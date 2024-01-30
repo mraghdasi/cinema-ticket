@@ -79,7 +79,13 @@ class DatabaseManager:
         Call this method once during the application setup.
         """
         # Add code here to create other tables if needed
-        pass
+
+        # # Add User Table to Database
+        # query = '''
+        #     CREATE TABLE IF NOT EXISTS user (id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        #     username VARCHAR(100) UNIQUE NOT NULL)
+        # '''
+        # self.execute_query(query)
 
 
 db_connector = DatabaseConnector(host='localhost', user='root', password='root', database='cinema_ticket')
