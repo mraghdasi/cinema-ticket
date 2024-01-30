@@ -17,8 +17,7 @@ class Validator:
         if re.match(r"^[a-zA-Z0-9]{3,100}$", username_str):
             return username_str
         else:
-            pass
-            # return UsernameValidationError()
+            return str(UsernameValidationError())
 
     @staticmethod
     def email_validator(email_str):

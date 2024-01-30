@@ -55,5 +55,9 @@ class User:
         INSERT INTO user (username, email, phone_number, password, birthday, last_login, created_at, subscription_id, wallet_id)
         VALUES ({self.username}, {self.email}, {self.phone_number}, {self.password}, {self.birthday}, {self.last_login}, {self.created_at}, {self.subscription_id}, {self.wallet_id});
         '''
-        return db_manager.execute_query(query)
+        return db_manager.execute_commit_query(query)
+
+    def read(self):
+        query = '''
+        '''
 
