@@ -8,8 +8,6 @@ class User:
     """
         Class To Make User Instances, It's a Basic User Without Any Specification.
     """
-    USER_ID_COUNTER = 1
-    user_id: int
     username: str
     email: str
     phone_number: str
@@ -34,7 +32,6 @@ class User:
         :param subscription_id:
         :param wallet_id:
         """
-        self.user_id = self.return_user_id()
         self.username = username_validator(username)
         self.email = email_validator(email)
         self.phone_number = phone_number_validator(phone_number)
@@ -45,16 +42,6 @@ class User:
         self.subscription_id = subscription_id
         self.wallet_id = wallet_id
 
-    def return_user_id(self):
-        """
-        Get Last Used Id
-        :return:
-            counter
-        """
-        counter = self.USER_ID_COUNTER
-        self.USER_ID_COUNTER += 1
-        return counter
-
     def save(self):
         """
         Insert User Instance to Database, Table User
@@ -63,8 +50,8 @@ class User:
         """
 
         query = f'''
-        INSERT INTO user (id, username, email, phone_number, password, birthday, last_login, created_at, subscription_id, wallet_id)
-        VALUES ({self.user_id}, {self.username}, {self.email}, {self.phone_number}, {self.password}, {self.birthday}, {self.last_login}, {self.created_at}, {self.subscription_id}, {self.wallet_id});
+        INSERT INTO user (username, email, phone_number, password, birthday, last_login, created_at, subscription_id, wallet_id)
+        VALUES ({self.username}, {self.email}, {self.phone_number}, {self.password}, {self.birthday}, {self.last_login}, {self.created_at}, {self.subscription_id}, {self.wallet_id});
         '''
         return db_manager.execute_query(query)
 
