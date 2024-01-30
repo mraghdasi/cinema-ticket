@@ -58,7 +58,7 @@ class DatabaseManager:
         """
         self.db_connector = db_connector
 
-    def execute_query(self, query):
+    def execute_commit_query(self, query):
         """
         Execute a SQL query on the connected database.
 
@@ -85,7 +85,7 @@ class DatabaseManager:
         #     CREATE TABLE IF NOT EXISTS user (id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
         #     username VARCHAR(100) UNIQUE NOT NULL)
         # '''
-        # self.execute_query(query)
+        # self.execute_commit_query(query)
 
 
 db_connector = DatabaseConnector(host='localhost', user='root', password='root', database='cinema_ticket')
