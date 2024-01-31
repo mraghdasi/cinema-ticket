@@ -91,15 +91,14 @@ class DatabaseManager:
         '''
             CREATE TABLE IF NOT EXISTS  user(
                 id INT NOT NULL PRIMARY KEY,
-                username VARCHAR(100) NOT NULL UNIQUE CHECK(username REGEXP '^[A-Za-z0-9]+$'),
-                email VARCHAR(100) NOT NULL UNIQUE CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
-                phone_number VARCHAR(20) DEFAULT NULL CHECK (phone_number REGEXP '^\\+?[0-9]+$'),
-                password VARCHAR(100) NOT NULL CHECK (password REGEXP '^[A-Za-z0-9]+$'),
+                username VARCHAR(100) NOT NULL UNIQUE CHECK,
+                email VARCHAR(255) NOT NULL UNIQUE CHECK ,
+                phone_number VARCHAR(20) DEFAULT NULL CHECK ,
+                password VARCHAR(255) NOT NULL CHECK ,
                 birthday DATE NOT NULL,
-                last_login DEFAULT NULL,
+                last_login DATETIME DEFAULT NULL ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                subscription_id INT DEFAULT NULL,
-                wallet_id INT DEFAULT NULL,
+                subscription_id INT DEFAULT NULL,                
                 balance INT DEFAULT 0
             );
             CREATE TABLE IF NOT EXISTS user_bank_account (
@@ -108,19 +107,19 @@ class DatabaseManager:
                 card_number VARCHAR(20) NOT NULL,
                 cvv2 VARCHAR(4) NOT NULL,
                 password VARCHAR(100) NOT NULL,
-                amount BIGINT,
-                minimum_amount BIGINT,
+                amount INT,
+                minimum_amount INT,
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
             CREATE TABLE IF NOT EXISTS transaction (
                 user_bank_account_id INTEGER NOT NULL,
                 transaction_type INTEGER NOT NULL,
-                amount BIGINT ,
+                amount INT ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_bank_account_id) REFERENCES user_bank_account(user_id)
             );
             CREATE TABLE IF NOT EXISTS package (
-                id INTEGER,
+                id INT,
                 title VARCHAR(255),
                 cash_back INTEGER DEFAULT 0,
                 price INTEGER
