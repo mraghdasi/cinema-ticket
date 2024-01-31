@@ -1,10 +1,12 @@
 from datetime import date, datetime
+from hmac import compare_digest
 
-from src.db.db_main import db_manager
+from src.db.db_operations import DBOperation
+from src.utils.custom_exceptions import UserPasswordNotCorrect, NewPasswordsNotSame
 from src.utils.utils import Validator
 
 
-class User:
+class User(DBOperation):
     """
         Class To Make User Instances, It's a Basic User Without Any Specification.
     """
@@ -17,47 +19,105 @@ class User:
     created_at: datetime
     subscription_id: int
     balance: int
+    role: str
 
     def __init__(self, username, email, phone_number, password, birthday, last_login, created_at, subscription_id,
-                 balance):
+                 balance, role):
         """
         Initialize Instance (Constructor Method)
-        :param username:
-        :param email:
-        :param phone_number:
-        :param password:
-        :param birthday:
-        :param last_login:
-        :param created_at:
-        :param subscription_id:
-        :param balance:
         """
         # Validators for Username
-        username_validators = [validate(username) for validate in [Validator.username_validator]]
-        # self.username = username_validator(username)
-        # self.email = email_validator(email)
-        # self.phone_number = phone_number_validator(phone_number)
+        # username_validators = [validate(username) for validate in [Validator.username_validator]]
+        self.username = username
+        self.email = email
+        self.phone_number = phone_number
         self.password = password
         self.birthday = birthday
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
         self.balance = balance
+        self.role = role
 
-    def save(self):
+    def __str__(self):
+        return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
+
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+    # We Have To Convert Database Fetched Data As User Instance IN CRUD
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+    # ATTENTION!
+
+    @staticmethod
+    def create(**kwargs):
         """
-        Insert User Instance to Database, Table User
+        Create New Row Of User in User Table in Database
+        :param kwargs:
+            columns: string of columns names, comma separated (col1, col2, col3)
+            values: string of columns values, comma separated (val1, val2, val3)
         :return:
-            True Or False
         """
+        super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
 
-        query = f'''
-        INSERT INTO user (username, email, phone_number, password, birthday, last_login, created_at, subscription_id, wallet_id)
-        VALUES ({self.username}, {self.email}, {self.phone_number}, {self.password}, {self.birthday}, {self.last_login}, {self.created_at}, {self.subscription_id}, {self.wallet_id});
-        '''
-        return db_manager.execute_commit_query(query)
+    @staticmethod
+    def read(**kwargs):
+        """
+        Get An Existing User From User Table in Database
+        :param kwargs:
+            columns: string of columns names, comma separated (col1, col2, col3)
+            condition: string of conditions (col1 = 'val1'), Default Value None
+            order: tuple of two value (col_name, ASC|DESC) (col1, ASC), Default Value None
+        :return:
+        """
+        super().read(kwargs.get('columns', None), 'user', kwargs.get('condition', None), kwargs.get('order', None))
 
-    def read(self):
-        query = '''
-        '''
+    @staticmethod
+    def update(**kwargs):
+        """
+        Update An Existing User In User Table in Database
+        :param kwargs:
+            columns: string of columns names and values, comma separated "col1 = val1, col2 = val2, col3 = val3"
+            condition: string of conditions (col1 = 'val1'), Default Value None
+        :return:
+        """
+        super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
 
+    @staticmethod
+    def delete(**kwargs):
+        """
+        Delete An Existing User From User Table in Database
+        :param kwargs:
+            condition: string of conditions (col1 = 'val1'), Default Value None
+        :return:
+        """
+        super().delete('user', kwargs.get('condition', None))
+
+    def change_password(self, password, new_password, confirm_new_password):
+        """
+        Change Password Of User, If New Password And Confirm New Password Are The Same, and Password is correct
+        Updates User Password to New Password
+        :param password:
+        :param new_password:
+        :param confirm_new_password:
+        :return:
+            True Or Raise Exception
+        """
+        if compare_digest(new_password, confirm_new_password):
+            hashed_password = Validator.hash_string(password)
+            user = self.read(
+                **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
+            if user:
+                hashed_new_password = Validator.hash_string(new_password)
+                self.password = hashed_new_password
+                self.update(**{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
+                return True
+            else:
+                return str(UserPasswordNotCorrect())
+        else:
+            return str(NewPasswordsNotSame())
