@@ -2,23 +2,6 @@ from src.db.db_main import db_manager
 
 
 class DBOperation:
-
-    # @staticmethod
-    # def create(query):
-    #     db_manager.execute_commit_query(query)
-    #
-    # @staticmethod
-    # def read(query):
-    #     db_manager.execute_commit_query(query)
-    #
-    # @staticmethod
-    # def update(query):
-    #     db_manager.execute_commit_query(query)
-    #
-    # @staticmethod
-    # def delete(query):
-    #     db_manager.execute_commit_query(query)
-
     @staticmethod
     def create(entity: str, columns: tuple, values: tuple):
         query = f'INSERT INTO {entity} {columns} VALUES {values}'

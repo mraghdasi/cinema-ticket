@@ -1,0 +1,3 @@
+ERROR:root:Exception in ex: division by zero
+ERROR:root:Exception in ex : division by zero
+ERROR:root: Exception in ex : division by zero
