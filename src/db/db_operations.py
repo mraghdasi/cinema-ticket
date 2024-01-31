@@ -15,7 +15,7 @@ class DBOperation:
             values (tuple): A tuple containing the corresponding values to be inserted.
 
         Returns:
-            None
+            The row that was inserted
         """
 
         query = f'INSERT INTO {entity} {columns} VALUES {values}'
@@ -42,7 +42,7 @@ class DBOperation:
             order (list, optional): A list specifying the order of results [column to order by, sorting (ASC or DESC)] (default is None).
 
         Returns:
-            None
+            The row(s) that was suppused to be read
         """
 
         query = f'SELECT {columns} FROM {table_name}'
