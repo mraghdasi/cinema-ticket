@@ -24,3 +24,20 @@ class PhoneNumberValidationError(Exception):
     def __init__(self):
         super().__init__('Please Enter a Valid Phone Number')
 
+
+class UserPasswordNotCorrect(Exception):
+    """
+        User Password Not Correct Exception
+    """
+
+    def __init__(self):
+        super().__init__('Password Is Not Correct')
+
+
+class NewPasswordsNotSame(Exception):
+    """
+        New Password And Confirm New Password Not Same Exception
+    """
+
+    def __init__(self):
+        super().__init__('New Password and Confirm New Password are Not Same')
