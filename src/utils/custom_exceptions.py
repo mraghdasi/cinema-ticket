@@ -27,6 +27,21 @@ class PhoneNumberValidationError(Exception):
     def __init__(self):
         super().__init__('Please Enter a Valid Phone Number')
 
+class PasswordValidationError(Exception):
+    """
+        Password Validation Error Exception
+    """
+
+    def __init__(self):
+        super().__init__('Please Enter a Valid Password (length 8-100 , 2 uppercase letters , 2 digits , 2 special characters)')
+        
+class BirthdayValidationError(Exception):
+    """
+        Birthday Validation Error Exception
+    """
+
+    def __init__(self):
+        super().__init__('Please Enter a Valid Format of date (yyyy/mm/dd) and Make Sure You Write a Valid Date')
 
 class UserPasswordNotCorrect(Exception):
     """
