@@ -80,12 +80,109 @@ class DatabaseManager:
         """
         # Add code here to create other tables if needed
 
+
         # # Add User Table to Database
         # query = '''
         #     CREATE TABLE IF NOT EXISTS user (id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
         #     username VARCHAR(100) UNIQUE NOT NULL)
+
         # '''
         # self.execute_commit_query(query)
+        '''
+            CREATE TABLE IF NOT EXISTS  user(
+                id INT NOT NULL PRIMARY KEY,
+                username VARCHAR(100) NOT NULL UNIQUE CHECK,
+                email VARCHAR(255) NOT NULL UNIQUE CHECK ,
+                phone_number VARCHAR(20) DEFAULT NULL CHECK ,
+                password VARCHAR(255) NOT NULL CHECK ,
+                birthday DATE NOT NULL,
+                last_login DATETIME DEFAULT NULL ,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                subscription_id INT DEFAULT NULL,                
+                balance INT DEFAULT 0
+            );
+            CREATE TABLE IF NOT EXISTS user_bank_account (
+                user_id INTEGER NOT NULL,
+                title VARCHAR(100) NOT NULL,
+                card_number VARCHAR(20) NOT NULL,
+                cvv2 VARCHAR(4) NOT NULL,
+                password VARCHAR(100) NOT NULL,
+                amount INT,
+                minimum_amount INT,
+                FOREIGN KEY (user_id) REFERENCES user(id)
+            );
+            CREATE TABLE IF NOT EXISTS transaction (
+                user_bank_account_id INTEGER NOT NULL,
+                transaction_type INTEGER NOT NULL,
+                amount INT ,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_bank_account_id) REFERENCES user_bank_account(user_id)
+            );
+            CREATE TABLE IF NOT EXISTS package (
+                id INT,
+                title VARCHAR(255),
+                cash_back INTEGER DEFAULT 0,
+                price INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS subscription (
+                id INTEGER,
+                user_id INTEGER,
+                package_id INTEGER,
+                expire_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES user(id),
+                FOREIGN KEY (package_id) REFERENCES package(id)
+            );
+            CREATE TABLE IF NOT EXISTS films (
+                id INTEGER,
+                title VARCHAR(255),
+                min_age INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS hall (
+                id INTEGER ,
+                title VARCHAR(255),
+                capacity INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS cinema_sans (
+                id INTEGER,
+                start_time TIME,
+                end_time TIME,
+                film_id INTEGER,
+                hall_id INTEGER,
+                price INTEGER,
+                FOREIGN KEY (film_id) REFERENCES films(id),
+                FOREIGN KEY (hall_id) REFERENCES hall(id)
+            );
+            CREATE TABLE IF NOT EXISTS ticket (
+                id INTEGER ,
+                cinema_sans_id INTEGER,
+                user_id INTEGER,
+                sit_number INTEGER,
+                FOREIGN KEY (cinema_sans_id) REFERENCES cinema_sans(id),
+                FOREIGN KEY (user_id) REFERENCES user(id)            
+            );
+            CREATE TABLE IF NOT EXISTS film_rate (
+                id INTEGER,
+                film_id INTEGER,
+                rate INTEGER,
+                user_id INTEGER,
+                FOREIGN KEY (film_id) REFERENCES films(id),
+                FOREIGN KEY (user_id) REFERENCES user(id)
+            );
+            CREATE TABLE IF NOT EXISTS comment (
+                id INTEGER,
+                description TEXT,
+                film_id INTEGER,
+                user_id INTEGER,
+                reply_to INTEGER NULL,
+                created_at DATETIME,
+                FOREIGN KEY (film_id) REFERENCES films(id),
+                FOREIGN KEY (user_id) REFERENCES user(id)            
+            
+            );
+        '''
+
+
+
 
 
 db_connector = DatabaseConnector(host='localhost', user='root', password='root', database='cinema_ticket')
