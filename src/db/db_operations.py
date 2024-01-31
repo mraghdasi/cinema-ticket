@@ -78,8 +78,7 @@ class DBOperation:
 
         query = f'UPDATE {entity} SET '
 
-        # query += ', '.join([f"{column} = {columns_values[column]
-        # }" for column in columns_values])
+        query += ', '.join([f"{column} = {columns_values[column]}" for column in columns_values])
 
         if condition is not None:
             query += f' WHERE {condition}'
