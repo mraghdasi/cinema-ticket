@@ -21,18 +21,17 @@ class User(DBOperation):
     balance: int
     role: str
 
-    def __init__(self, username, email, phone_number, password, birthday, last_login, created_at, subscription_id,
+    def __init__(self, username, email, phone_number, password, birthday,
+                 last_login, created_at, subscription_id,
                  balance, role):
         """
         Initialize Instance (Constructor Method)
         """
-        # Validators for Username
-        # username_validators = [validate(username) for validate in [Validator.username_validator]]
-        self.username = username
-        self.email = email
-        self.phone_number = phone_number
-        self.password = password
-        self.birthday = birthday
+        self.username = Validator.username_validator(username)
+        self.email = Validator.email_validator(email)
+        self.phone_number = Validator.phone_number_validator(phone_number)
+        self.password = Validator.password_validator(password)
+        self.birthday = Validator.birthday_format_validator(birthday)
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
@@ -54,7 +53,7 @@ class User(DBOperation):
     # ATTENTION!
     # ATTENTION!
 
-    @staticmethod
+
     def create(**kwargs):
         """
         Create New Row Of User in User Table in Database
@@ -65,7 +64,7 @@ class User(DBOperation):
         """
         super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
 
-    @staticmethod
+
     def read(**kwargs):
         """
         Get An Existing User From User Table in Database
@@ -75,9 +74,10 @@ class User(DBOperation):
             order: tuple of two value (col_name, ASC|DESC) (col1, ASC), Default Value None
         :return:
         """
-        super().read(kwargs.get('columns', None), 'user', kwargs.get('condition', None), kwargs.get('order', None))
+        super().read(kwargs.get('columns', None), 'user', kwargs.get(
+            'condition', None), kwargs.get('order', None))
 
-    @staticmethod
+
     def update(**kwargs):
         """
         Update An Existing User In User Table in Database
@@ -88,7 +88,7 @@ class User(DBOperation):
         """
         super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
 
-    @staticmethod
+
     def delete(**kwargs):
         """
         Delete An Existing User From User Table in Database
@@ -109,13 +109,14 @@ class User(DBOperation):
             True Or Raise Exception
         """
         if compare_digest(new_password, confirm_new_password):
-            hashed_password = Validator.hash_string(password)
+            hashed_password = Validator.password_validator(password)
             user = self.read(
                 **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
             if user:
-                hashed_new_password = Validator.hash_string(new_password)
+                hashed_new_password = Validator.password_validator(password)
                 self.password = hashed_new_password
-                self.update(**{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
+                self.update(
+                    **{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
                 return True
             else:
                 return str(UserPasswordNotCorrect())
