@@ -3,7 +3,7 @@ from hmac import compare_digest
 
 from src.db.db_operations import DBOperation
 from src.utils.custom_exceptions import UserPasswordNotCorrect, NewPasswordsNotSame
-from src.utils.utils import Validator
+import src.utils.validators as Validators
 
 
 class User(DBOperation):
@@ -27,11 +27,11 @@ class User(DBOperation):
         """
         Initialize Instance (Constructor Method)
         """
-        self.username = Validator.username_validator(username)
-        self.email = Validator.email_validator(email)
-        self.phone_number = Validator.phone_number_validator(phone_number)
-        self.password = Validator.password_validator(password)
-        self.birthday = Validator.birthday_format_validator(birthday)
+        self.username = Validators.UserValidator.username_validator(username)
+        self.email = Validators.UserValidator.email_validator(email)
+        self.phone_number = Validators.UserValidator.phone_number_validator(phone_number)
+        self.password = Validators.UserValidator.password_validator(password)
+        self.birthday = Validators.UserValidator.birthday_format_validator(birthday)
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
@@ -109,11 +109,11 @@ class User(DBOperation):
             True Or Raise Exception
         """
         if compare_digest(new_password, confirm_new_password):
-            hashed_password = Validator.password_validator(password)
+            hashed_password = Validators.UserValidator.password_validator(password)
             user = self.read(
                 **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
             if user:
-                hashed_new_password = Validator.password_validator(password)
+                hashed_new_password = Validators.UserValidator.password_validator(password)
                 self.password = hashed_new_password
                 self.update(
                     **{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
