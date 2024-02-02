@@ -42,7 +42,7 @@ class DBOperation:
             order (list, optional): A list specifying the order of results [column to order by, sorting (ASC or DESC)] (default is None).
 
         Returns:
-            The row(s) that was suppused to be read
+            The row(s) that was supposed to be read
         """
 
         query = f'SELECT {columns} FROM {table_name}'
@@ -85,44 +85,42 @@ class DBOperation:
 
         return db_manager.execute_commit_query(query)
 
+    @staticmethod
+    def delete(entity: str, condition: str = None):
+        """
+        Deletes records from the specified entity based on the provided condition.
 
-@staticmethod
-def delete(entity: str, condition: str = None):
+        Args:
+            entity (str): The name of the table/entity to delete records from.
+            condition (str, optional): The condition to filter records (default is None).
+
+        Returns:
+            True if everything is done OK
+
+            False if something goes wrong
     """
-    Deletes records from the specified entity based on the provided condition.
 
-    Args:
-        entity (str): The name of the table/entity to delete records from.
-        condition (str, optional): The condition to filter records (default is None).
+        query = f'DELETE FROM {entity}'
+        if condition is not None:
+            query += f' WHERE {condition}'
 
-    Returns:
-        True if everything is done OK
+        return db_manager.execute_commit_query(query)
 
-        False if something goes wrong
-    """
-
-    query = f'DELETE FROM {entity}'
-    if condition is not None:
-        query += f' WHERE {condition}'
-
-    return db_manager.execute_commit_query(query)
-
-
-def __str__(self) -> str:
-    details = """
-                    A class for managing database operations.
-
-                    Methods:
-                        create(entity: str, columns: tuple, values: tuple)
-                            Inserts a new record into the specified entity.
-
-                        read(columns: tuple, table_name: str, condition: str = None, order: list = None)
-                            Retrieves records from the specified table based on the provided columns, condition, and order.
-
-                        update(entity: str, columns_values: dict, condition: str = None)
-                            Updates records in the specified entity based on the provided column-value pairs and condition.
-
-                        delete(entity: str, condition: str = None)
-                            Deletes records from the specified entity based on the provided condition.
-                    """
-    return details
+    def __str__(self) -> str:
+        details = """
+                        A class for managing database operations.
+    
+                        Methods:
+                            create(entity: str, columns: tuple, values: tuple)
+                                Inserts a new record into the specified entity.
+    
+                            read(columns: tuple, table_name: str, condition: str = None, order: list = None)
+                                Retrieves records from the specified table based on the provided columns, condition, and order.
+    
+                            update(entity: str, columns_values: dict, condition: str = None)
+                                Updates records in the specified entity based on the provided column-value pairs and condition.
+    
+                            delete(entity: str, condition: str = None)
+                                Deletes records from the specified entity based on the provided condition.
+                        """
+        return details

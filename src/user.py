@@ -3,7 +3,7 @@ from hmac import compare_digest
 
 from src.db.db_operations import DBOperation
 from src.utils.custom_exceptions import UserPasswordNotCorrect, NewPasswordsNotSame
-import src.utils.validators as Validators
+import src.utils.custom_validators as Validators
 
 
 class User(DBOperation):
@@ -27,11 +27,11 @@ class User(DBOperation):
         """
         Initialize Instance (Constructor Method)
         """
-        self.username = Validators.UserValidator.username_validator(username)
-        self.email = Validators.UserValidator.email_validator(email)
-        self.phone_number = Validators.UserValidator.phone_number_validator(phone_number)
-        self.password = Validators.UserValidator.password_validator(password)
-        self.birthday = Validators.UserValidator.birthday_format_validator(birthday)
+        self.username = Validators.Validator.username_validator(username)
+        self.email = Validators.Validator.email_validator(email)
+        self.phone_number = Validators.Validator.phone_number_validator(phone_number)
+        self.password = Validators.Validator.password_validator(password)
+        self.birthday = Validators.Validator.birthday_format_validator(birthday)
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
@@ -41,19 +41,8 @@ class User(DBOperation):
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
 
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # We Have To Convert Database Fetched Data As User Instance IN CRUD
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
 
-
+    @staticmethod
     def create(**kwargs):
         """
         Create New Row Of User in User Table in Database
@@ -64,7 +53,7 @@ class User(DBOperation):
         """
         super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
 
-
+    @staticmethod
     def read(**kwargs):
         """
         Get An Existing User From User Table in Database
@@ -77,7 +66,7 @@ class User(DBOperation):
         super().read(kwargs.get('columns', None), 'user', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-
+    @staticmethod
     def update(**kwargs):
         """
         Update An Existing User In User Table in Database
@@ -88,7 +77,7 @@ class User(DBOperation):
         """
         super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
 
-
+    @staticmethod
     def delete(**kwargs):
         """
         Delete An Existing User From User Table in Database
@@ -109,11 +98,11 @@ class User(DBOperation):
             True Or Raise Exception
         """
         if compare_digest(new_password, confirm_new_password):
-            hashed_password = Validators.UserValidator.password_validator(password)
+            hashed_password = Validators.Validator.password_validator(password)
             user = self.read(
                 **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
             if user:
-                hashed_new_password = Validators.UserValidator.password_validator(password)
+                hashed_new_password = Validators.Validator.password_validator(password)
                 self.password = hashed_new_password
                 self.update(
                     **{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})

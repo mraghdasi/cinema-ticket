@@ -4,8 +4,8 @@ import re
 
 from validators import email
 
-from main import secret_key
 import src.utils.custom_exceptions as custom_exceptions
+from main import secret_key
 
 
 def hash_string(string):
@@ -18,7 +18,7 @@ def hash_string(string):
     return hmac.new(secret_key.encode('utf-8'), string.encode('utf-8'), hashlib.sha256).hexdigest()
 
 
-class UserValidator:
+class Validator:
     @staticmethod
     def validate(string: str, validator_functions: tuple):
         """
@@ -83,13 +83,13 @@ class UserValidator:
 
     @staticmethod
     def password_validator(password_str):
-        '''
+        """
         A function to validate password
 
         :param password_str:
         :return:
         hashed password or PasswordValidationError
-        '''
+        """
 
         if re.match(r'^(?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8,100}$', password_str):
             return hash_string(password_str)
@@ -98,14 +98,14 @@ class UserValidator:
 
     @staticmethod
     def birthday_format_validator(birthday_str):
-        '''
+        """
         A function to validate birthday
 
         :param birthday_str:
         :return:
         birthday or BirthdayValidationError
-        '''
-        if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$',birthday_str):
+        """
+        if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$', birthday_str):
             year, month, day = map(int, birthday_str.split('/'))
             if not 1300 <= year <= 1390:
                 return custom_exceptions.BirthdayValidationError()
@@ -120,3 +120,33 @@ class UserValidator:
             return birthday_str
         else:
             return custom_exceptions.BirthdayValidationError()
+
+    @staticmethod
+    def min_age_validator(min_age):
+        """
+        A function to validate min age bigger than 0
+
+        :param min_age:
+        :return:
+            True Or Message of MinAgeNotPositive Exception
+        """
+
+        if min_age >= 0:
+            return True
+        else:
+            return str(custom_exceptions.MinAgeNotPositive())
+
+    @staticmethod
+    def rate_validator(rate):
+        """
+        A function to validate rate is between 0 and 5
+
+        :param rate:
+        :return:
+            True Or Message of RateNotBetweenZeroAndFive Exception
+        """
+
+        if 0 <= rate <= 5:
+            return True
+        else:
+            return str(custom_exceptions.MinAgeNotPositive())
