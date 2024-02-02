@@ -1,4 +1,5 @@
-from datetime import date, datetime
+from datetime import date
+from datetime import datetime
 from hmac import compare_digest
 
 from src.db.db_operations import DBOperation
@@ -25,7 +26,7 @@ class User(DBOperation):
     role: str
 
     def __init__(self, username, email, phone_number, password, birthday,
-                 last_login, created_at, subscription_id,
+                 last_login, created_at, subscription_id, wallet_id,
                  balance, role):
         """
         Initialize Instance (Constructor Method)
@@ -68,6 +69,7 @@ class User(DBOperation):
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
+        self.wallet_id = wallet_id
         self.balance = balance
         self.role = role
 
