@@ -98,7 +98,8 @@ class DatabaseManager:
                 last_login DATETIME DEFAULT NULL ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 subscription_id INT DEFAULT NULL,                
-                balance INT DEFAULT 0
+                balance INT DEFAULT 0,
+                is_logged_in INT DEFAULT 0,
             );
             CREATE TABLE IF NOT EXISTS user_bank_account (
                 user_id INT NOT NULL,
@@ -108,14 +109,8 @@ class DatabaseManager:
                 password VARCHAR(255) NOT NULL,
                 amount INT NOT NULL,
                 minimum_amount INT NOT NULL,
+                expire_date DATE NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES user(id)
-            );
-            CREATE TABLE IF NOT EXISTS transaction (
-                user_bank_account_id INT NOT NULL,
-                transaction_type INTEGER NOT NULL,
-                amount INT NOT NULL ,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_bank_account_id) REFERENCES user_bank_account(user_id)
             );
             CREATE TABLE IF NOT EXISTS package (
                 id INT,
