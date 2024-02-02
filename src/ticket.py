@@ -16,9 +16,11 @@ class Ticket(DBOperation):
         self.user_id = user_id
         self.sit_number = sit_number
 
+    @staticmethod
     def __str__(self):
         return f': Cinema Sans ID: {self.cinema_sans_id} | User ID: {self.user_id} | Sit Number: {self.sit_number}'
 
+    @staticmethod
     def create(**kwargs):
         """
         Create New Row Of Ticket in ticket Table in Database
@@ -26,6 +28,7 @@ class Ticket(DBOperation):
         super().create('ticket', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
+    @staticmethod
     def read(**kwargs):
         """
         Get An Existing ticket From ticket Table in Database
@@ -34,7 +37,7 @@ class Ticket(DBOperation):
         super().read(kwargs.get('columns', None), 'ticket', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-
+    @staticmethod
     def update(**kwargs):
         """
         Update An Existing ticket In ticket Table in Database
@@ -43,7 +46,8 @@ class Ticket(DBOperation):
         super().update('ticket', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
- def delete(**kwargs):
+    @staticmethod
+    def delete(**kwargs):
         """
         Delete An Existing ticket  From ticket Table in Database
 
