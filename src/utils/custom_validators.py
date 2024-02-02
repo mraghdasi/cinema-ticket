@@ -1,21 +1,9 @@
-import hashlib
-import hmac
 import re
 
 from validators import email
 
 import src.utils.custom_exceptions as custom_exceptions
-from main import secret_key
-
-
-def hash_string(string):
-    """
-    Return A Hashed String From An Input String
-    :param string:
-    :return:
-        Hashed String
-    """
-    return hmac.new(secret_key.encode('utf-8'), string.encode('utf-8'), hashlib.sha256).hexdigest()
+from src.utils.utils import hash_string
 
 
 class Validator:
@@ -48,7 +36,7 @@ class Validator:
              username_str Or UsernameValidationError
         """
         if re.match(r"^[a-zA-Z0-9]{3,100}$", username_str):
-            return username_str
+            return True
         else:
             return str(custom_exceptions.UsernameValidationError())
 
@@ -61,9 +49,9 @@ class Validator:
             email_str Or EmailValidationError
         """
         if email(email_str):
-            return email_str
+            return True
         else:
-            raise custom_exceptions.EmailValidationError()
+            return str(custom_exceptions.EmailValidationError())
 
     @staticmethod
     def phone_number_validator(phone_number_str):
@@ -73,13 +61,13 @@ class Validator:
         :return:
         phone_number_str Or PhoneNumberValidationError Or None
         """
-        if phone_number_str:
+        if len(phone_number_str) != 0 :
             if re.match(r"^(09)([0-9]{9})$", phone_number_str):
-                return phone_number_str
+                return True
             else:
-                raise custom_exceptions.PhoneNumberValidationError()
+                return str(custom_exceptions.PhoneNumberValidationError())
         else:
-            return None
+            return True
 
     @staticmethod
     def password_validator(password_str):
@@ -92,9 +80,9 @@ class Validator:
         """
 
         if re.match(r'^(?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8,100}$', password_str):
-            return hash_string(password_str)
+            return True
         else:
-            return custom_exceptions.PasswordValidationError()
+            return str(custom_exceptions.PasswordValidationError())
 
     @staticmethod
     def birthday_format_validator(birthday_str):
@@ -108,18 +96,18 @@ class Validator:
         if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$', birthday_str):
             year, month, day = map(int, birthday_str.split('/'))
             if not 1300 <= year <= 1390:
-                return custom_exceptions.BirthdayValidationError()
+                return str(custom_exceptions.BirthdayValidationError())
             elif not 1 <= month <= 12:
-                return custom_exceptions.BirthdayValidationError()
+                return str(custom_exceptions.BirthdayValidationError())
             elif 1 <= month <= 6 and not 1 <= day <= 31:
-                return custom_exceptions.BirthdayValidationError()
+                return str(custom_exceptions.BirthdayValidationError())
             elif 7 <= month <= 11 and not 1 <= day <= 30:
-                return custom_exceptions.BirthdayValidationError()
+                return str(custom_exceptions.BirthdayValidationError())
             elif month == 12 and not 1 <= day <= 29:
-                return custom_exceptions.BirthdayValidationError()
-            return birthday_str
+                return str(custom_exceptions.BirthdayValidationError())
+            return True
         else:
-            return custom_exceptions.BirthdayValidationError()
+            return str(custom_exceptions.BirthdayValidationError())
 
     @staticmethod
     def min_age_validator(min_age):

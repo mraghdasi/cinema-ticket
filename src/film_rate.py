@@ -15,15 +15,15 @@ class FilmRate(DBOperation):
         Initialize Instance (Constructor Method)
         """
         self.film_id = film_id
-        self.rate = rate
-        self.user_id = user_id
 
-        validate_min_age = Validator.validate(rate, (Validator.rate_validator,))
-        if isinstance(validate_min_age, bool):
-            self.min_age = validate_min_age
+        validate_rate = Validator.validate(rate, (Validator.rate_validator,))
+        if isinstance(validate_rate, bool):
+            self.rate = validate_rate
         else:
-            raise Exception(validate_min_age)
+            raise Exception(validate_rate)
 
+        self.user_id = user_id
+        
     def __str__(self):
         return f'Film Id: {self.film_id} | Rate: {self.rate} | User Id: {self.user_id}'
 

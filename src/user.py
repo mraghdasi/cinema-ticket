@@ -2,7 +2,10 @@ from datetime import date, datetime
 from hmac import compare_digest
 
 from src.db.db_operations import DBOperation
-from src.utils.custom_exceptions import UserPasswordNotCorrect, NewPasswordsNotSame
+from src.utils.custom_exceptions import UserPasswordNotCorrect
+from src.utils.custom_exceptions import NewPasswordsNotSame
+from src.utils.utils import hash_string
+
 import src.utils.custom_validators as Validators
 
 
@@ -27,11 +30,41 @@ class User(DBOperation):
         """
         Initialize Instance (Constructor Method)
         """
-        self.username = Validators.Validator.username_validator(username)
-        self.email = Validators.Validator.email_validator(email)
-        self.phone_number = Validators.Validator.phone_number_validator(phone_number)
-        self.password = Validators.Validator.password_validator(password)
-        self.birthday = Validators.Validator.birthday_format_validator(birthday)
+        validate_username = Validators.validate(
+            username, (Validators.Validator.username_validator,))
+        if isinstance(validate_username, bool):
+            self.username = username
+        else:
+            raise Exception(validate_username)
+
+        validate_email = Validators.validate(
+            email, (Validators.Validator.email_validator,))
+        if isinstance(validate_email, bool):
+            self.email = email
+        else:
+            raise Exception(validate_email)
+
+        validate_phone_number = Validators.validate(
+            phone_number, (Validators.Validator.phone_number_validator,))
+        if isinstance(validate_phone_number, bool):
+            self.phone_number = phone_number
+        else:
+            raise Exception(validate_phone_number)
+
+        validate_password = Validators.validate(
+            password, (Validators.Validator.password_validator,))
+        if isinstance(validate_password, bool):
+            self.password = hash_string(password)
+        else:
+            raise Exception(validate_password)
+
+        validate_birthday = Validators.validate(
+            birthday, (Validators.Validator.birthday_format_validator,))
+        if isinstance(validate_birthday, bool):
+            self.birthday = birthday
+        else:
+            raise Exception(validate_birthday)
+
         self.last_login = last_login
         self.created_at = created_at
         self.subscription_id = subscription_id
@@ -41,8 +74,6 @@ class User(DBOperation):
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
 
-
-    @staticmethod
     def create(**kwargs):
         """
         Create New Row Of User in User Table in Database
@@ -53,7 +84,6 @@ class User(DBOperation):
         """
         super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
 
-    @staticmethod
     def read(**kwargs):
         """
         Get An Existing User From User Table in Database
@@ -66,7 +96,6 @@ class User(DBOperation):
         super().read(kwargs.get('columns', None), 'user', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    @staticmethod
     def update(**kwargs):
         """
         Update An Existing User In User Table in Database
@@ -77,7 +106,6 @@ class User(DBOperation):
         """
         super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
 
-    @staticmethod
     def delete(**kwargs):
         """
         Delete An Existing User From User Table in Database
@@ -98,15 +126,20 @@ class User(DBOperation):
             True Or Raise Exception
         """
         if compare_digest(new_password, confirm_new_password):
-            hashed_password = Validators.Validator.password_validator(password)
+            hashed_password = hash_string(password)
             user = self.read(
                 **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
             if user:
-                hashed_new_password = Validators.Validator.password_validator(password)
-                self.password = hashed_new_password
-                self.update(
-                    **{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
-                return True
+                validate_password = Validators.validate(
+                    new_password, (Validators.Validator.password_validator,))
+                if isinstance(validate_password, bool):
+                    hashed_new_password = hash_string(new_password)
+                    self.password = hashed_new_password
+                    self.update(
+                        **{'columns': f'password = {hashed_new_password}', 'condition': f'id = {user.id}'})
+                    return True
+                else:
+                    raise Exception(validate_password)
             else:
                 return str(UserPasswordNotCorrect())
         else:
