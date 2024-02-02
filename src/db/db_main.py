@@ -92,7 +92,8 @@ class DatabaseManager:
                 last_login DATETIME DEFAULT NULL ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 subscription_id INT DEFAULT NULL,                
-                balance INT DEFAULT 0
+                balance INT DEFAULT 0,
+                is_logged_in INT DEFAULT 0,
             );
             '''
         self.execute_commit_query(query)
@@ -108,6 +109,7 @@ class DatabaseManager:
                 password VARCHAR(255) NOT NULL,
                 amount INT NOT NULL,
                 minimum_amount INT NOT NULL,
+                expire_date DATE NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
         '''

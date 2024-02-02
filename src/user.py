@@ -24,6 +24,7 @@ class User(DBOperation):
     subscription_id: int
     balance: int
     role: str
+    is_logged_in: int
 
     def __init__(self, username, email, phone_number, password, birthday,
                  last_login, created_at, subscription_id, wallet_id,
@@ -72,6 +73,7 @@ class User(DBOperation):
         self.wallet_id = wallet_id
         self.balance = balance
         self.role = role
+        self.is_logged_in = 0
 
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
@@ -146,3 +148,9 @@ class User(DBOperation):
                 return str(UserPasswordNotCorrect())
         else:
             return str(NewPasswordsNotSame())
+
+    def set_user_logged_in(self):
+        self.is_logged_in = 1
+
+    def set_user_logged_out(self):
+        self.is_logged_in = 0

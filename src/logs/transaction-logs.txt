@@ -1,0 +1,1 @@
+INFO:root: Username : gjhghk | Card Number : 4574584 | Amount : 10000 | Transaction Type : buy_ticket | DateTime : 2024-02-02 21:52:35.515611
