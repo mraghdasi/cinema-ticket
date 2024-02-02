@@ -136,7 +136,6 @@ class Validator:
         else:
             return str(custom_exceptions.MinAgeNotPositive())
 
-
     @staticmethod
     def rate_validator(rate):
         """

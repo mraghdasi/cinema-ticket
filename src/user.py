@@ -41,17 +41,6 @@ class User(DBOperation):
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
 
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # We Have To Convert Database Fetched Data As User Instance IN CRUD
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
-    # ATTENTION!
 
     @staticmethod
     def create(**kwargs):
