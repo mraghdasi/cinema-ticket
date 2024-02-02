@@ -142,15 +142,15 @@ class Validator:
 
     @staticmethod
     @exception_log()
-    def len_validator(str: str, max: int):
+    def len_validator(str_input: str, length: int):
         """
        A function to validate the length of a string.
 
        Parameters
        ----------
-       str : str
+       str_input : str
            The string to be validated.
-       max : int
+       length : int
            The length of the string.
 
        Returns
@@ -165,10 +165,10 @@ class Validator:
            If the length is not met, an exception is raised with a message
            indicating the expected maximum length.
        """
-        if len(str) == max:
+        if len(str_input) == length:
             return True
         else:
-            raise Exception(f'Length Must Be {max}')
+            raise Exception(f'Length Must Be {length}')
 
     @staticmethod
     @exception_log()
