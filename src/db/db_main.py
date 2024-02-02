@@ -80,15 +80,9 @@ class DatabaseManager:
         """
         # Add code here to create other tables if needed
 
-        # # Add User Table to Database
-        # query = '''
-        #     CREATE TABLE IF NOT EXISTS user (id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-        #     username VARCHAR(100) UNIQUE NOT NULL)
-
-        # '''
-        # self.execute_commit_query(query)
-        '''
-            CREATE TABLE IF NOT EXISTS  user(
+        # Add User Table to Database
+        query = '''
+                CREATE TABLE IF NOT EXISTS  user(
                 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 username VARCHAR(100) NOT NULL UNIQUE,
                 email VARCHAR(255) NOT NULL UNIQUE ,
@@ -100,6 +94,12 @@ class DatabaseManager:
                 subscription_id INT DEFAULT NULL,                
                 balance INT DEFAULT 0
             );
+            '''
+        self.execute_commit_query(query)
+
+        # Add User Bank Account Table to Database
+
+        query = '''
             CREATE TABLE IF NOT EXISTS user_bank_account (
                 user_id INT NOT NULL,
                 title VARCHAR(255) NOT NULL,
@@ -110,6 +110,11 @@ class DatabaseManager:
                 minimum_amount INT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
+        '''
+        self.execute_commit_query(query)
+
+        '''
+            
             CREATE TABLE IF NOT EXISTS transaction (
                 user_bank_account_id INT NOT NULL,
                 transaction_type INTEGER NOT NULL,
@@ -179,25 +184,25 @@ class DatabaseManager:
                 FOREIGN KEY (reply_to) REFERENCES comment(id)            
             );
         '''
-            # CREATE TABLE IF NOT EXISTS package (
-            #     id INT,
-            #     user_id,
-            #     title VARCHAR(255),
-            #     cash_back INTEGER DEFAULT 0,
-            #     price INT,
-            #     FOREIGN KEY (user_id) REFERENCES user(id)
-            # );
-            # CREATE TABLE IF NOT EXISTS subscription (
-            #     id INT,
-            #     user_id INT,
-            #     package_id INT,
-            #     expire_at TIMESTAMP,
-            #     FOREIGN KEY (user_id) REFERENCES user(id),
-            #     FOREIGN KEY (package_id) REFERENCES package(id)
-            # );
+        # CREATE TABLE IF NOT EXISTS package (
+        #     id INT,
+        #     user_id,
+        #     title VARCHAR(255),
+        #     cash_back INTEGER DEFAULT 0,
+        #     price INT,
+        #     FOREIGN KEY (user_id) REFERENCES user(id)
+        # );
+        # CREATE TABLE IF NOT EXISTS subscription (
+        #     id INT,
+        #     user_id INT,
+        #     package_id INT,
+        #     expire_at TIMESTAMP,
+        #     FOREIGN KEY (user_id) REFERENCES user(id),
+        #     FOREIGN KEY (package_id) REFERENCES package(id)
+        # );
 
 
 db_connector = DatabaseConnector(
     host='localhost', user='root', password='root', database='cinema_ticket')
 db_manager = DatabaseManager(db_connector)
-# db_connector.initialize_database()
+db_manager.initialize_database()
