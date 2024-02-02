@@ -1,1 +1,2 @@
 INFO:root: Username : gjhghk | Card Number : 4574584 | Amount : 10000 | Transaction Type : buy_ticket | DateTime : 2024-02-02 21:52:35.515611
+INFO:root: Username : mraghdasi | Card Number : 5892-1001457-568568 | Amount : 20000 | Transaction Type : withdraw_card | DateTime : 2024-02-03 00:05:27.934382

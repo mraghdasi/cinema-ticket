@@ -3,3 +3,4 @@ ERROR:root:Exception in ex : division by zero
 ERROR:root: Exception in ex : division by zero
 ERROR:root: Exception in a : division by zero
 ERROR:root: Exception in set_transaction : Invalid Transaction Type: TransactionType.BUY_TICKET
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: bursdg

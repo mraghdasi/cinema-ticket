@@ -33,6 +33,12 @@ class UserBankAccount(DBOperation):
         else:
             raise Exception(validate_card_number)
 
+        validate_cvv2 = Validator.len_validator(cvv2, 16)
+        if isinstance(validate_cvv2, bool):
+            self.cvv2 = cvv2
+        else:
+            raise Exception(validate_cvv2)
+
         validate_amount = Validator.value_validator(amount, 1000)
         if isinstance(validate_amount, bool):
             self.amount = amount
@@ -48,7 +54,6 @@ class UserBankAccount(DBOperation):
         self.user_id = user_id
         self.title = title
         self.password = hash_string(password)
-        self.cvv2 = hash_string(cvv2)
 
     def __str__(self):
         return f'Bank Account Card Number: {self.card_number} | Amount: {self.amount} | Title: {self.title}'
