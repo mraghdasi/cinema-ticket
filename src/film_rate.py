@@ -27,12 +27,7 @@ class FilmRate(DBOperation):
     def __str__(self):
         return f'Film Id: {self.film_id} | Rate: {self.rate} | User Id: {self.user_id}'
 
-<<<<<<< HEAD
-
-    def create(**kwargs):
-=======
     def create(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Create New Row Of Film Rate in Film Rate Table in Database
         :param kwargs:
@@ -43,12 +38,7 @@ class FilmRate(DBOperation):
         super().create('film_rate', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-<<<<<<< HEAD
-
-    def read(**kwargs):
-=======
     def read(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Get An Existing Film Rate From Film Rate Table in Database
         :param kwargs:
@@ -60,12 +50,7 @@ class FilmRate(DBOperation):
         super().read(kwargs.get('columns', None), 'film_rate', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-<<<<<<< HEAD
-
-    def update(**kwargs):
-=======
     def update(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Update An Existing Film Rate In Film Rate Table in Database
         :param kwargs:
@@ -76,12 +61,7 @@ class FilmRate(DBOperation):
         super().update('film_rate', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-<<<<<<< HEAD
-
-    def delete(**kwargs):
-=======
     def delete(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Delete An Existing Film Rate From Film Rate Table in Database
         :param kwargs:
