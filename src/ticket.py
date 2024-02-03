@@ -20,8 +20,7 @@ class Ticket(DBOperation):
     def __str__(self):
         return f': Cinema Sans ID: {self.cinema_sans_id} | User ID: {self.user_id} | Sit Number: {self.sit_number}'
 
-    @staticmethod
-    def create(**kwargs):
+    def create(self,**kwargs):
         """
         Create New Row Of Ticket in ticket Table in Database
         """

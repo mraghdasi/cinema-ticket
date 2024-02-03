@@ -78,8 +78,8 @@ class Validator:
         :return:
         hashed password or PasswordValidationError
         """
-
-        if re.match(r'^(?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8,100}$', password_str):
+# Test
+        if re.match(r'^((?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8})+$', password_str):
             return True
         else:
             return str(custom_exceptions.PasswordValidationError())
@@ -93,13 +93,20 @@ class Validator:
         :return:
         birthday or BirthdayValidationError
         """
+#  import datetime
+# >>> def validate(date_text):
+#         try:
+#             datetime.date.fromisoformat(date_text)
+#         except ValueError:
+#             raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
         if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$', birthday_str):
             year, month, day = map(int, birthday_str.split('/'))
             if not 1300 <= year <= 1390:
                 return str(custom_exceptions.BirthdayValidationError())
             elif not 1 <= month <= 12:
                 return str(custom_exceptions.BirthdayValidationError())
-            elif 1 <= month <= 6 and not 1 <= day <= 31:
+            elif (1 <= month <= 6) and (not (1 <= day <= 31)):
                 return str(custom_exceptions.BirthdayValidationError())
             elif 7 <= month <= 11 and not 1 <= day <= 30:
                 return str(custom_exceptions.BirthdayValidationError())
