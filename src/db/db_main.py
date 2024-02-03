@@ -1,3 +1,5 @@
+import os
+
 import mysql.connector as mysql_db
 
 
@@ -87,9 +89,9 @@ class DatabaseManager:
 
         # '''
         # self.execute_commit_query(query)
-        query ='''
+        query = '''
             CREATE TABLE IF NOT EXISTS  user(
-                id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 username VARCHAR(100) NOT NULL UNIQUE,
                 email VARCHAR(255) NOT NULL UNIQUE ,
                 phone_number VARCHAR(255) DEFAULT NULL ,
@@ -99,16 +101,32 @@ class DatabaseManager:
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 subscription_id INT DEFAULT NULL,                
                 balance INT DEFAULT 0,
-                is_logged_in INT DEFAULT 0,
+                is_logged_in INT DEFAULT 0
             );
         '''
         self.execute_commit_query(query)
 
+        query = '''
+                    CREATE TABLE IF NOT EXISTS films (
+                        id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                        title VARCHAR(255),
+                        min_age INT
+                    );
+                '''
+        self.execute_commit_query(query)
 
+        query = '''
+                    CREATE TABLE IF NOT EXISTS hall (
+                        id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                        title VARCHAR(255),
+                        capacity INT
+                    );
+                '''
+        self.execute_commit_query(query)
 
-
-        query ='''
+        query = '''
             CREATE TABLE IF NOT EXISTS user_bank_account (
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 user_id INT NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 card_number VARCHAR(255) NOT NULL,
@@ -119,8 +137,12 @@ class DatabaseManager:
                 expire_date DATE NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
-            CREATE TABLE IF NOT EXISTS package (
-                id INT,
+        '''
+        self.execute_commit_query(query)
+
+        query = '''
+        CREATE TABLE IF NOT EXISTS package (
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 title VARCHAR(255),
                 cash_back INTEGER DEFAULT 0,
                 price INT
@@ -128,12 +150,9 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
-
-
-
-        query ='''
+        query = '''
             CREATE TABLE IF NOT EXISTS subscription (
-                id INT,
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 user_id INT,
                 package_id INT,
                 expire_at TIMESTAMP,
@@ -143,12 +162,23 @@ class DatabaseManager:
          '''
         self.execute_commit_query(query)
 
+        query = '''
+                    CREATE TABLE IF NOT EXISTS cinema_sans (
+                        id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                        start_time TIME,
+                        end_time TIME,
+                        film_id INT,
+                        hall_id INT,
+                        price INT,
+                        FOREIGN KEY (film_id) REFERENCES films(id),
+                        FOREIGN KEY (hall_id) REFERENCES hall(id)
+                    );
+                '''
+        self.execute_commit_query(query)
 
-
-
-        query ='''
+        query = '''
             CREATE TABLE IF NOT EXISTS ticket (
-                id INT ,
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 cinema_sans_id INT,
                 user_id INT,
                 sit_number INT,
@@ -158,51 +188,9 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
-
-
-
-        query ='''
-            CREATE TABLE IF NOT EXISTS cinema_sans (
-                id INT,
-                start_time TIME,
-                end_time TIME,
-                film_id INT,
-                hall_id INT,
-                price INT,
-                FOREIGN KEY (film_id) REFERENCES films(id),
-                FOREIGN KEY (hall_id) REFERENCES hall(id)
-            );
-        '''
-        self.execute_commit_query(query)
-
-
-
-
-        query ='''
-            CREATE TABLE IF NOT EXISTS films (
-                id INT,
-                title VARCHAR(255),
-                min_age INT
-            );
-        '''
-        self.execute_commit_query(query)
-
-
-
-        query ='''
-            CREATE TABLE IF NOT EXISTS hall (
-                id INT ,
-                title VARCHAR(255),
-                capacity INT
-            );
-        '''
-        self.execute_commit_query(query)
-
-
-
         query = '''
             CREATE TABLE IF NOT EXISTS film_rate (
-                id INT,
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 film_id INT,
                 rate INT,
                 user_id INT,
@@ -212,11 +200,9 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
-
-
-        query ='''
+        query = '''
             CREATE TABLE IF NOT EXISTS comment (
-                id INT,
+                id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 description TEXT,
                 film_id INT,
                 user_id INT,
@@ -229,25 +215,8 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
-            # CREATE TABLE IF NOT EXISTS package (
-            #     id INT,
-            #     user_id,
-            #     title VARCHAR(255),
-            #     cash_back INTEGER DEFAULT 0,
-            #     price INT,
-            #     FOREIGN KEY (user_id) REFERENCES user(id)
-            # );
-            # CREATE TABLE IF NOT EXISTS subscription (
-            #     id INT,
-            #     user_id INT,
-            #     package_id INT,
-            #     expire_at TIMESTAMP,
-            #     FOREIGN KEY (user_id) REFERENCES user(id),
-            #     FOREIGN KEY (package_id) REFERENCES package(id)
-            # );
-
 
 db_connector = DatabaseConnector(
-    host='localhost', user='root', password='root', database='cinema_ticket')
+    host=os.getenv('DB_HOST'), user=os.getenv('DB_USERNAME'), password=os.getenv('DB_PASSWORD'), database=os.getenv('DB_SCHEMA_DATABASE'))
 db_manager = DatabaseManager(db_connector)
-# db_connector.initialize_database()
+db_manager.initialize_database()
