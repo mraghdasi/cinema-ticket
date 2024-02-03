@@ -26,12 +26,7 @@ class Hall(DBOperation):
         super().create('hall', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-<<<<<<< HEAD
-
-    def read(**kwargs):
-=======
     def read(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Get An Existing Hall info From Hall Table in Database
 
@@ -39,24 +34,14 @@ class Hall(DBOperation):
         super().read(kwargs.get('columns', None), 'hall', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-<<<<<<< HEAD
-
-    def update(**kwargs):
-=======
     def update(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Update An Existing آHall info In Hall Table in Database
         """
         super().update('hall', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-<<<<<<< HEAD
-
-    def delete(**kwargs):
-=======
     def delete(self, **kwargs):
->>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Delete An Existing Hall info From Hall Table in Database
 
