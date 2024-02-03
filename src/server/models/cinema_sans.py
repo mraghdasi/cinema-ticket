@@ -2,7 +2,7 @@ from src.db.db_operations import DBOperation
 from datetime import datetime
 
 
-class Cinema_sans(DBOperation):
+class CinemaSans(DBOperation):
     """
             Class To Make Cinema_sans Instances.
     """

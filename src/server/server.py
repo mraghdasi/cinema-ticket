@@ -6,9 +6,3 @@ load_dotenv()
 import src.db.db_main as db
 
 
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()
