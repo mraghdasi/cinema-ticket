@@ -18,7 +18,7 @@ class Hall(DBOperation):
     def __str__(self):
         return f'Title:{self.title} | Capacity:{self.capacity}'
 
-    def create(**kwargs):
+    def create(self, **kwargs):
         """
             Create New Row Of Hall info in Hall Table in Database
 
@@ -26,8 +26,7 @@ class Hall(DBOperation):
         super().create('hall', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-    @staticmethod
-    def read(**kwargs):
+    def read(self, **kwargs):
         """
         Get An Existing Hall info From Hall Table in Database
 
@@ -35,16 +34,14 @@ class Hall(DBOperation):
         super().read(kwargs.get('columns', None), 'hall', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    @staticmethod
-    def update(**kwargs):
+    def update(self, **kwargs):
         """
         Update An Existing آHall info In Hall Table in Database
         """
         super().update('hall', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-    @staticmethod
-    def delete(**kwargs):
+    def delete(self, **kwargs):
         """
         Delete An Existing Hall info From Hall Table in Database
 

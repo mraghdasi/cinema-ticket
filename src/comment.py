@@ -14,15 +14,14 @@ class Comment(DBOperation):
         """
         Initialize Instance (Constructor Method)
         """
-        
+
         self.description = description
         self.film_id = film_id
         self.user_id = user_id
         self.created_at = created_at
         self.reply_to = reply_to
-        
-    
-    def create(**kwargs):
+
+    def create(self, **kwargs):
         """
         Create New Row Of Comment in Comment Table in Database
         :param kwargs:
@@ -31,8 +30,8 @@ class Comment(DBOperation):
         :return:
         """
         super().create('comment', kwargs.get('columns', None), kwargs.get('values', None))
-        
-    def read(**kwargs):
+
+    def read(self, **kwargs):
         """
         Get An Existing Comment From Comment Table in Database
         :param kwargs:
@@ -43,8 +42,8 @@ class Comment(DBOperation):
         """
         super().read(kwargs.get('columns', None), 'comment', kwargs.get(
             'condition', None), kwargs.get('order', None))
-        
-    def update(**kwargs):
+
+    def update(self, **kwargs):
         """
         Update An Existing Comment In Comment Table in Database
         :param kwargs:
@@ -53,8 +52,8 @@ class Comment(DBOperation):
         :return:
         """
         super().update('comment', kwargs.get('columns', None), kwargs.get('condition', None))
-        
-    def delete(**kwargs):
+
+    def delete(self, **kwargs):
         """
         Delete An Existing Comment From Comment Table in Database
         :param kwargs:
