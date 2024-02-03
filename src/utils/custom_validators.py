@@ -3,6 +3,7 @@ import re
 from validators import email
 
 import src.utils.custom_exceptions as custom_exceptions
+from src.utils.custom_exceptions import exception_log
 from src.utils.utils import hash_string
 
 
@@ -61,7 +62,7 @@ class Validator:
         :return:
         phone_number_str Or PhoneNumberValidationError Or None
         """
-        if len(phone_number_str) != 0 :
+        if len(phone_number_str) != 0:
             if re.match(r"^(09)([0-9]{9})$", phone_number_str):
                 return True
             else:
@@ -78,8 +79,8 @@ class Validator:
         :return:
         hashed password or PasswordValidationError
         """
-
-        if re.match(r'^(?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8,100}$', password_str):
+# Test
+        if re.match(r'^((?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8})+$', password_str):
             return True
         else:
             return str(custom_exceptions.PasswordValidationError())
@@ -93,13 +94,20 @@ class Validator:
         :return:
         birthday or BirthdayValidationError
         """
+#  import datetime
+# >>> def validate(date_text):
+#         try:
+#             datetime.date.fromisoformat(date_text)
+#         except ValueError:
+#             raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
         if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$', birthday_str):
             year, month, day = map(int, birthday_str.split('/'))
             if not 1300 <= year <= 1390:
                 return str(custom_exceptions.BirthdayValidationError())
             elif not 1 <= month <= 12:
                 return str(custom_exceptions.BirthdayValidationError())
-            elif 1 <= month <= 6 and not 1 <= day <= 31:
+            elif (1 <= month <= 6) and (not (1 <= day <= 31)):
                 return str(custom_exceptions.BirthdayValidationError())
             elif 7 <= month <= 11 and not 1 <= day <= 30:
                 return str(custom_exceptions.BirthdayValidationError())
@@ -138,3 +146,41 @@ class Validator:
             return True
         else:
             return str(custom_exceptions.MinAgeNotPositive())
+
+    @staticmethod
+    @exception_log()
+    def len_validator(str_input: str, length: int):
+        """
+       A function to validate the length of a string.
+
+       Parameters
+       ----------
+       str_input : str
+           The string to be validated.
+       length : int
+           The length of the string.
+
+       Returns
+       -------
+       bool
+           Returns True if the length of the string is equal to the length,
+           otherwise raises an exception.
+
+       Raises
+       ------
+       Exception
+           If the length is not met, an exception is raised with a message
+           indicating the expected maximum length.
+       """
+        if len(str_input) == length:
+            return True
+        else:
+            raise Exception(f'Length Must Be {length}')
+
+    @staticmethod
+    @exception_log()
+    def value_validator(value: int, max_value: int):
+        if value >= max_value:
+            return True
+        else:
+            raise Exception(f'Value Must Be Greater Than {max}')

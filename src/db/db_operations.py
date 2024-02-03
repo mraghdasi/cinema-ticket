@@ -124,3 +124,5 @@ class DBOperation:
                                 Deletes records from the specified entity based on the provided condition.
                         """
         return details
+
+# return object model

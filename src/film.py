@@ -15,7 +15,8 @@ class Film(DBOperation):
         """
         self.title = title
 
-        validate_min_age = Validator.validate(min_age, (Validator.min_age_validator,))
+        validate_min_age = Validator.validate(
+            min_age, (Validator.min_age_validator,))
         if isinstance(validate_min_age, bool):
             self.min_age = validate_min_age
         else:
@@ -24,8 +25,12 @@ class Film(DBOperation):
     def __str__(self):
         return f'Title : {self.title} | Min Age: {self.min_age}'
 
+<<<<<<< HEAD
 
     def create(**kwargs):
+=======
+    def create(self, **kwargs):
+>>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Create New Row Of Film in Film Table in Database
         :param kwargs:
@@ -36,8 +41,12 @@ class Film(DBOperation):
         super().create('film', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
+<<<<<<< HEAD
 
     def read(**kwargs):
+=======
+    def read(self, **kwargs):
+>>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Get An Existing Film From Film Table in Database
         :param kwargs:
@@ -49,8 +58,12 @@ class Film(DBOperation):
         super().read(kwargs.get('columns', None), 'film', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
+<<<<<<< HEAD
 
     def update(**kwargs):
+=======
+    def update(self, **kwargs):
+>>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Update An Existing Film In Film Table in Database
         :param kwargs:
@@ -61,8 +74,12 @@ class Film(DBOperation):
         super().update('film', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
+<<<<<<< HEAD
 
     def delete(**kwargs):
+=======
+    def delete(self, **kwargs):
+>>>>>>> 922f00e871ae084fcc4542cdec9f2e889dc9e009
         """
         Delete An Existing Film From Film Table in Database
         :param kwargs:
