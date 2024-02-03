@@ -87,7 +87,7 @@ class DatabaseManager:
 
         # '''
         # self.execute_commit_query(query)
-        '''
+        query ='''
             CREATE TABLE IF NOT EXISTS  user(
                 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 username VARCHAR(100) NOT NULL UNIQUE,
@@ -100,6 +100,13 @@ class DatabaseManager:
                 subscription_id INT DEFAULT NULL,                
                 balance INT DEFAULT 0
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS user_bank_account (
                 user_id INT NOT NULL,
                 title VARCHAR(255) NOT NULL,
@@ -110,6 +117,13 @@ class DatabaseManager:
                 minimum_amount INT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS transaction (
                 user_bank_account_id INT NOT NULL,
                 transaction_type INTEGER NOT NULL,
@@ -117,12 +131,26 @@ class DatabaseManager:
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_bank_account_id) REFERENCES user_bank_account(user_id)
             );
+         '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS package (
                 id INT,
                 title VARCHAR(255),
                 cash_back INTEGER DEFAULT 0,
                 price INT
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS subscription (
                 id INT,
                 user_id INT,
@@ -131,6 +159,13 @@ class DatabaseManager:
                 FOREIGN KEY (user_id) REFERENCES user(id),
                 FOREIGN KEY (package_id) REFERENCES package(id)
             );
+         '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS ticket (
                 id INT ,
                 cinema_sans_id INT,
@@ -139,6 +174,13 @@ class DatabaseManager:
                 FOREIGN KEY (cinema_sans_id) REFERENCES cinema_sans(id),
                 FOREIGN KEY (user_id) REFERENCES user(id)            
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS cinema_sans (
                 id INT,
                 start_time TIME,
@@ -149,16 +191,35 @@ class DatabaseManager:
                 FOREIGN KEY (film_id) REFERENCES films(id),
                 FOREIGN KEY (hall_id) REFERENCES hall(id)
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS films (
                 id INT,
                 title VARCHAR(255),
                 min_age INT
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS hall (
                 id INT ,
                 title VARCHAR(255),
                 capacity INT
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+        query = '''
             CREATE TABLE IF NOT EXISTS film_rate (
                 id INT,
                 film_id INT,
@@ -167,6 +228,12 @@ class DatabaseManager:
                 FOREIGN KEY (film_id) REFERENCES films(id),
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
+        '''
+        self.execute_commit_query(query)
+
+
+
+        query ='''
             CREATE TABLE IF NOT EXISTS comment (
                 id INT,
                 description TEXT,
@@ -179,6 +246,8 @@ class DatabaseManager:
                 FOREIGN KEY (reply_to) REFERENCES comment(id)            
             );
         '''
+        self.execute_commit_query(query)
+
             # CREATE TABLE IF NOT EXISTS package (
             #     id INT,
             #     user_id,

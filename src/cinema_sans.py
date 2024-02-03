@@ -25,7 +25,7 @@ class Cinema_sans(DBOperation):
         return (f'Start Time:{self.start_time} | End Time:{self.end_time} |'
                 f' Film ID:{self.film_id} | Hall ID:{self.hall_id} | Price:{self.price}')
 
-    @staticmethod
+
     def create(**kwargs):
         """
             Create New Row Of Cinema sans in cinema_sans Table in Database
@@ -34,7 +34,7 @@ class Cinema_sans(DBOperation):
         super().create('cinema_sans', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-    @staticmethod
+
     def read(**kwargs):
         """
         Get An Existing cinema sans From cinema_sans Table in Database
@@ -43,7 +43,7 @@ class Cinema_sans(DBOperation):
             'condition', None), kwargs.get('order', None))
 
 
-    @staticmethod
+
     def update(**kwargs):
         """
         Update An Existing Cinema Sans In cinema_sans Table in Database
@@ -52,7 +52,6 @@ class Cinema_sans(DBOperation):
         super().update('cinema_sans', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-    @staticmethod
     def delete(**kwargs):
         """
         Delete An Existing cinema sans From cinema_sans Table in Database

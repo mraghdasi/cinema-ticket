@@ -27,7 +27,7 @@ class FilmRate(DBOperation):
     def __str__(self):
         return f'Film Id: {self.film_id} | Rate: {self.rate} | User Id: {self.user_id}'
 
-    @staticmethod
+
     def create(**kwargs):
         """
         Create New Row Of Film Rate in Film Rate Table in Database
@@ -39,7 +39,7 @@ class FilmRate(DBOperation):
         super().create('film_rate', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-    @staticmethod
+
     def read(**kwargs):
         """
         Get An Existing Film Rate From Film Rate Table in Database
@@ -52,7 +52,7 @@ class FilmRate(DBOperation):
         super().read(kwargs.get('columns', None), 'film_rate', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    @staticmethod
+
     def update(**kwargs):
         """
         Update An Existing Film Rate In Film Rate Table in Database
@@ -64,7 +64,7 @@ class FilmRate(DBOperation):
         super().update('film_rate', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-    @staticmethod
+
     def delete(**kwargs):
         """
         Delete An Existing Film Rate From Film Rate Table in Database

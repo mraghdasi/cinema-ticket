@@ -24,7 +24,7 @@ class Film(DBOperation):
     def __str__(self):
         return f'Title : {self.title} | Min Age: {self.min_age}'
 
-    @staticmethod
+
     def create(**kwargs):
         """
         Create New Row Of Film in Film Table in Database
@@ -36,7 +36,7 @@ class Film(DBOperation):
         super().create('film', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-    @staticmethod
+
     def read(**kwargs):
         """
         Get An Existing Film From Film Table in Database
@@ -49,7 +49,7 @@ class Film(DBOperation):
         super().read(kwargs.get('columns', None), 'film', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    @staticmethod
+
     def update(**kwargs):
         """
         Update An Existing Film In Film Table in Database
@@ -61,7 +61,7 @@ class Film(DBOperation):
         super().update('film', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-    @staticmethod
+
     def delete(**kwargs):
         """
         Delete An Existing Film From Film Table in Database
