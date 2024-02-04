@@ -25,6 +25,7 @@ class User:
     @classmethod
     def set_manager(cls):
         setattr(cls, 'objects', Manager(cls))
+        setattr(cls, 'db_table_name', 'user')
 
     def __init__(self, username, email, phone_number, password, birthday, **kwargs):
         """

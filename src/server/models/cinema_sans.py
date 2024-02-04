@@ -1,5 +1,6 @@
-from src.db.db_operations import DBOperation
 from datetime import datetime
+
+from src.db.db_operations import DBOperation, Manager
 
 
 class CinemaSans(DBOperation):
@@ -11,6 +12,12 @@ class CinemaSans(DBOperation):
     film_id: int
     hall_id: int
     price: int
+    objects: object
+
+    @classmethod
+    def set_manager(cls):
+        setattr(cls, 'objects', Manager(cls))
+        setattr(cls, 'db_table_name', 'cinema_sans')
 
     def __init__(self, start_time, end_time, film_id, hall_id, price):
         """
@@ -26,32 +33,5 @@ class CinemaSans(DBOperation):
         return (f'Start Time:{self.start_time} | End Time:{self.end_time} |'
                 f' Film ID:{self.film_id} | Hall ID:{self.hall_id} | Price:{self.price}')
 
-    def create(self, **kwargs):
-        """
-            Create New Row Of Cinema sans in cinema_sans Table in Database
 
-        """
-        super().create('cinema_sans', kwargs.get(
-            'columns', None), kwargs.get('values', None))
-
-    def read(self, **kwargs):
-        """
-        Get An Existing cinema sans From cinema_sans Table in Database
-        """
-        super().read(kwargs.get('columns', None), 'cinema_sans', kwargs.get(
-            'condition', None), kwargs.get('order', None))
-
-    def update(self, **kwargs):
-        """
-        Update An Existing Cinema Sans In cinema_sans Table in Database
-
-        """
-        super().update('cinema_sans', kwargs.get(
-            'columns', None), kwargs.get('condition', None))
-
-    def delete(self, **kwargs):
-        """
-        Delete An Existing cinema sans From cinema_sans Table in Database
-
-        """
-        super().delete('cinema_sans', kwargs.get('condition', None))
+CinemaSans.set_manager()
