@@ -1,4 +1,4 @@
-from src.db.db_operations import DBOperation
+from src.db.db_operations import DBOperation, Manager
 from src.utils.custom_validators import Validator
 
 
@@ -8,6 +8,12 @@ class Film(DBOperation):
     """
     title: str
     min_age: int
+    objects: object
+
+    @classmethod
+    def set_manager(cls):
+        setattr(cls, 'objects', Manager(cls))
+        setattr(cls, 'db_table_name', 'film')
 
     def __init__(self, title, min_age):
         """
@@ -25,45 +31,5 @@ class Film(DBOperation):
     def __str__(self):
         return f'Title : {self.title} | Min Age: {self.min_age}'
 
-    def create(self, **kwargs):
-        """
-        Create New Row Of Film in Film Table in Database
-        :param kwargs:
-            columns: string of columns names, comma separated (col1, col2, col3)
-            values: string of columns values, comma separated (val1, val2, val3)
-        :return:
-        """
-        super().create('film', kwargs.get(
-            'columns', None), kwargs.get('values', None))
 
-    def read(self, **kwargs):
-        """
-        Get An Existing Film From Film Table in Database
-        :param kwargs:
-            columns: string of columns names, comma separated (col1, col2, col3)
-            condition: string of conditions (col1 = 'val1'), Default Value None
-            order: tuple of two value (col_name, ASC|DESC) (col1, ASC), Default Value None
-        :return:
-        """
-        super().read(kwargs.get('columns', None), 'film', kwargs.get(
-            'condition', None), kwargs.get('order', None))
-
-    def update(self, **kwargs):
-        """
-        Update An Existing Film In Film Table in Database
-        :param kwargs:
-            columns: string of columns names and values, comma separated "col1 = val1, col2 = val2, col3 = val3"
-            condition: string of conditions (col1 = 'val1'), Default Value None
-        :return:
-        """
-        super().update('film', kwargs.get(
-            'columns', None), kwargs.get('condition', None))
-
-    def delete(self, **kwargs):
-        """
-        Delete An Existing Film From Film Table in Database
-        :param kwargs:
-            condition: string of conditions (col1 = 'val1'), Default Value None
-        :return:
-        """
-        super().delete('film', kwargs.get('condition', None))
+Film.set_manager()

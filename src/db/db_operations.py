@@ -31,7 +31,7 @@ class DBOperation:
         """
         Inserts a new record into the specified entity.
         """
-        table_name = entity.__name__.lower()
+        table_name = entity.db_table_name
         obj = entity(*args)
         columns = tuple(vars(obj).keys())
         values = tuple(vars(obj).values())
@@ -57,7 +57,7 @@ class DBOperation:
             The Instance of Entity Based On row(s) that was supposed to be read
         """
 
-        table_name = entity.__name__.lower()
+        table_name = entity.db_table_name
 
         query = f"SELECT * FROM {table_name}"
 
@@ -91,7 +91,7 @@ class DBOperation:
 
             False if something goes wrong
         """
-        table_name = entity.__name__.lower()
+        table_name = entity.db_table_name
         sub_query = ', '.join([f'{column} = "{columns_values[column]}"' for column in columns_values])
         query = f"UPDATE {table_name} SET {sub_query}"
         if condition is not None:
@@ -113,7 +113,7 @@ class DBOperation:
 
             False if something goes wrong
     """
-        table_name = entity.__name__.lower()
+        table_name = entity.db_table_name
         query = f'DELETE FROM {table_name}'
         if condition is not None:
             query += f' WHERE {condition}'

@@ -12,6 +12,7 @@ class Hall:
     @classmethod
     def set_manager(cls):
         setattr(cls, 'objects', Manager(cls))
+        setattr(cls, 'db_table_name', 'hall')
 
     def __init__(self, title, capacity, **kwargs):
         """
