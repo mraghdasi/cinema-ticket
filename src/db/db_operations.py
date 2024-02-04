@@ -23,6 +23,10 @@ class Manager:
     def delete(self, *args):
         return DBOperation.delete(self.entity, *args)
 
+    @staticmethod
+    def query(*args):
+        return DBOperation.query(*args)
+
 
 class DBOperation:
 
