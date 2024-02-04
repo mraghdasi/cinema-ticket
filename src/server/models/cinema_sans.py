@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from src.db.db_operations import DBOperation, Manager
+from src.db.db_operations import Manager
 
 
-class CinemaSans(DBOperation):
+class CinemaSans:
     """
             Class To Make Cinema_sans Instances.
     """
@@ -19,7 +19,7 @@ class CinemaSans(DBOperation):
         setattr(cls, 'objects', Manager(cls))
         setattr(cls, 'db_table_name', 'cinema_sans')
 
-    def __init__(self, start_time, end_time, film_id, hall_id, price):
+    def __init__(self, start_time, end_time, film_id, hall_id, price, **kwargs):
         """
                 Initialize Instance (Constructor Method)
         """
@@ -28,6 +28,9 @@ class CinemaSans(DBOperation):
         self.film_id = film_id
         self.hall_id = hall_id
         self.price = price
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __str__(self):
         return (f'Start Time:{self.start_time} | End Time:{self.end_time} |'

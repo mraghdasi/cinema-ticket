@@ -20,6 +20,7 @@ class Hall:
         """
         self.title = title
         self.capacity = capacity
+
         for key, value in kwargs.items():
             setattr(self, key, value)
 

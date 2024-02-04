@@ -1,8 +1,6 @@
 from datetime import date
 from datetime import datetime
 
-# from src.utils.custom_exceptions import NewPasswordsNotSame
-# from src.utils.custom_exceptions import UserPasswordNotCorrect
 from src.db.db_operations import Manager
 
 
@@ -10,6 +8,7 @@ class User:
     """
         Class To Make User Instances, It's a Basic User Without Any Specification.
     """
+    id: int
     username: str
     email: str
     phone_number: str
@@ -68,6 +67,7 @@ class User:
         self.role = 1
         self.is_logged_in = 0
         self.balance = 0
+
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -106,9 +106,11 @@ class User:
 
     def set_user_logged_in(self):
         self.is_logged_in = 1
+        User.objects.update({'is_logged_in': '1'}, f'id={self.id}')
 
     def set_user_logged_out(self):
         self.is_logged_in = 0
+        User.objects.update({'is_logged_in': '0'}, f'id={self.id}')
 
 
 User.set_manager()

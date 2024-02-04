@@ -82,7 +82,7 @@ class DBOperation:
         Updates records in the specified entity based on the provided column-value pairs and condition.
 
         Args:
-            entity (str): The name of the table/entity to update records in.
+            entity (object): The name of the table/entity to update records in.
             columns_values (dict): A dictionary containing key-value pairs for the update.
             condition (str, optional): The condition to filter records (default is None).
 
@@ -105,7 +105,7 @@ class DBOperation:
         Deletes records from the specified entity based on the provided condition.
 
         Args:
-            entity (str): The name of the table/entity to delete records from.
+            entity (object): The name of the table/entity to delete records from.
             condition (str, optional): The condition to filter records (default is None).
 
         Returns:
@@ -118,6 +118,15 @@ class DBOperation:
         if condition is not None:
             query += f' WHERE {condition}'
         return db_manager.execute_commit_query(query)
+
+    @staticmethod
+    def query(queries: str):
+        """
+        :param queries: (str)String Of Custom Query
+        :return:
+            True Or False
+        """
+        return db_manager.execute_commit_query(queries)
 
     def __str__(self) -> str:
         """
