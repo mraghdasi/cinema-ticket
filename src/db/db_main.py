@@ -1,6 +1,6 @@
-import mysql.connector as mysql_db
 import os
 
+import mysql.connector as mysql_db
 from dotenv import load_dotenv
 
 # Load the .env file
@@ -39,7 +39,7 @@ class DatabaseConnector:
             password=password,
             database=database
         )
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(buffered=True)
 
 
 class DatabaseManager:
@@ -64,7 +64,7 @@ class DatabaseManager:
         """
         self.db_connector = db_connector
 
-    def execute_commit_query(self, query):
+    def execute_commit_query(self, query: str):
         """
         Execute a SQL query on the connected database.
 
@@ -79,20 +79,30 @@ class DatabaseManager:
             print(e)
             return False
 
+    def execute_commit_query_with_value(self, query: str, values: tuple):
+        """
+        Execute a SQL query on the connected database.
+
+        Params:
+            query (str): The SQL query to be executed.
+            value (tuple): The SQL values to be executed.
+
+        """
+        try:
+            self.db_connector.cursor.execute(query, values)
+            self.db_connector.connection.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     def initialize_database(self):
         """
         Initialize the database by creating necessary tables.
         Call this method once during the application setup.
         """
-        # Add code here to create other tables if needed
 
         # # Add User Table to Database
-        # query = '''
-        #     CREATE TABLE IF NOT EXISTS user (id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-        #     username VARCHAR(100) UNIQUE NOT NULL)
-
-        # '''
-        # self.execute_commit_query(query)
         query = '''
             CREATE TABLE IF NOT EXISTS  user(
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -101,17 +111,18 @@ class DatabaseManager:
                 phone_number VARCHAR(255) DEFAULT NULL ,
                 password VARCHAR(255) NOT NULL ,
                 birthday DATE NOT NULL,
-                last_login DATETIME DEFAULT NULL ,
+                last_login DATETIME DEFAULT CURRENT_TIMESTAMP ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                subscription_id INT DEFAULT NULL,                
                 balance INT DEFAULT 0,
+                role INT DEFAULT 1,
                 is_logged_in INT DEFAULT 0
             );
         '''
         self.execute_commit_query(query)
 
+        # Add Film Table to Database
         query = '''
-                    CREATE TABLE IF NOT EXISTS films (
+                    CREATE TABLE IF NOT EXISTS film (
                         id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                         title VARCHAR(255),
                         min_age INT
@@ -119,6 +130,7 @@ class DatabaseManager:
                 '''
         self.execute_commit_query(query)
 
+        # Add Hall Table to Database
         query = '''
                     CREATE TABLE IF NOT EXISTS hall (
                         id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -128,6 +140,7 @@ class DatabaseManager:
                 '''
         self.execute_commit_query(query)
 
+        # Add User Bank Account Table to Database
         query = '''
             CREATE TABLE IF NOT EXISTS user_bank_account (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -144,6 +157,7 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
+        # Add Package Table to Database
         query = '''
         CREATE TABLE IF NOT EXISTS package (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -154,6 +168,7 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
+        # Add Subscription Table to Database
         query = '''
             CREATE TABLE IF NOT EXISTS subscription (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -166,6 +181,7 @@ class DatabaseManager:
          '''
         self.execute_commit_query(query)
 
+        # Add Cinema Sans Table to Database
         query = '''
                     CREATE TABLE IF NOT EXISTS cinema_sans (
                         id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -174,12 +190,13 @@ class DatabaseManager:
                         film_id INT,
                         hall_id INT,
                         price INT,
-                        FOREIGN KEY (film_id) REFERENCES films(id),
+                        FOREIGN KEY (film_id) REFERENCES film(id),
                         FOREIGN KEY (hall_id) REFERENCES hall(id)
                     );
                 '''
         self.execute_commit_query(query)
 
+        # Add Ticket Table to Database
         query = '''
             CREATE TABLE IF NOT EXISTS ticket (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -192,18 +209,20 @@ class DatabaseManager:
         '''
         self.execute_commit_query(query)
 
+        # Add Film Rate Table to Database
         query = '''
             CREATE TABLE IF NOT EXISTS film_rate (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 film_id INT,
                 rate INT,
                 user_id INT,
-                FOREIGN KEY (film_id) REFERENCES films(id),
+                FOREIGN KEY (film_id) REFERENCES film(id),
                 FOREIGN KEY (user_id) REFERENCES user(id)
             );
         '''
         self.execute_commit_query(query)
 
+        # Add Comment Table to Database
         query = '''
             CREATE TABLE IF NOT EXISTS comment (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -212,7 +231,7 @@ class DatabaseManager:
                 user_id INT,
                 reply_to INT NULL,
                 created_at DATETIME,
-                FOREIGN KEY (film_id) REFERENCES films(id),
+                FOREIGN KEY (film_id) REFERENCES film(id),
                 FOREIGN KEY (user_id) REFERENCES user(id),            
                 FOREIGN KEY (reply_to) REFERENCES comment(id)            
             );
@@ -221,6 +240,7 @@ class DatabaseManager:
 
 
 db_connector = DatabaseConnector(
-    host=os.getenv('DB_HOST'), user=os.getenv('DB_USERNAME'), password=os.getenv('DB_PASSWORD'), database=os.getenv('DB_SCHEMA_DATABASE'))
+    host=os.getenv('DB_HOST'), user=os.getenv('DB_USERNAME'), password=os.getenv('DB_PASSWORD'),
+    database=os.getenv('DB_SCHEMA_DATABASE'))
 db_manager = DatabaseManager(db_connector)
 db_manager.initialize_database()

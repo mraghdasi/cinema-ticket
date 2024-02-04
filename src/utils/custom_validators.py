@@ -1,10 +1,10 @@
+import datetime
 import re
 
 from validators import email
 
 import src.utils.custom_exceptions as custom_exceptions
 from src.utils.custom_exceptions import exception_log
-from src.utils.utils import hash_string
 
 
 class Validator:
@@ -21,8 +21,7 @@ class Validator:
         """
         list_of_results = [validate(string)
                            for validate in validator_functions]
-        list_of_messages = list(
-            filter(lambda x: True if not x else False, list_of_results))
+        list_of_messages = list(filter(lambda x: True if (x != True) else False, list_of_results))
         if len(list_of_messages) > 0:
             return ' \n'.join(list_of_messages)
         else:
@@ -34,7 +33,7 @@ class Validator:
         A Function to Validate Username String
         :param username_str:
         :return:
-             username_str Or UsernameValidationError
+             True Or UsernameValidationError
         """
         if re.match(r"^[a-zA-Z0-9]{3,100}$", username_str):
             return True
@@ -47,7 +46,7 @@ class Validator:
             A Function to Validate Email String
         :param email_str:
         :return:
-            email_str Or EmailValidationError
+            True Or EmailValidationError
         """
         if email(email_str):
             return True
@@ -60,7 +59,7 @@ class Validator:
         A Function to Validate Phone Number String
         :param phone_number_str:
         :return:
-        phone_number_str Or PhoneNumberValidationError Or None
+        True Or PhoneNumberValidationError Or None
         """
         if len(phone_number_str) != 0:
             if re.match(r"^(09)([0-9]{9})$", phone_number_str):
@@ -77,10 +76,15 @@ class Validator:
 
         :param password_str:
         :return:
-        hashed password or PasswordValidationError
+        True or PasswordValidationError
         """
-# Test
-        if re.match(r'^((?=(?:.*[A-Z]){2,})(?=(?:.*\d){2,})(?=(?:.*[\W_]){2,})[A-Za-z\d\W_]{8})+$', password_str):
+        length_check = re.match(r"^.{8,100}$", password_str)
+        special_char_check = re.search(r"(.*[!@#$%^&*()_+\-=\[\]{};':\"\\,.<>?].*){2,}", password_str)
+        uppercase_check = re.search(r"(.*[A-Z].*){2,}", password_str)
+        lowercase_check = re.search(r"(.*[a-z].*){2,}", password_str)
+        digit_check = re.search(r"(.*\d.*){2,}", password_str)
+
+        if all([length_check, special_char_check, uppercase_check, lowercase_check, digit_check]):
             return True
         else:
             return str(custom_exceptions.PasswordValidationError())
@@ -92,29 +96,13 @@ class Validator:
 
         :param birthday_str:
         :return:
-        birthday or BirthdayValidationError
+        True or BirthdayValidationError
         """
-#  import datetime
-# >>> def validate(date_text):
-#         try:
-#             datetime.date.fromisoformat(date_text)
-#         except ValueError:
-#             raise ValueError("Incorrect data format, should be YYYY-MM-DD")
 
-        if re.match(r'^[0-9]{4}/[0-9]{2}/[0-9]{2}$', birthday_str):
-            year, month, day = map(int, birthday_str.split('/'))
-            if not 1300 <= year <= 1390:
-                return str(custom_exceptions.BirthdayValidationError())
-            elif not 1 <= month <= 12:
-                return str(custom_exceptions.BirthdayValidationError())
-            elif (1 <= month <= 6) and (not (1 <= day <= 31)):
-                return str(custom_exceptions.BirthdayValidationError())
-            elif 7 <= month <= 11 and not 1 <= day <= 30:
-                return str(custom_exceptions.BirthdayValidationError())
-            elif month == 12 and not 1 <= day <= 29:
-                return str(custom_exceptions.BirthdayValidationError())
+        try:
+            datetime.date.fromisoformat(birthday_str)
             return True
-        else:
+        except ValueError:
             return str(custom_exceptions.BirthdayValidationError())
 
     @staticmethod

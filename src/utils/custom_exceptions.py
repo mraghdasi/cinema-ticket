@@ -44,7 +44,7 @@ class BirthdayValidationError(Exception):
     """
 
     def __init__(self):
-        super().__init__('Please Enter a Valid Format of date (yyyy/mm/dd) and Make Sure You Write a Valid Date')
+        super().__init__('Please Enter a Valid Format of date (yyyy-mm-dd) and Make Sure You Write a Valid Date')
 
 
 class UserPasswordNotCorrect(Exception):
@@ -81,6 +81,15 @@ class RateNotBetweenZeroAndFive(Exception):
 
     def __init__(self):
         super().__init__('Rate Must Be An Integer between Zero And Five')
+
+
+class ReadFromDataBaseError(Exception):
+    """
+        Read From Data Base Error Exception
+    """
+
+    def __init__(self):
+        super().__init__('Execute or Commit Failed.')
 
 
 def exception_log():
