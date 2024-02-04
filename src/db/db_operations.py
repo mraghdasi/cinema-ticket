@@ -1,8 +1,27 @@
-import re
-
 from src.db.db_main import db_connector
 from src.db.db_main import db_manager
 from src.utils.custom_exceptions import ReadFromDataBaseError
+
+
+class Manager:
+    """
+        A Class To Manage DB Operations For Specific Class
+    """
+
+    def __init__(self, entity: object):
+        self.entity = entity
+
+    def create(self, *args):
+        return DBOperation.create(self.entity, *args)
+
+    def read(self, *args):
+        return DBOperation.read(self.entity, *args)
+
+    def update(self, *args):
+        return DBOperation.update(self.entity, *args)
+
+    def delete(self, *args):
+        return DBOperation.delete(self.entity, *args)
 
 
 class DBOperation:
@@ -20,22 +39,7 @@ class DBOperation:
         exe = db_manager.execute_commit_query_with_value(query, values)
 
         if exe:
-            query = f"SELECT * FROM {table_name} WHERE {' AND '.join([f'{c}={repr(v)}' for c, v in zip(columns, values)])}"
-            db_connector.cursor.execute(query)
-            created_row = db_connector.cursor.fetchone()
-
-            def convert_datetime_to_str(dt):
-                if type(dt) == 'str':
-                    if re.search(r'^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$', dt):
-                        return dt.split()[0]
-                return dt
-
-            entity_db_data = dict(
-                zip([desc[0] for desc in db_connector.cursor.description], map(convert_datetime_to_str, created_row)))
-            entity_db_data = dict([(key, value) for key, value in entity_db_data.items() if key not in vars(obj)])
-            for key, value in entity_db_data.items():
-                setattr(obj, key, value)
-            return obj
+            return DBOperation.read(entity, ' AND '.join([f'{c}={repr(v)}' for c, v in zip(columns, values)]))[0]
         else:
             raise ReadFromDataBaseError()
 
@@ -67,7 +71,7 @@ class DBOperation:
 
         if exe:
             objs_data = [dict(zip([desc[0] for desc in db_connector.cursor.description], data)) for data in
-                    db_connector.cursor.fetchall()]
+                         db_connector.cursor.fetchall()]
             return [entity(**obj) for obj in objs_data]
         else:
             return exe
@@ -88,53 +92,48 @@ class DBOperation:
             False if something goes wrong
         """
         table_name = entity.__name__.lower()
-
-        query = f'UPDATE {table_name} SET '
-
-        query += ', '.join([f"{column} = {columns_values[column]}" for column in columns_values])
-
+        sub_query = ', '.join([f'{column} = "{columns_values[column]}"' for column in columns_values])
+        query = f"UPDATE {table_name} SET {sub_query}"
         if condition is not None:
             query += f' WHERE {condition}'
+        db_manager.execute_commit_query(query)
+        return DBOperation.read(entity, condition)
 
+    @staticmethod
+    def delete(entity: object, condition: str = None):
+        """
+        Deletes records from the specified entity based on the provided condition.
+
+        Args:
+            entity (str): The name of the table/entity to delete records from.
+            condition (str, optional): The condition to filter records (default is None).
+
+        Returns:
+            True if everything is done OK
+
+            False if something goes wrong
+    """
+        table_name = entity.__name__.lower()
+        query = f'DELETE FROM {table_name}'
+        if condition is not None:
+            query += f' WHERE {condition}'
         return db_manager.execute_commit_query(query)
-    #
-    # @staticmethod
-    # def delete(entity: str, condition: str = None):
-    #     """
-    #     Deletes records from the specified entity based on the provided condition.
-    #
-    #     Args:
-    #         entity (str): The name of the table/entity to delete records from.
-    #         condition (str, optional): The condition to filter records (default is None).
-    #
-    #     Returns:
-    #         True if everything is done OK
-    #
-    #         False if something goes wrong
-    # """
-    #
-    #     query = f'DELETE FROM {entity}'
-    #     if condition is not None:
-    #         query += f' WHERE {condition}'
-    #
-    #     return db_manager.execute_commit_query(query)
-    #
-    # def __str__(self) -> str:
-    #     """
-    #         A class for managing database operations.
-    #
-    #         Methods:
-    #             create(entity: str, columns: tuple, values: tuple)
-    #                 Inserts a new record into the specified entity.
-    #
-    #             read(columns: tuple, table_name: str, condition: str = None, order: list = None)
-    #                 Retrieves records from the specified table based on the provided columns, condition, and order.
-    #
-    #             update(entity: str, columns_values: dict, condition: str = None)
-    #                 Updates records in the specified entity based on the provided column-value pairs and condition.
-    #
-    #             delete(entity: str, condition: str = None)
-    #                 Deletes records from the specified entity based on the provided condition.
-    #     """
-    #     return f'A class for managing database operations.'
-    #
+
+    def __str__(self) -> str:
+        """
+            A class for managing database operations.
+
+            Methods:
+                create(entity: str, columns: tuple, values: tuple)
+                    Inserts a new record into the specified entity.
+
+                read(columns: tuple, table_name: str, condition: str = None, order: list = None)
+                    Retrieves records from the specified table based on the provided columns, condition, and order.
+
+                update(entity: str, columns_values: dict, condition: str = None)
+                    Updates records in the specified entity based on the provided column-value pairs and condition.
+
+                delete(entity: str, condition: str = None)
+                    Deletes records from the specified entity based on the provided condition.
+        """
+        return f'A class for managing database operations.'

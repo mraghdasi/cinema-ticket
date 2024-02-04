@@ -1,12 +1,9 @@
-import re
 from datetime import date
 from datetime import datetime
 
 # from src.utils.custom_exceptions import NewPasswordsNotSame
 # from src.utils.custom_exceptions import UserPasswordNotCorrect
-from src.db.db_operations import DBOperation
-from src.utils.custom_validators import Validator
-from src.utils.utils import hash_string
+from src.db.db_operations import Manager
 
 
 class User:
@@ -23,6 +20,11 @@ class User:
     balance: int
     role: int
     is_logged_in: int
+    objects: object
+
+    @classmethod
+    def set_manager(cls):
+        setattr(cls, 'objects', Manager(cls))
 
     def __init__(self, username, email, phone_number, password, birthday, **kwargs):
         """
@@ -106,3 +108,6 @@ class User:
 
     def set_user_logged_out(self):
         self.is_logged_in = 0
+
+
+User.set_manager()
