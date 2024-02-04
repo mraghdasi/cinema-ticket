@@ -1,5 +1,4 @@
 from src.db.db_operations import DBOperation, Manager
-from src.utils.custom_validators import Validator
 
 
 class FilmRate(DBOperation):
@@ -16,19 +15,22 @@ class FilmRate(DBOperation):
         setattr(cls, 'objects', Manager(cls))
         setattr(cls, 'db_table_name', 'film_rate')
 
-    def __init__(self, film_id, rate, user_id):
+    def __init__(self, film_id, rate, user_id, **kwargs):
         """
         Initialize Instance (Constructor Method)
         """
+
+        # validate_rate = Validator.validate(rate, (Validator.rate_validator,))
+        # if isinstance(validate_rate, bool):
+        #     self.rate = validate_rate
+        # else:
+        #     raise Exception(validate_rate)
         self.film_id = film_id
-
-        validate_rate = Validator.validate(rate, (Validator.rate_validator,))
-        if isinstance(validate_rate, bool):
-            self.rate = validate_rate
-        else:
-            raise Exception(validate_rate)
-
+        self.rate = rate
         self.user_id = user_id
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __str__(self):
         return f'Film Id: {self.film_id} | Rate: {self.rate} | User Id: {self.user_id}'
