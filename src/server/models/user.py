@@ -10,7 +10,7 @@ from src.utils.utils import hash_string
 from src.utils.custom_validators import Validator
 
 
-class User(DBOperation):
+class User():
     """
         Class To Make User Instances, It's a Basic User Without Any Specification.
     """
@@ -76,46 +76,46 @@ class User(DBOperation):
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
 
-    def create(self, **kwargs):
-        """
-        Create New Row Of User in User Table in Database
-        :param kwargs:
-            columns: string of columns names, comma separated (col1, col2, col3)
-            values: string of columns values, comma separated (val1, val2, val3)
-        :return:
-        """
-        super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
-
-    def read(self, **kwargs):
-        """
-        Get An Existing User From User Table in Database
-        :param kwargs:
-            columns: string of columns names, comma separated (col1, col2, col3)
-            condition: string of conditions (col1 = 'val1'), Default Value None
-            order: tuple of two value (col_name, ASC|DESC) (col1, ASC), Default Value None
-        :return:
-        """
-        super().read(kwargs.get('columns', None), 'user', kwargs.get(
-            'condition', None), kwargs.get('order', None))
-
-    def update(self, **kwargs):
-        """
-        Update An Existing User In User Table in Database
-        :param kwargs:
-            columns: string of columns names and values, comma separated "col1 = val1, col2 = val2, col3 = val3"
-            condition: string of conditions (col1 = 'val1'), Default Value None
-        :return:
-        """
-        super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
-
-    def delete(self, **kwargs):
-        """
-        Delete An Existing User From User Table in Database
-        :param kwargs:
-            condition: string of conditions (col1 = 'val1'), Default Value None
-        :return:
-        """
-        super().delete('user', kwargs.get('condition', None))
+    # def create(self, **kwargs):
+    #     """
+    #     Create New Row Of User in User Table in Database
+    #     :param kwargs:
+    #         columns: string of columns names, comma separated (col1, col2, col3)
+    #         values: string of columns values, comma separated (val1, val2, val3)
+    #     :return:
+    #     """
+    #     super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
+    #
+    # def read(self, **kwargs):
+    #     """
+    #     Get An Existing User From User Table in Database
+    #     :param kwargs:
+    #         columns: string of columns names, comma separated (col1, col2, col3)
+    #         condition: string of conditions (col1 = 'val1'), Default Value None
+    #         order: tuple of two value (col_name, ASC|DESC) (col1, ASC), Default Value None
+    #     :return:
+    #     """
+    #     super().read(kwargs.get('columns', None), 'user', kwargs.get(
+    #         'condition', None), kwargs.get('order', None))
+    #
+    # def update(self, **kwargs):
+    #     """
+    #     Update An Existing User In User Table in Database
+    #     :param kwargs:
+    #         columns: string of columns names and values, comma separated "col1 = val1, col2 = val2, col3 = val3"
+    #         condition: string of conditions (col1 = 'val1'), Default Value None
+    #     :return:
+    #     """
+    #     super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
+    #
+    # def delete(self, **kwargs):
+    #     """
+    #     Delete An Existing User From User Table in Database
+    #     :param kwargs:
+    #         condition: string of conditions (col1 = 'val1'), Default Value None
+    #     :return:
+    #     """
+    #     super().delete('user', kwargs.get('condition', None))
 
     def change_password(self, password, new_password, confirm_new_password):
         """

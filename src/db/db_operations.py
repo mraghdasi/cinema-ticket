@@ -31,7 +31,7 @@ class DBOperation:
             return exe
 
     @staticmethod
-    def read(columns: tuple, table_name: str, condition: str = None, order: list = None):
+    def read(table_name: str, condition: str = None, order: list = None):
         """
         Retrieves records from the specified table based on the provided columns, condition, and order.
 
@@ -45,7 +45,7 @@ class DBOperation:
             The row(s) that was supposed to be read
         """
 
-        query = f'SELECT {columns} FROM {table_name}'
+        query = f'SELECT * FROM {table_name}'
 
         if condition is not None:
             query += f' WHERE {condition}'
