@@ -26,9 +26,7 @@ class User(DBOperation):
     role: str
     is_logged_in: int
 
-    def __init__(self, username, email, phone_number, password, birthday,
-                 last_login, created_at, subscription_id, wallet_id,
-                 balance, role):
+    def __init__(self, username, email, phone_number, password, birthday):
         """
         Initialize Instance (Constructor Method)
         """
@@ -67,12 +65,12 @@ class User(DBOperation):
         else:
             raise Exception(validate_birthday)
 
-        self.last_login = last_login
-        self.created_at = created_at
-        self.subscription_id = subscription_id
-        self.wallet_id = wallet_id
-        self.balance = balance
-        self.role = role
+        self.last_login = None
+        self.created_at = None
+        self.subscription_id = None
+        self.wallet_id = None
+        self.balance = None
+        self.role = None
         self.is_logged_in = 0
 
     def __str__(self):

@@ -1,6 +1,10 @@
+import mysql.connector as mysql_db
 import os
 
-import mysql.connector as mysql_db
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
 
 
 class DatabaseConnector:
