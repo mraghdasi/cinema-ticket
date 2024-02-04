@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from src.db.db_operations import DBOperation, Manager
+from src.db.db_operations import Manager
 
 
-class Comment(DBOperation):
+class Comment:
     description: str
     film_id: int
     user_id: int

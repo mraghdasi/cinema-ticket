@@ -1,7 +1,7 @@
-from src.db.db_operations import DBOperation, Manager
+from src.db.db_operations import Manager
 
 
-class Film(DBOperation):
+class Film:
     """
         Class To Make Film Instances. 
     """

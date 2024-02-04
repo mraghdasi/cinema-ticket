@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from src.db.db_operations import DBOperation, Manager
+from src.db.db_operations import Manager
 
 
-class Subscription(DBOperation):
+class Subscription:
     """
         Class To Make Subscription Instances. 
     """

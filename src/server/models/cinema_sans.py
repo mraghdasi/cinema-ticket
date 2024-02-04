@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from src.db.db_operations import DBOperation, Manager
+from src.db.db_operations import Manager
 
 
-class CinemaSans(DBOperation):
+class CinemaSans:
     """
             Class To Make Cinema_sans Instances.
     """
