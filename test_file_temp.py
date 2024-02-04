@@ -34,25 +34,43 @@ from src.server.models.cinema_sans import CinemaSans
 # package1 = Package.objects.create('Gold', 50, 50000)
 # subs1 = Subscription.objects.create(user1.id, package1.id, time.strftime('%Y-%m-%d %H:%M:%S'))
 # print(subs1.user_id)
-from src.server.models.film import Film
-from src.server.models.hall import Hall
 
-film1 = Film.objects.create('Film2', 20)
-hall1 = Hall.objects.create('Hall2', 100)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('12:12:00', '16:00:00', film1.id, hall1.id, 4000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('16:12:00', '18:00:00', film1.id, hall1.id, 1000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-q = """
-select *
-from cinema_sans
-join cinema_ticket.film film on cinema_sans.film_id = film.id
-join cinema_ticket.hall hall on hall.id  = cinema_sans.hall_id
-"""
-list1 = CinemaSans.objects.query(q, fetch=True)
-print(list(map(vars, list1)))
+
+# from src.server.models.film import Film
+# from src.server.models.hall import Hall
+#
+# film1 = Film.objects.create('Film2', 20)
+# hall1 = Hall.objects.create('Hall2', 100)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('12:12:00', '16:00:00', film1.id, hall1.id, 4000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('16:12:00', '18:00:00', film1.id, hall1.id, 1000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+
+# q = """
+# SELECT cs.id     ,
+#        cs.start_time,
+#        cs.end_time,
+#        cs.film_id ,
+#        cs.hall_id ,
+#        cs.price    ,
+#        film.id      AS film_id,
+#        film.title   AS film_title,
+#        film.min_age AS film_min_age,
+#        hall.id      AS hall_id,
+#        hall.title   AS hall_title,
+#        hall.capacity
+# FROM cinema_sans cs
+#          JOIN
+#      cinema_ticket.film film ON cs.film_id = film.id
+#          JOIN
+#      cinema_ticket.hall hall ON hall.id = cs.hall_id;
+# """
+# list1 = CinemaSans.objects.query(q, fetch=True)
+#
+# print(list(map(vars, list1)))
+
