@@ -7,7 +7,7 @@ from src.utils.custom_exceptions import UserPasswordNotCorrect
 from src.utils.custom_exceptions import NewPasswordsNotSame
 from src.utils.utils import hash_string
 
-import src.utils.custom_validators as Validators
+from src.utils.custom_validators import Validator
 
 
 class User(DBOperation):
@@ -26,59 +26,57 @@ class User(DBOperation):
     role: str
     is_logged_in: int
 
-    def __init__(self, username, email, phone_number, password, birthday,
-                 last_login, created_at, subscription_id, wallet_id,
-                 balance, role):
+    def __init__(self, username, email, phone_number, password, birthday):
         """
         Initialize Instance (Constructor Method)
         """
-        validate_username = Validators.validate(
-            username, (Validators.Validator.username_validator,))
+        validate_username = Validator.validate(
+            username, (Validator.username_validator,))
         if isinstance(validate_username, bool):
             self.username = username
         else:
             raise Exception(validate_username)
 
-        validate_email = Validators.validate(
-            email, (Validators.Validator.email_validator,))
+        validate_email = Validator.validate(
+            email, (Validator.email_validator,))
         if isinstance(validate_email, bool):
             self.email = email
         else:
             raise Exception(validate_email)
 
-        validate_phone_number = Validators.validate(
-            phone_number, (Validators.Validator.phone_number_validator,))
+        validate_phone_number = Validator.validate(
+            phone_number, (Validator.phone_number_validator,))
         if isinstance(validate_phone_number, bool):
             self.phone_number = phone_number
         else:
             raise Exception(validate_phone_number)
 
-        validate_password = Validators.validate(
-            password, (Validators.Validator.password_validator,))
+        validate_password = Validator.validate(
+            password, (Validator.password_validator,))
         if isinstance(validate_password, bool):
             self.password = hash_string(password)
         else:
             raise Exception(validate_password)
 
-        validate_birthday = Validators.validate(
-            birthday, (Validators.Validator.birthday_format_validator,))
+        validate_birthday = Validator.validate(
+            birthday, (Validator.birthday_format_validator,))
         if isinstance(validate_birthday, bool):
             self.birthday = birthday
         else:
             raise Exception(validate_birthday)
 
-        self.last_login = last_login
-        self.created_at = created_at
-        self.subscription_id = subscription_id
-        self.wallet_id = wallet_id
-        self.balance = balance
-        self.role = role
+        self.last_login = None
+        self.created_at = None
+        self.subscription_id = None
+        self.wallet_id = None
+        self.balance = None
+        self.role = None
         self.is_logged_in = 0
 
     def __str__(self):
         return f'Username: {self.username} | Email: {self.email} | Role: {self.role}'
 
-    def create(**kwargs):
+    def create(self, **kwargs):
         """
         Create New Row Of User in User Table in Database
         :param kwargs:
@@ -88,7 +86,7 @@ class User(DBOperation):
         """
         super().create('user', kwargs.get('columns', None), kwargs.get('values', None))
 
-    def read(**kwargs):
+    def read(self, **kwargs):
         """
         Get An Existing User From User Table in Database
         :param kwargs:
@@ -100,7 +98,7 @@ class User(DBOperation):
         super().read(kwargs.get('columns', None), 'user', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    def update(**kwargs):
+    def update(self, **kwargs):
         """
         Update An Existing User In User Table in Database
         :param kwargs:
@@ -110,7 +108,7 @@ class User(DBOperation):
         """
         super().update('user', kwargs.get('columns', None), kwargs.get('condition', None))
 
-    def delete(**kwargs):
+    def delete(self, **kwargs):
         """
         Delete An Existing User From User Table in Database
         :param kwargs:
@@ -134,8 +132,8 @@ class User(DBOperation):
             user = self.read(
                 **{'columns': '*', 'condition': f'username = {self.username} AND password = {hashed_password}'})
             if user:
-                validate_password = Validators.validate(
-                    new_password, (Validators.Validator.password_validator,))
+                validate_password = Validator.validate(
+                    new_password, (Validator.password_validator,))
                 if isinstance(validate_password, bool):
                     hashed_new_password = hash_string(new_password)
                     self.password = hashed_new_password

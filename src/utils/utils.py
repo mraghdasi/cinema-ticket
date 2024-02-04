@@ -1,7 +1,7 @@
 import hashlib
 import hmac
+import os
 
-from main import secret_key
 
 def hash_string(string):
     """
@@ -10,4 +10,13 @@ def hash_string(string):
     :return:
         Hashed String
     """
-    return hmac.new(secret_key.encode('utf-8'), string.encode('utf-8'), hashlib.sha256).hexdigest()
+
+    return hmac.new(os.getenv('SECRET_KEY').encode('utf-8'), string.encode('utf-8'), hashlib.sha256).hexdigest()
+
+
+def input_client(msg):
+    return input(msg).strip()
+
+
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')

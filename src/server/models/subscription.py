@@ -22,8 +22,7 @@ class Subscription(DBOperation):
     def __str__(self):
         return f'User Id: {self.user_id} | Package Id: {self.package_id} | Expire At: {self.expire_at}'
 
-    @staticmethod
-    def create(**kwargs):
+    def create(self, **kwargs):
         """
         Create New Row Of Subscription in Subscription Table in Database
         :param kwargs:
@@ -34,8 +33,7 @@ class Subscription(DBOperation):
         super().create('subscription', kwargs.get(
             'columns', None), kwargs.get('values', None))
 
-    @staticmethod
-    def read(**kwargs):
+    def read(self, **kwargs):
         """
         Get An Existing Subscription From Subscription Table in Database
         :param kwargs:
@@ -47,8 +45,7 @@ class Subscription(DBOperation):
         super().read(kwargs.get('columns', None), 'subscription', kwargs.get(
             'condition', None), kwargs.get('order', None))
 
-    @staticmethod
-    def update(**kwargs):
+    def update(self, **kwargs):
         """
         Update An Existing Subscription In Subscription Table in Database
         :param kwargs:
@@ -59,8 +56,7 @@ class Subscription(DBOperation):
         super().update('subscription', kwargs.get(
             'columns', None), kwargs.get('condition', None))
 
-    @staticmethod
-    def delete(**kwargs):
+    def delete(self, **kwargs):
         """
         Delete An Existing Subscription From Subscription Table in Database
         :param kwargs:
