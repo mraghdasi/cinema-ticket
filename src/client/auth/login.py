@@ -1,4 +1,4 @@
-import os
+from src.utils.utils import clear_terminal
 
 
 def main():
@@ -12,7 +12,7 @@ def main():
                 'Password :').strip()
 
         except KeyboardInterrupt:
-            os.system("cls")
+            clear_terminal()
             break
 
         # some code to connect to db and stuff
@@ -20,7 +20,7 @@ def main():
         user_info = 'f'
 
         if some_validations == '':
-            os.system('cls')
+            clear_terminal()
             return user_info
 
 

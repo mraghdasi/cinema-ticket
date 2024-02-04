@@ -1,4 +1,6 @@
-import os
+
+from src.utils.utils import input_client, clear_terminal
+
 
 #!
 #!
@@ -17,7 +19,7 @@ def main():
             username = input(
                 'Username*(must contain lower and uppercase letters and numbers at least 3 characters):').strip()
 
-            email = input('Email*(example@example.example):').strip()
+            email = input_client('Email*(example@example.example):')
 
             phone_number = input('Phone number(09121231234):').strip()
 
@@ -35,7 +37,7 @@ def main():
             
 
         except KeyboardInterrupt:
-            os.system("cls")
+            clear_terminal()
             break
         # except Validator errors:
         #   ...
@@ -49,5 +51,5 @@ def main():
         # some code to connect to db and stuff
         
         user_info = ''
-        os.system('cls')
+        clear_terminal()
         return user_info
