@@ -28,9 +28,9 @@ class Validator:
         :return:
              True Or UsernameValidationError
         """
-        if re.match(r".*[a-z].*", username_str) and\
-                re.match(r".*[A-Z].*", username_str) and\
-                re.match(r".*[0-9].*", username_str) and\
+        if re.match(r".*[a-z].*", username_str) and \
+                re.match(r".*[A-Z].*", username_str) and \
+                re.match(r".*[0-9].*", username_str) and \
                 3 <= len(username_str) <= 100:
             return True
         else:
@@ -168,3 +168,7 @@ class Validator:
             return True
         else:
             raise Exception(f'Value Must Be Greater Than {max}')
+
+    @staticmethod
+    def deposit_amount_validator(deposit_amount: str):
+        return True
