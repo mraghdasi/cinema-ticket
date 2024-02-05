@@ -30,31 +30,73 @@ def main(user_info,movie=None):
 
 
         #======================Please Check my Code =========================
-        movie_list = [('spiderman', 'sat', '2 to 4 (price)'), ('spiderman', 'sat', '5 to 7 (price)'),
-                      ('spiderman', 'sun', '4 to 6 (price)'), ('batman', 'sat', '3 to 5 (price)'),
-                      ('batman', 'sat', '6 to 8 (price)'), ('batman', 'sun', '5 to 7 (price)'),
-                      ('joker', 'sat', '4 to 6 (price)'), ('joker', 'sat', '7 to 9 (price)'),
-                      ('joker', 'sun', '6 to 8 (price)')]
+        movies = [
+            {
+                'name': 'spiderman',
+                'min_age': 12,
+                'rating': 8.8,
+                'length': 148,
+                'sans': [
+                    {'day': 'sat', 'start_time': '14:00', 'end_time': '16:00'},
+                    {'day': 'sat', 'start_time': '18:00', 'end_time': '20:00'},
+                    {'day': 'Wednesday', 'start_time': '21:00', 'end_time': '23:00'},
+                    {'day': 'Wednesday', 'start_time': '19:00', 'end_time': '20:00'},
+                    {'day': 'Thursday', 'start_time': '14:00', 'end_time': '16:00'},
+                    {'day': 'Thursday', 'start_time': '21:00', 'end_time': '23:00'}
+                ],
+                'comments number': 1050,
+                'ticket price': 12
+            },
+            {
+                'name': 'batman',
+                'min_age': 13,
+                'rating': 9.0,
+                'length': 152,
+                'sans': [
+                    {'day': 'Friday', 'start_time': '15:00', 'end_time': '17:00'},
+                    {'day': 'Saturday', 'start_time': '12:00', 'end_time': '14:00'},
+                    {'day': 'Sunday', 'start_time': '18:00', 'end_time': '20:00'}
+                ],
+                'comments number': 876,
+                'ticket price': 11
+            }
+        ]
 
         movies_dict = {}
 
-        for m, d, t in movie_list:
-            if m not in movies_dict:
-                movies_dict[m] = {'sat': [], 'sun': []}
-            movies_dict[m][d].append(t)
+        for movie in movies:
+            name = movie['name']
+            sans = movie['sans']
+            if name not in movies_dict:
+                movies_dict[name] = {'sat': [], 'sun': [], 'mon': [], 'tue': [], 'wed': [], 'thu': [], 'fri': []}
+            for san in sans:
+                day = san['day'].lower()[:3]
+                start_time = san['start_time']
+                end_time = san['end_time']
+                time_range = f"{start_time} to {end_time} (price {movie['ticket price']})"
+                movies_dict[name][day].append(time_range)
+
+        print("List of available movies:")
+        for movie in movies:
+            print("- " + movie['name'])
 
         movie_name = input("Enter movie name: ")
         if movie_name in movies_dict:
             showtimes = movies_dict[movie_name]
             print("{0}:".format(movie_name))
-            for day_number, (day, times) in enumerate(showtimes.items(), 1):
+            days_with_showtimes = []
+            for day, times in showtimes.items():
+                if times:
+                    days_with_showtimes.append(day)
+            for day_number, day in enumerate(days_with_showtimes, 1):
                 print("{0}. {1}:".format(day_number, day))
+                times = showtimes[day]
                 for i, t in enumerate(times):
                     print("  {0}. {1}".format(i + 1, t))
 
             selected_time = input("Enter day and time number: ")
             day_number, time_number = map(int, selected_time.split('-'))
-            day = list(showtimes.keys())[day_number - 1]
+            day = days_with_showtimes[day_number - 1]
             selected_time = showtimes[day][time_number - 1]
             print("Selected time: {0} - {1}".format(day, selected_time))
             print("***At this step the user should be taken to the payment page***")
