@@ -1,16 +1,24 @@
 import os
 
+
 def main(user_info):
     while True:
         print('fill the fields')
-        
+
         # card registration stuff
-        
+
         # returns user info
 
+    # ========================= Please Check The Code ======================
+    # for quiting the program in this file use KeyboardInterruptError
 
+    # use the validations from custom_validations.py
 
-    #========================= Please Check The Code ======================
+    # if we type card number correct but write for example cvv2 wrong the program should not take card num from us again
+    # (check registration.py for my approach)
+
+    # the program should close if everything runs correct
+
     card_list = []
     while True:
         print('fill the fields')

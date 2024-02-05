@@ -16,7 +16,10 @@
 
 
 
-#=========================***Plese check My Code:***===============MRY=================
+#=========================***Please check My Code:***===============MRY=================
+
+# check buy_ticket.py and card_registration.py
+
 import sys
 
 card_list = ['2656435571048868', '7988634497364006', '4328353309086601', '2498525345064556', '3500037762653692', '3971687107588513', '8353272705341641', '7215425071807050', '6715821371280480', '7644452566589771']
@@ -36,6 +39,11 @@ else:
             print("1. Edit card number")
             print("2. Change CVV2")
             print("3. Change expiration date")
+            #-------
+
+            # password ?
+
+            #-------
             print("4. Cancel")
             choice = input("Please choose an option: ")
             if choice == '1':
@@ -54,4 +62,6 @@ else:
                 print("Invalid selection. Please try again.")
     except (ValueError, IndexError):
         print("Invalid selection.")
+
+
 

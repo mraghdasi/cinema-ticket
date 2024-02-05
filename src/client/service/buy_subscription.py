@@ -16,6 +16,8 @@ def main(user_info):
 
     #===========================Please Check my Code==========================
 
+    # check buy_ticket.py and card_registration.py
+
     while True:
         print('please choose your package:\n  1. silver\n  2. gold')
 
@@ -29,6 +31,8 @@ def main(user_info):
             user_package = 'gold'
         else:
             user_package = 'bronze'
+
+        # else can be 100000000000000000 other stuff . use elif and have bronze in opts
 
         if user_choice in {'1', '2'}:
             print("You selected", user_package)
