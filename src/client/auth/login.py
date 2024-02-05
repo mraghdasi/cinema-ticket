@@ -1,6 +1,20 @@
 from src.utils.utils import clear_terminal
 
 
+# !
+# !
+# !
+# !
+# !
+# !
+# ! WE HAVE TO FIX IMPORTS
+# !
+# !
+# !
+# !
+# !
+# !
+
 def main():
     while True:
         try:
