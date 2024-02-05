@@ -27,21 +27,25 @@ class PhoneNumberValidationError(Exception):
     def __init__(self):
         super().__init__('Please Enter a Valid Phone Number')
 
+
 class PasswordValidationError(Exception):
     """
         Password Validation Error Exception
     """
 
     def __init__(self):
-        super().__init__('Please Enter a Valid Password (length 8-100 , 2 uppercase letters , 2 digits , 2 special characters)')
-        
+        super().__init__(
+            'Please Enter a Valid Password (length 8-100 , 2 uppercase letters , 2 digits , 2 special characters)')
+
+
 class BirthdayValidationError(Exception):
     """
         Birthday Validation Error Exception
     """
 
     def __init__(self):
-        super().__init__('Please Enter a Valid Format of date (yyyy/mm/dd) and Make Sure You Write a Valid Date')
+        super().__init__('Please Enter a Valid Format of date (yyyy-mm-dd) and Make Sure You Write a Valid Date')
+
 
 class UserPasswordNotCorrect(Exception):
     """
@@ -59,6 +63,33 @@ class NewPasswordsNotSame(Exception):
 
     def __init__(self):
         super().__init__('New Password and Confirm New Password are Not Same')
+
+
+class MinAgeNotPositive(Exception):
+    """
+        Min Age Not Positive Exception
+    """
+
+    def __init__(self):
+        super().__init__('Min Age Must Be a Positive Integer')
+
+
+class RateNotBetweenZeroAndFive(Exception):
+    """
+        Rate Not Between Zero And Five Exception
+    """
+
+    def __init__(self):
+        super().__init__('Rate Must Be An Integer between Zero And Five')
+
+
+class ReadFromDataBaseError(Exception):
+    """
+        Read From Data Base Error Exception
+    """
+
+    def __init__(self):
+        super().__init__('Execute or Commit Failed.')
 
 
 def exception_log():
