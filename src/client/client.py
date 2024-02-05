@@ -10,7 +10,7 @@ def main():
     while True:
         user_input = input('1.Login\n2.Register\n3.Quit\n\n:').lower().strip()
 
-        if user_input == '3' or user_input == 'quit' :
+        if user_input == '3' or user_input == 'quit':
             clear_terminal()
             sys.exit('*\n**\n***\nHave A Nice Day :)\n***\n**\n*')
         elif user_input == '1' or user_input == 'login':
@@ -33,5 +33,4 @@ def main():
             continue
 
 
-if __name__ == '__main__':
-    main()
+main()
