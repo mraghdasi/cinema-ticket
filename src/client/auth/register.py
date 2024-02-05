@@ -40,7 +40,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                 print(f'Username : {creds['username']}')
 
             if creds['email'] == '':
-                email = input_client('Email*(example@example.example):')
+                email = input_client('Email*(example@example.example):').strip().lower()
 
                 if Validators.Validator.email_validator(email):
                     creds['email'] = email
@@ -49,7 +49,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                 print(f'Email : {creds['email']}')
 
             if creds['phone_number'] == '':
-                phone_number = input('Phone number(09121231234):').strip()
+                phone_number = input('Phone number(09121231234):').replace(" ","")
 
                 if Validators.Validator.phone_number_validator(phone_number):
                     creds['phone_number'] = phone_number
@@ -76,7 +76,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                 print(f'Password : {creds['password']}')
 
             if creds['birthday'] == '':
-                birthday = input('Birthday*(yyyy-mm-dd):')
+                birthday = input('Birthday*(yyyy-mm-dd):').strip()
 
                 if Validators.Validator.birthday_format_validator(birthday):
                     creds['birthday'] = birthday
