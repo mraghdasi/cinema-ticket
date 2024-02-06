@@ -1,8 +1,14 @@
+from src.server.models.bank_account import UserBankAccount
 from src.server.models.cinema_sans import CinemaSans
+from src.server.models.user import User
+from src.utils.utils import hash_string
 
 # operations = DBOperation()
 
-# user1 = User.objects.create('soroush12321233', 'sorm1379@gmail.com', '09390468833', 'pAssWd120@#!', '1379-12-16')
+# UserBankAccount.objects.create(1, 'bank Sepah', '1234123412341234', hash_string('mraghdasi'), hash_string('4321'), 10000, 2000, '2024-10-16')
+# UserBankAccount.objects.create(1, 'bank Saderat', '4567567845673456', hash_string('mraghdasi2'), hash_string('3333'), 40000, 4000, '2024-01-16')
+# user1 = User.objects.create('soroush123223421233', 'sorm1371349@gmail.com', '09390468833', '123456', '1379-12-16')
+# print(user1.password)
 # hall1 = Hall.objects.create('title1', 30)
 # user1 = User.objects.read('username="soroush12321233"')
 # user1 = user1[0]
@@ -73,4 +79,3 @@ from src.server.models.cinema_sans import CinemaSans
 # list1 = CinemaSans.objects.query(q, fetch=True)
 #
 # print(list(map(vars, list1)))
-

@@ -1,6 +1,8 @@
-ERROR:root:Exception in ex: division by zero
-ERROR:root:Exception in ex : division by zero
-ERROR:root: Exception in ex : division by zero
-ERROR:root: Exception in a : division by zero
-ERROR:root: Exception in set_transaction : Invalid Transaction Type: TransactionType.BUY_TICKET
-ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: bursdg
+ERROR:root: Exception in payment_gateway : Card Number = 1234123412341234 , Password Or CVV2 Not Valid | DateTime : 2024-02-06 03:03:48
+ERROR:root: Exception in payment_gateway : Card Number = 1234123412341234 , Password Or CVV2 Not Valid | DateTime : 2024-02-06 03:04:13
+ERROR:root: Exception in payment_gateway : Origin Card Number = 12341234123412340 , Not Found | DateTime : 2024-02-06 03:15:30
+ERROR:root: Exception in payment_gateway : Origin Card Number = 12341234123412340 , Not Found | DateTime : 2024-02-06 20:32:31
+ERROR:root: Exception in payment_gateway : User_id = 124 , Not Found | DateTime : 2024-02-06 20:33:36
+ERROR:root: Exception in payment_gateway : Destination Card Number = 43634734 , Not Found | DateTime : 2024-02-06 20:33:47
+ERROR:root: Exception in payment_gateway : Destination Card Number = 4567567845673456 , Expired | DateTime : 2024-02-06 20:34:30
+ERROR:root: Exception in payment_gateway : Destination Card Number = 23456704323678900 , Not Found | DateTime : 2024-02-06 20:38:54

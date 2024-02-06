@@ -21,7 +21,7 @@ class UserBankAccount:
         setattr(cls, 'objects', Manager(cls))
         setattr(cls, 'db_table_name', 'user_bank_account')
 
-    def __init__(self, title, card_number, password, cvv2, amount, minimum_amount, **kwargs):
+    def __init__(self, user_id, title, card_number, password, cvv2, amount, minimum_amount, expire_date, **kwargs):
         """
         Initialize Instance (Constructor Method)
         """
@@ -52,10 +52,11 @@ class UserBankAccount:
         self.title = title
         self.card_number = card_number
         self.password = password
-        self.title = card_number
         self.cvv2 = cvv2
         self.amount = amount
         self.minimum_amount = minimum_amount
+        self.user_id = user_id
+        self.expire_date = expire_date
         for key, value in kwargs.items():
             setattr(self, key, value)
 

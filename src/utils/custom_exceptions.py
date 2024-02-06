@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 
 class UsernameValidationError(Exception):
@@ -112,7 +113,7 @@ def exception_log():
                 return func(*args, **kwargs)
             except Exception as e:
                 logging.basicConfig(filename='../logs/error-logs.txt', level=logging.ERROR)
-                logging.error(f" Exception in {func.__name__} : {str(e)}")
+                logging.error(f" Exception in {func.__name__} : {str(e)} | DateTime : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
         return wrapper
 
