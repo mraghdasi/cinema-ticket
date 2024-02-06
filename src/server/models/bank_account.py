@@ -50,8 +50,9 @@ class UserBankAccount:
         #     raise Exception(validate_minimum_amount)
 
         self.title = title
-        self.title = card_number
+        self.card_number = card_number
         self.password = password
+        self.title = card_number
         self.cvv2 = cvv2
         self.amount = amount
         self.minimum_amount = minimum_amount

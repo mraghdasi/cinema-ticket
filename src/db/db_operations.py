@@ -23,6 +23,9 @@ class Manager:
     def delete(self, *args):
         return DBOperation.delete(self.entity, *args)
 
+    def query(self, *args, **kwargs):
+        return DBOperation.query(self.entity, *args, **kwargs)
+
 
 class DBOperation:
 
@@ -120,13 +123,25 @@ class DBOperation:
         return db_manager.execute_commit_query(query)
 
     @staticmethod
-    def query(queries: str):
+    def query(entity: object, queries: str, fetch=False):
         """
+        :param entity: (object) The name of the table/entity to Run Query on It.
+        :param fetch: (bool) Return Data
         :param queries: (str)String Of Custom Query
         :return:
             True Or False
         """
-        return db_manager.execute_commit_query(queries)
+        exe = db_manager.execute_commit_query(queries)
+        if exe:
+            if fetch:
+                try:
+                    objs_data = [dict(zip([desc[0] for desc in db_connector.cursor.description], data)) for data in
+                                 db_connector.cursor.fetchall()]
+                    return [entity(**obj) for obj in objs_data]
+                except Exception as e:
+                    print(e)
+                    return False
+        return False
 
     def __str__(self) -> str:
         """

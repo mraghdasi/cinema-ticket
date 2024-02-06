@@ -19,13 +19,6 @@ class Validator:
         :return:
         True Or String of Exceptions Messages
         """
-        list_of_results = [validate(string)
-                           for validate in validator_functions]
-        list_of_messages = list(filter(lambda x: True if (x != True) else False, list_of_results))
-        if len(list_of_messages) > 0:
-            return ' \n'.join(list_of_messages)
-        else:
-            return True
 
     @staticmethod
     def username_validator(username_str):
@@ -35,10 +28,13 @@ class Validator:
         :return:
              True Or UsernameValidationError
         """
-        if re.match(r"^[a-zA-Z0-9]{3,100}$", username_str):
+        if re.match(r".*[a-z].*", username_str) and \
+                re.match(r".*[A-Z].*", username_str) and \
+                re.match(r".*[0-9].*", username_str) and \
+                3 <= len(username_str) <= 100:
             return True
         else:
-            return str(custom_exceptions.UsernameValidationError())
+            raise custom_exceptions.UsernameValidationError()
 
     @staticmethod
     def email_validator(email_str):
@@ -51,7 +47,7 @@ class Validator:
         if email(email_str):
             return True
         else:
-            return str(custom_exceptions.EmailValidationError())
+            raise custom_exceptions.EmailValidationError()
 
     @staticmethod
     def phone_number_validator(phone_number_str):
@@ -65,7 +61,7 @@ class Validator:
             if re.match(r"^(09)([0-9]{9})$", phone_number_str):
                 return True
             else:
-                return str(custom_exceptions.PhoneNumberValidationError())
+                raise custom_exceptions.PhoneNumberValidationError()
         else:
             return True
 
@@ -87,7 +83,7 @@ class Validator:
         if all([length_check, special_char_check, uppercase_check, lowercase_check, digit_check]):
             return True
         else:
-            return str(custom_exceptions.PasswordValidationError())
+            raise custom_exceptions.PasswordValidationError()
 
     @staticmethod
     def birthday_format_validator(birthday_str):
@@ -103,7 +99,7 @@ class Validator:
             datetime.date.fromisoformat(birthday_str)
             return True
         except ValueError:
-            return str(custom_exceptions.BirthdayValidationError())
+            raise custom_exceptions.BirthdayValidationError()
 
     @staticmethod
     def min_age_validator(min_age):
@@ -118,7 +114,7 @@ class Validator:
         if min_age >= 0:
             return True
         else:
-            return str(custom_exceptions.MinAgeNotPositive())
+            raise custom_exceptions.MinAgeNotPositive()
 
     @staticmethod
     def rate_validator(rate):
@@ -133,7 +129,7 @@ class Validator:
         if 0 <= rate <= 5:
             return True
         else:
-            return str(custom_exceptions.MinAgeNotPositive())
+            raise custom_exceptions.MinAgeNotPositive()
 
     @staticmethod
     @exception_log()
@@ -172,3 +168,7 @@ class Validator:
             return True
         else:
             raise Exception(f'Value Must Be Greater Than {max}')
+
+    @staticmethod
+    def deposit_amount_validator(deposit_amount: str):
+        return True
