@@ -17,3 +17,5 @@ def main(user_info):
         # transfer
 
         # 4 or card op
+
+if __name__ == '__main__':

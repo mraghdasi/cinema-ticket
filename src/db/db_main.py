@@ -113,6 +113,7 @@ class DatabaseManager:
                 birthday DATE NOT NULL,
                 last_login DATETIME DEFAULT CURRENT_TIMESTAMP ,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                subscription_id INT DEFAULT 1,
                 balance INT DEFAULT 0,
                 role INT DEFAULT 1,
                 is_logged_in INT DEFAULT 0

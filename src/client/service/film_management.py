@@ -1,11 +1,10 @@
 import os
 from prettytable import PrettyTable
 
-#======================```============install  PrettyTable library ============```=============
+
+# ======================```============install  PrettyTable library ============```=============
 
 def main(user_info):
-
-
     movies = [
         {
             'name': 'Spiderman',
@@ -68,10 +67,11 @@ def main(user_info):
                     break
 
         if selected_movie_details:
+            # please do all this in one print statement (use multi line str)
             print("\n" + "=" * 50)
             print(selected_movie_details['name'])
             print("=" * 50)
-            print(f"Age rating: {selected_movie_details['min_age']}")
+            print(f"Minimum Age: {selected_movie_details['min_age']}")
             print(f"Rating: {selected_movie_details['rating']:.1f}/10")
             print(f"Duration: {selected_movie_details['length']} minutes")
 
@@ -98,6 +98,13 @@ def main(user_info):
             selected_option = input("Enter your choice: ")
             if selected_option.isdigit():
                 selected_option = int(selected_option)
+
+                # A very fun and cool approach to use os.system, but we have to import these files
+                # Keep in mind that buying ticket (from this file) and commenting both have an input called movie name
+                # you have to pass movie name to them
+                # don't forget that we have to clear terminal in some cases, and we have a function for it in utils
+                # options should be selected by numbers or names selected_option == 1 or  selected_option == 'Buy'
+
                 if selected_option == 1:
                     os.system("python buy_ticket.py")
                 elif selected_option == 2:
@@ -110,8 +117,10 @@ def main(user_info):
                     break
             else:
                 print("Invalid input! Please enter a valid number")
-user_info = {'name': 'John', 'email': 'john@example.com'}
-main(user_info)
+
+
+if __name__ == "__main__":
+    main('m')
 
 # input(buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
 # comment (runs commenting.py)))
