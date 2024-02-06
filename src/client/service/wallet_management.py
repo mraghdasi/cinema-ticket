@@ -1,17 +1,21 @@
 import os
 
 
-        
-
 def main(user_info):
     # charge wallet , check balance
 
-    # user_info
+    # check balance is for wallet we don't need to get the card info
+
+    # user_info  # lowercase vars please
     CARD_LIST = [
-        {'card_number': '2656435571048868', 'cvv2': '333', 'password': '1234', 'expiration_year': '02', 'expiration_month': '11'},
-        {'card_number': '7988634497364006', 'cvv2': '333', 'password': '1234', 'expiration_year': '02', 'expiration_month': '12'},
-        {'card_number': '8765435571048868', 'cvv2': '333', 'password': '1234', 'expiration_year': '02', 'expiration_month': '10'},
-        {'card_number': '1234334497364006', 'cvv2': '333', 'password': '1234', 'expiration_year': '02', 'expiration_month': '11'}
+        {'card_number': '2656435571048868', 'cvv2': '333', 'password': '1234', 'expiration_year': '02',
+         'expiration_month': '11'},
+        {'card_number': '7988634497364006', 'cvv2': '333', 'password': '1234', 'expiration_year': '02',
+         'expiration_month': '12'},
+        {'card_number': '8765435571048868', 'cvv2': '333', 'password': '1234', 'expiration_year': '02',
+         'expiration_month': '10'},
+        {'card_number': '1234334497364006', 'cvv2': '333', 'password': '1234', 'expiration_year': '02',
+         'expiration_month': '11'}
     ]
 
     # user info (dummy data)
@@ -21,6 +25,7 @@ def main(user_info):
     WALLET_BALANCE = 0
 
     def check_card_info():
+        # Check for each input and don't make the user write the correct ones again
         card_num = input('Enter card number:')
         cvv2 = input('Enter CVV2 code:')
         password = input('Enter password:')
@@ -29,7 +34,10 @@ def main(user_info):
 
         # check if card is available
         for card in CARD_LIST:
-            if (card['card_number'], card['cvv2'], card['password'], card['expiration_year'], card['expiration_month']) == (card_num, cvv2, password, expire_year, expire_month):
+            if (
+                    card['card_number'], card['cvv2'], card['password'], card['expiration_year'],
+                    card['expiration_month']) == (
+                    card_num, cvv2, password, expire_year, expire_month):
                 return card
 
         return None
@@ -76,5 +84,7 @@ def main(user_info):
 
         else:  # invalid choice
             print('Invalid choice. Please try again.')
+
+
 user_info = {'account_number': '1234567890', 'password': 'password123'}
 main(user_info)
