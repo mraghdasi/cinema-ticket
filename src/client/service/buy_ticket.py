@@ -1,9 +1,12 @@
 import os
 from datetime import datetime
 from prettytable import PrettyTable
-#======================```============install  PrettyTable library ============```=============
+
+
+# ======================```============install  PrettyTable library ============```=============
 
 def cancel_ticket():
+    # movie date and movie time please
     ticket_list = [
         {
             'ticket_id': 1,
@@ -66,6 +69,8 @@ def cancel_ticket():
 
     # Print the table and ask for a ticket_id to cancel
     print(table)
+    # Error handling
+    # And a quit option
     ticket_id = int(input("Enter the ID of the ticket you want to cancel: "))
 
     # Find the selected ticket by ticket_id
@@ -88,6 +93,7 @@ def cancel_ticket():
             refund_amount = selected_ticket['price'] * selected_ticket['quantity']
             print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
             print(f'{refund_amount} can pass to wallet_management.py')
+            # 0 <= time_diff_hours <= 1 , no need for and XD
         elif time_diff_hours >= 0 and time_diff_hours <= 1:
             refund_amount = selected_ticket['price'] * selected_ticket['quantity'] * 0.82
             print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
