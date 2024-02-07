@@ -1,13 +1,26 @@
 import os
 import sys
 
+<<<<<<< HEAD
 users = {
     1: {'id': '2354', 'name': 'John', 'wallet': 20, 'subscription': 'bronze'},
     2: {'id': '756', 'name': 'Amy', 'wallet': 50, 'subscription': 'bronze'},
     3: {'id': '23', 'name': 'David', 'wallet': 60, 'subscription': 'bronze'}
 }
+=======
 
+# incoming : package and subscription details
+# outgoing : banking process and updating user
 
+def main(user_info):
+    # package = bronze , silver , gold
+
+    # if package == one of the packages
+>>>>>>> 088e7274ade2f7231d3e28287bed02c373c4ab9f
+
+    # payment stuff and changes in db (should use other modules and db)
+
+<<<<<<< HEAD
 def main(user_input):
     # package = bronze , silver , gold
 
@@ -17,6 +30,10 @@ def main(user_input):
 
     # returns user_info
 
+=======
+    # returns user_info
+
+>>>>>>> 088e7274ade2f7231d3e28287bed02c373c4ab9f
     # ===========================Please Check my Code==========================
 
     # check buy_ticket.py and card_registration.py
@@ -45,6 +62,7 @@ def main(user_input):
             print("User not found.")
             return
 
+<<<<<<< HEAD
         print(f"Welcome {user_info['name']}!")
 
         while True:
@@ -104,3 +122,8 @@ def main(user_input):
 
 if __name__ == '__main__':
     main('2354')
+=======
+
+user_info = {'name': 'John', 'email': 'john@example.com'}
+main(user_info)
+>>>>>>> 088e7274ade2f7231d3e28287bed02c373c4ab9f

@@ -4,6 +4,8 @@ from prettytable import PrettyTable
 
 # ======================```============install  PrettyTable library ============```=============
 
+# incoming : all the film details
+
 def main(user_info):
     movies = [
         {

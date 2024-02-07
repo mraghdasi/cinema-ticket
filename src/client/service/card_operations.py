@@ -5,6 +5,8 @@ import src.utils.custom_exceptions as custom_exceptions
 
 from src.utils.utils import clear_terminal
 
+# incoming : card info
+# outgoing : updates
 
 def op_manager(op, selected_card):
     available_cards = ['6104337387924085', '5859831112974042', '6037701540936439']

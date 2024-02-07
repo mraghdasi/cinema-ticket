@@ -5,6 +5,10 @@ import src.utils.custom_validators as Validators
 import src.utils.custom_exceptions as CustomException
 
 
+# outgoing data : validated user registration info :
+# username email phone number password birthday
+
+
 # !
 # !
 # !
@@ -49,7 +53,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                 print(f'Email : {creds['email']}')
 
             if creds['phone_number'] == '':
-                phone_number = input('Phone number(09121231234):').replace(" ","")
+                phone_number = input('Phone number(09121231234):').replace(" ", "")
 
                 if Validators.Validator.phone_number_validator(phone_number):
                     creds['phone_number'] = phone_number

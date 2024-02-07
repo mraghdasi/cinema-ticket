@@ -1,4 +1,9 @@
-from src.utils.utils import clear_terminal
+import json
+
+from src.utils.utils import clear_terminal, hash_string
+
+
+# outgoing data : username and password to the User Table in DB
 
 
 # !
@@ -29,13 +34,14 @@ def main():
             clear_terminal()
             break
 
-        # some code to connect to db and stuff
-        some_validations = ''
-        user_info = 'f'
-
-        if some_validations == '':
-            clear_terminal()
-            return user_info
+        password = hash_string(password)
+        data = {
+            'payload': {'username': username, 'password': password},
+            'url': 'login'
+        }
+        js = json.dumps(data)
+        clear_terminal()
+        return js
 
 
 if __name__ == '__main__':

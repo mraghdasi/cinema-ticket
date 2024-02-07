@@ -1,5 +1,7 @@
 import os
 
+# incoming : wallet info
+# outgoing : any update
 
 def main(user_info):
     # charge wallet , check balance
