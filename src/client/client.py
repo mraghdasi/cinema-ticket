@@ -1,10 +1,10 @@
+import socket
 import sys
 
-import auth.login as login
-import auth.register as register
-import main_menu
+from src.client import main_menu
+from src.client.auth import login
+from src.client.auth import register
 from src.utils.utils import clear_terminal
-
 
 def main():
     while True:
@@ -34,3 +34,21 @@ def main():
 
 
 main()
+
+HOST = '127.0.0.1'
+PORT = 5555
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((HOST, PORT))
+client.send('Connection Request'.encode('utf-8'))
+
+while True:
+    response = client.recv(1024).decode('utf-8')
+    print(response)
+
+    message = input(': ')
+    client.send(message.encode('utf-8'))
+
+    if message.lower() == 'quit':
+        break
+
+client.close()
