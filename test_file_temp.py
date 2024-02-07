@@ -79,4 +79,4 @@ from src.utils.utils import hash_string
 # list1 = CinemaSans.objects.query(q, fetch=True)
 # Test Conflict 2
 # print(list(map(vars, list1)))
-#hello mohammadreza
+#hello again mohammadreza*****
