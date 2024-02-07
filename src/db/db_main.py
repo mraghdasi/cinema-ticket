@@ -91,10 +91,8 @@ class DatabaseManager:
         try:
             self.db_connector.cursor.execute(query, values)
             self.db_connector.connection.commit()
-            return True
         except Exception as e:
-            print(e)
-            return False
+            raise DBError()
 
     def initialize_database(self):
         """

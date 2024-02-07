@@ -24,9 +24,10 @@ def do_login(request):
         user = User.objects.read(f'username="{payload["username"]}"')
         if user:
             user = user[0]
+            print(user.password, payload['password'])
             if compare_digest(user.password, payload['password']):
                 request.session.user = user
-                return {'user': user, 'status_code': 200}
+                return {'user': {k: v if type(v) not in [date, datetime] else v.strftime('%Y-%m-%d') for k, v in vars(user).items()}, 'status_code': 200}
             else:
                 return {'msg': 'Password Not Correct', 'status_code': 400}
         else:
@@ -41,7 +42,7 @@ def register(request):
         try:
             user = User.objects.create(**payload)
             request.session.user = user
-            return {'msg': 'Registered', 'status_code': 200}
+            return {'user': {k: v if type(v) not in [date, datetime] else v.strftime('%Y-%m-%d') for k, v in vars(user).items()}, 'status_code': 200}
         except DBError:
             return {'msg': 'Duplication Error', 'status_code': 400}
     except Exception as e:

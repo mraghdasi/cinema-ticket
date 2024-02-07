@@ -106,5 +106,6 @@ def main(user_info):
             print('Invalid choice. Please try again.')
 
 
-user_info = {'account_number': '1234567890', 'password': 'password123'}
-main(user_info)
+if __name__ == '__main__':
+    user_info = {'account_number': '1234567890', 'password': 'password123'}
+    main(user_info)

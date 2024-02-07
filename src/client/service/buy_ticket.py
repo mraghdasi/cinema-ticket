@@ -1,5 +1,5 @@
-import os
 from datetime import datetime
+
 from prettytable import PrettyTable
 
 
@@ -309,6 +309,6 @@ def main(user_info, movie=None):
 
 # -------------------
 
-#sansegit pull origin m
+# sansegit pull origin m
 if __name__ == '__main__':
     main('m', 'm')

@@ -44,5 +44,6 @@ def main(user_info):
     return user_info
 
 
-user_info = {'name': 'John', 'email': 'john@example.com'}
-main(user_info)
+if __name__ == '__main__':
+    user_info = {'name': 'John', 'email': 'john@example.com'}
+    main(user_info)

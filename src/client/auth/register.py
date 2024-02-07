@@ -1,8 +1,10 @@
-from src.utils.utils import input_client
-from src.utils.utils import clear_terminal
+import json
+from secrets import compare_digest
 
-import src.utils.custom_validators as Validators
 import src.utils.custom_exceptions as CustomException
+import src.utils.custom_validators as Validators
+from src.utils.utils import clear_terminal, hash_string
+from src.utils.utils import input_client
 
 
 # outgoing data : validated user registration info :
@@ -27,10 +29,8 @@ import src.utils.custom_exceptions as CustomException
 def main():
     creds = {'username': '', 'email': '', 'phone_number': '', 'password': '', 'birthday': ''}
     while True:
-        print(
-            '''\nHi! we are very happy to have you on our app.
-Please fill in the fields.
-Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
+        print('\nHi! we are very happy to have you on our app.\nPlease fill in the fields.\n'
+              'Pay attention to the requirements for each field (press Ctrl+C to quit)\n')
         try:
 
             if creds['username'] == '':
@@ -41,7 +41,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                     creds['username'] = username
 
             else:
-                print(f'Username : {creds['username']}')
+                print(f'Username : {creds["username"]}')
 
             if creds['email'] == '':
                 email = input_client('Email*(example@example.example):').strip().lower()
@@ -50,7 +50,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                     creds['email'] = email
 
             else:
-                print(f'Email : {creds['email']}')
+                print(f'Email : {creds["email"]}')
 
             if creds['phone_number'] == '':
                 phone_number = input('Phone number(09121231234):').replace(" ", "")
@@ -59,7 +59,7 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                     creds['phone_number'] = phone_number
 
             else:
-                print(f'Phone Number : {creds['phone_number']}')
+                print(f'Phone Number : {creds["phone_number"]}')
 
             if creds['password'] == '':
                 password = input(
@@ -69,15 +69,15 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
 
                     password_confirm = ''
 
-                    while password != password_confirm:
+                    while not compare_digest(password, password_confirm):
                         if password_confirm != '':
                             print('\nPasswords Do Not Match!\n')
                         password_confirm = input('Confirm Password*:').strip()
 
-                    creds['password'] = password
+                    creds['password'] = hash_string(password)
 
             else:
-                print(f'Password : {creds['password']}')
+                print(f'Password : {creds["password"]}')
 
             if creds['birthday'] == '':
                 birthday = input('Birthday*(yyyy-mm-dd):').strip()
@@ -86,7 +86,16 @@ Pay attention to the requirements for each field (press Ctrl+C to quit)\n''')
                     creds['birthday'] = birthday
 
             else:
-                print(f'Birthday : {creds['birthday']}')
+                print(f'Birthday : {creds["birthday"]}')
+
+            data = {
+                'payload': creds,
+                'url': 'register'
+            }
+            js = json.dumps(data)
+            clear_terminal()
+            return js
+
 
         except KeyboardInterrupt:
             clear_terminal()
