@@ -6,6 +6,10 @@ from src.client.auth import login
 from src.client.auth import register
 from src.utils.utils import clear_terminal
 
+
+# outgoing : user login or user registration info
+# incoming : user info
+
 def main():
     while True:
         user_input = input('1.Login\n2.Register\n3.Quit\n\n:').lower().strip()
@@ -35,20 +39,20 @@ def main():
 
 main()
 
-HOST = '127.0.0.1'
-PORT = 5555
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, PORT))
-client.send('Connection Request'.encode('utf-8'))
-
-while True:
-    response = client.recv(1024).decode('utf-8')
-    print(response)
-
-    message = input(': ')
-    client.send(message.encode('utf-8'))
-
-    if message.lower() == 'quit':
-        break
-
-client.close()
+# HOST = '127.0.0.1'
+# PORT = 5555
+# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# client.connect((HOST, PORT))
+# client.send('Connection Request'.encode('utf-8'))
+#
+# while True:
+#     response = client.recv(1024).decode('utf-8')
+#     print(response)
+#
+#     message = input(': ')
+#     client.send(message.encode('utf-8'))
+#
+#     if message.lower() == 'quit':
+#         break
+#
+# client.close()

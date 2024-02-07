@@ -1,6 +1,9 @@
 from src.utils.utils import clear_terminal
 
 
+# outgoing data : username and password to the User Table in DB
+
+
 # !
 # !
 # !

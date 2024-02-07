@@ -5,6 +5,10 @@ from prettytable import PrettyTable
 
 # ======================```============install  PrettyTable library ============```=============
 
+# incoming data : available movies and showtimes , list of bought tickets (if available) , wallet info
+# outgoing data : a ticket that user bought (the ticket itself , wallet updating , lowering the capacity for that sans,
+# if wallet doesn't have enough money it should be charged , checking for birthday discount , cash back check)
+
 def cancel_ticket():
     # movie date and movie time please
     ticket_list = [

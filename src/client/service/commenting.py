@@ -2,6 +2,8 @@ import os
 
 from src.utils.utils import clear_terminal
 
+# incoming : all the comments and replies to comments for specified movie
+# outgoing : any update for comments
 
 def main(user_info, movie):
     while True:

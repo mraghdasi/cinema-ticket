@@ -18,6 +18,9 @@
 
 # check buy_ticket.py and card_registration.py
 
+# incoming : card info
+# outgoing : any updates
+
 from prettytable import PrettyTable
 
 

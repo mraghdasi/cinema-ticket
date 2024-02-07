@@ -6,11 +6,14 @@ import service.user_modification as user_modification
 from src.utils.utils import clear_terminal
 
 
+# outgoing : just the url for the next file
+
 def main(user_info):
     while True:
         print("What do you want to do today ?\n")
 
-        user_input = input('1.Buy tickets\n2.Buy A Subscription\n3.Check Available Movies\n4.Banking\n5.Modify Account\n6.Quit\n\n:').lower().strip()
+        user_input = input(
+            '1.Buy tickets\n2.Buy A Subscription\n3.Check Available Movies\n4.Banking\n5.Modify Account\n6.Quit\n\n:').lower().strip()
 
         if user_input == '6' or user_input == 'quit':
             clear_terminal()
