@@ -1,28 +1,12 @@
 import json
 import socket
 import threading
-from datetime import date
-from datetime import datetime
-from secrets import compare_digest
 
 from dotenv import load_dotenv
 
-from src.server.models.user import User
-from src.server.views import login, register, show_profile
-from src.utils.custom_exceptions import DBError
+from src.server.views import do_login, register, show_profile
 
 load_dotenv()
-
-
-def login_required(func):
-    def wrapper(request):
-        if request.session.user:
-            return func(request)
-        else:
-            def login_required_error():
-                return {'msg': 'Login Required', 'status_code': 401}
-            return login_required_error()
-    return wrapper
 
 
 class Session:
@@ -63,7 +47,7 @@ class Response:
 
 
 urls = {
-    'login': login,
+    'login': do_login,
     'register': register,
     'show_profile': show_profile,
 }

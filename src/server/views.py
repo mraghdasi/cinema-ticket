@@ -2,11 +2,23 @@ from datetime import datetime, date
 from hmac import compare_digest
 
 from src.server.models.user import User
-from src.server.server import login_required
 from src.utils.custom_exceptions import DBError
 
 
-def login(request):
+def login_required(func):
+    def wrapper(request):
+        if request.session.user:
+            return func(request)
+        else:
+            def login_required_error():
+                return {'msg': 'Login Required', 'status_code': 401}
+
+            return login_required_error()
+
+    return wrapper
+
+
+def do_login(request):
     payload = request.payload
     try:
         user = User.objects.read(f'username="{payload["username"]}"')
