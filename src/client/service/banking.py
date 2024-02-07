@@ -18,4 +18,4 @@ def main(user_info):
 
         # 4 or card op
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
