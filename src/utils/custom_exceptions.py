@@ -84,6 +84,15 @@ class RateNotBetweenZeroAndFive(Exception):
         super().__init__('Rate Must Be An Integer between Zero And Five')
 
 
+class CardOpAmountValueError(Exception):
+    """
+        Rate Not Between Zero And Five Exception
+    """
+
+    def __init__(self):
+        super().__init__('Please Enter Numeric Value Without Any Decimal Portions!')
+
+
 class ReadFromDataBaseError(Exception):
     """
         Read From Data Base Error Exception
@@ -113,7 +122,8 @@ def exception_log():
                 return func(*args, **kwargs)
             except Exception as e:
                 logging.basicConfig(filename='../logs/error-logs.txt', level=logging.ERROR)
-                logging.error(f" Exception in {func.__name__} : {str(e)} | DateTime : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                logging.error(
+                    f" Exception in {func.__name__} : {str(e)} | DateTime : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
         return wrapper
 
