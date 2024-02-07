@@ -93,9 +93,9 @@ class CardOpAmountValueError(Exception):
         super().__init__('Please Enter Numeric Value Without Any Decimal Portions!')
 
 
-class ReadFromDataBaseError(Exception):
+class DBError(Exception):
     """
-        Read From Data Base Error Exception
+        DB Error Exception
     """
 
     def __init__(self):

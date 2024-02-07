@@ -4,6 +4,8 @@ import mysql.connector as mysql_db
 from dotenv import load_dotenv
 
 # Load the .env file
+from src.utils.custom_exceptions import DBError
+
 load_dotenv()
 
 
@@ -74,10 +76,8 @@ class DatabaseManager:
         try:
             self.db_connector.cursor.execute(query)
             self.db_connector.connection.commit()
-            return True
         except Exception as e:
-            print(e)
-            return False
+            raise DBError()
 
     def execute_commit_query_with_value(self, query: str, values: tuple):
         """
