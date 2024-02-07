@@ -1,19 +1,19 @@
 import os
 
+
+# incoming : package and subscription details
+# outgoing : banking process and updating user
+
 def main(user_info):
+    # package = bronze , silver , gold
 
-        
-        # package = bronze , silver , gold
-        
-        # if package == one of the packages
-        
-        # payment stuff and changes in db (should use othere modules and db)
-        
-        # returns user_info
+    # if package == one of the packages
 
+    # payment stuff and changes in db (should use other modules and db)
 
+    # returns user_info
 
-    #===========================Please Check my Code==========================
+    # ===========================Please Check my Code==========================
 
     # check buy_ticket.py and card_registration.py
 
@@ -42,6 +42,7 @@ def main(user_info):
         break
 
     return user_info
+
 
 user_info = {'name': 'John', 'email': 'john@example.com'}
 main(user_info)

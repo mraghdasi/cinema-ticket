@@ -3,6 +3,9 @@ import json
 from src.utils.utils import clear_terminal, hash_string
 
 
+# outgoing data : username and password to the User Table in DB
+
+
 # !
 # !
 # !

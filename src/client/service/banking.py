@@ -1,5 +1,7 @@
 import os
 
+# outgoing : urls
+
 def main(user_info):
     while True:
         print('please choose your banking op')
@@ -19,3 +21,4 @@ def main(user_info):
         # 4 or card op
 
 if __name__ == '__main__':
+    main('m')

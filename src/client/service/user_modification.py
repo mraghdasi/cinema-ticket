@@ -3,6 +3,10 @@ import os
 from src.server.models.user import User
 
 
+# incoming : account info
+# outgoing : updates on account
+
+
 def main(user_info):
     user_id = 1
     while True:

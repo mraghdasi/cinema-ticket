@@ -1,9 +1,10 @@
 def main(user_info):
     card_list = []
+    # outgoing : creat the card in db
 
-        # card registration stuff
+    # card registration stuff
 
-        # returns user info
+    # returns user info
 
     # ========================= Please Check The Code ======================
     # for quiting the program in this file use KeyboardInterruptError
@@ -14,6 +15,7 @@ def main(user_info):
     # (check registration.py for my approach)
 
     # the program should close if everything runs correct
+
     while True:
         print('fill the fields')
         card_number = input("Enter card number (16 digits): ")
@@ -46,5 +48,7 @@ def main(user_info):
         print(f"The card {card_number} has been successfully registered.")
         print(f"The card information: {card_info}")
         print(f"List of registered cards: {card_list}")
+
+
 if __name__ == '__main__':
     main(user_info=0)
