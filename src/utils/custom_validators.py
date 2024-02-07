@@ -170,5 +170,11 @@ class Validator:
             raise Exception(f'Value Must Be Greater Than {max}')
 
     @staticmethod
-    def deposit_amount_validator(deposit_amount: str):
+    def card_op_amount_validator(deposit_amount: str):
+        try:
+            int(deposit_amount)
+        except ValueError:
+            raise custom_exceptions.CardOpAmountValueError()
+
         return True
+
