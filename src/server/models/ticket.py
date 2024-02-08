@@ -8,7 +8,7 @@ class Ticket:
     cinema_sans_id: int
     user_id: int
     sit_number: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

@@ -9,7 +9,7 @@ class Package:
     title: str
     cash_back: int
     price: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

@@ -91,10 +91,8 @@ class DatabaseManager:
         try:
             self.db_connector.cursor.execute(query, values)
             self.db_connector.connection.commit()
-            return True
         except Exception as e:
-            print(e)
-            return False
+            raise DBError()
 
     def initialize_database(self):
         """
@@ -186,6 +184,7 @@ class DatabaseManager:
         query = '''
                     CREATE TABLE IF NOT EXISTS cinema_sans (
                         id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                        premiere_date DATE,
                         start_time TIME,
                         end_time TIME,
                         film_id INT,

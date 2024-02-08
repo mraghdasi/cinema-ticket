@@ -10,7 +10,7 @@ class Subscription:
     user_id: int
     package_id: int
     expire_at: datetime
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

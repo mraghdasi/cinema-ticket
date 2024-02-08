@@ -7,7 +7,7 @@ class Hall:
     """
     title: str
     capacity: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

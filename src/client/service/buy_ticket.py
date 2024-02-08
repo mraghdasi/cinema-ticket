@@ -1,196 +1,211 @@
-import os
+import json
 from datetime import datetime
+
 from prettytable import PrettyTable
+
+# incoming data : available movies and show_times , list of bought tickets (if available) , wallet info
+# outgoing data : a ticket that user bought (the ticket itself , wallet updating , lowering the capacity for that sans,
+# if wallet doesn't have enough money it should be charged , checking for birthday discount , cash back check)
+from src.utils.utils import clear_terminal
 
 
 # ======================```============install  PrettyTable library ============```=============
 
-# incoming data : available movies and showtimes , list of bought tickets (if available) , wallet info
-# outgoing data : a ticket that user bought (the ticket itself , wallet updating , lowering the capacity for that sans,
-# if wallet doesn't have enough money it should be charged , checking for birthday discount , cash back check)
 
-def cancel_ticket():
+def cancel_ticket(client):
     # movie date and movie time please
-    ticket_list = [
-        {
-            'ticket_id': 1,
-            'movie': 'Batman',
-            'quantity': 2,
-            'price': 22,
-            'total_price': 44,
-            'purchase_date': '2021-09-04',
-            'time': '19:00'
-        },
-        {
-            'ticket_id': 2,
-            'movie': 'Spiderman',
-            'quantity': 3,
-            'price': 36,
-            'total_price': 108,
-            'purchase_date': '2021-09-05',
-            'time': '14:00'
-        },
-        {
-            'ticket_id': 3,
-            'movie': 'Batman',
-            'quantity': 1,
-            'price': 11,
-            'total_price': 11,
-            'purchase_date': '2025-08-31',
-            'time': '15:00'
-        },
-        {
-            'ticket_id': 4,
-            'movie': 'Spiderman',
-            'quantity': 2,
-            'price': 24,
-            'total_price': 48,
-            'purchase_date': '2025-08-30',
-            'time': '19:00'
-        },
-        {
-            'ticket_id': 5,
-            'movie': 'Spiderman',
-            'quantity': 1,
-            'price': 12,
-            'total_price': 12,
-            'purchase_date': '2021-08-29',
-            'time': '21:00'
-        }
-    ]
+
+    request_data = json.dumps({
+        'payload': {},
+        'url': 'check_tickets'
+    })
+    client.send(request_data.encode('utf-8'))
+    response = client.recv(5 * 1024).decode('utf-8')
+    response = json.loads(response)
+    if response['status_code'] == 200:
+        ticket_list = response['payload']
+    else:
+        print(response['msg'])
+        return False
+
+    # ticket_list = [
+    #     {
+    #         'ticket_id': 1,
+    #         'movie': 'Batman',
+    #         'quantity': 2,
+    #         'price': 22,
+    #         'total_price': 44,
+    #         'purchase_date': '2021-09-04',
+    #         'time': '19:00'
+    #     },
+    #     {
+    #         'ticket_id': 2,
+    #         'movie': 'Spiderman',
+    #         'quantity': 3,
+    #         'price': 36,
+    #         'total_price': 108,
+    #         'purchase_date': '2021-09-05',
+    #         'time': '14:00'
+    #     },
+    #     {
+    #         'ticket_id': 3,
+    #         'movie': 'Batman',
+    #         'quantity': 1,
+    #         'price': 11,
+    #         'total_price': 11,
+    #         'purchase_date': '2025-08-31',
+    #         'time': '15:00'
+    #     },
+    #     {
+    #         'ticket_id': 4,
+    #         'movie': 'Spiderman',
+    #         'quantity': 2,
+    #         'price': 24,
+    #         'total_price': 48,
+    #         'purchase_date': '2025-08-30',
+    #         'time': '19:00'
+    #     },
+    #     {
+    #         'ticket_id': 5,
+    #         'movie': 'Spiderman',
+    #         'quantity': 1,
+    #         'price': 12,
+    #         'total_price': 12,
+    #         'purchase_date': '2021-08-29',
+    #         'time': '21:00'
+    #     }
+    # ]
 
     # Sort the ticket_list by purchase date and time
-    ticket_list = sorted(ticket_list,
-                         key=lambda x: datetime.strptime(x['purchase_date'] + ' ' + x['time'], '%Y-%m-%d %H:%M'))
+    ticket_list = sorted(ticket_list, key=lambda x: x['id'], reverse=True)
 
     # Create a new table with the desired columns
-    table = PrettyTable(['Ticket ID', 'Movie', 'Quantity', 'Price', 'Total Price', 'Purchase Date', 'Time'])
+    table = PrettyTable(['Id', 'Seat', 'Ticket Data', 'Movie', 'Price'])
 
     # Add each ticket's data as a row to the table
     for ticket in ticket_list:
-        table.add_row([ticket['ticket_id'], ticket['movie'], ticket['quantity'], ticket['price'], ticket['total_price'],
-                       ticket['purchase_date'], ticket['time']])
+        table.add_row(
+            [ticket['id'], ticket['sit_number'], f"{ticket['start_time']} {ticket['end_time']}", ticket['title'],
+             ticket['price']])
 
-    # Print the table and ask for a ticket_id to cancel
-    print(table)
-    # Error handling
-    # And a quit option
-    ticket_id = int(input("Enter the ID of the ticket you want to cancel: "))
-
-    # Find the selected ticket by ticket_id
-    selected_ticket = None
-    for ticket in ticket_list:
-        if ticket['ticket_id'] == ticket_id:
-            selected_ticket = ticket
-            break
-
-    # Check if the selected ticket is found
-    if selected_ticket is not None:
-        # Find the time difference for the selected ticket
-        ticket_time = datetime.strptime(selected_ticket['purchase_date'] + ' ' + selected_ticket['time'],
-                                        '%Y-%m-%d %H:%M')
-        system_time = datetime.now()
-        time_diff_hours = (ticket_time - system_time).total_seconds() / 3600
-
-        # Calculate refund amount based on time difference
-        if time_diff_hours > 1:
-            refund_amount = selected_ticket['price'] * selected_ticket['quantity']
-            print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
-            print(f'{refund_amount} can pass to wallet_management.py')
-            # 0 <= time_diff_hours <= 1 , no need for and XD
-        elif time_diff_hours >= 0 and time_diff_hours <= 1:
-            refund_amount = selected_ticket['price'] * selected_ticket['quantity'] * 0.82
-            print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
-            print(f'{refund_amount} can pass to wallet_management.py')
-        else:
-            refund_amount = 0
-            print("Sorry, ticket has been expired")
-
-        # add_to_wallet(refund_amount)
-    else:
-        print("Sorry, the ticket with the given ID could not be found.")
-
-    return refund_amount
-
-
-def main(user_info, movie=None):
-    # Create dictionary to map day codes to numeric values
-    day_codes = {'Sat': 1, 'Sun': 2, 'Mon': 3, 'Tue': 4, 'Wed': 5, 'Thu': 6, 'Fri': 7}
+    clear_terminal()
     while True:
-        print("Please choose your action:")
-        print("1. Buy")
-        print("2. Cancel ticket")
-        print("q. Quit")
+        # Print the table and ask for a ticket_id to cancel
+        print(table)
+        # Error handling
+        # And a quit option
+        ticket_id = input("Enter the ID of the ticket you want to cancel: ").strip().lower()
+
+        if ticket_id == 'quit':
+            return True
+
+        # Find the selected ticket by ticket_id
+        selected_ticket = None
+        for ticket in ticket_list:
+            if str(ticket['id']) == ticket_id:
+                selected_ticket = ticket
+                break
+        # Check if the selected ticket is found
+        if selected_ticket:
+            # Find the time difference for the selected ticket
+            ticket_time = datetime.strptime(selected_ticket['premiere_date'], '%Y-%m-%d')
+            system_time = datetime.now()
+            time_diff_hours = (ticket_time - system_time).total_seconds() / 3600
+
+            # Calculate refund amount based on time difference
+            if time_diff_hours > 1:
+                refund_amount = selected_ticket['price']
+                print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
+                print(f'{refund_amount} can pass to wallet_management.py')
+                # 0 <= time_diff_hours <= 1 , no need for and XD
+            elif 0 <= time_diff_hours <= 1:
+                refund_amount = int(selected_ticket['price'] * 0.82)
+                print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
+                print(f'{refund_amount} can pass to wallet_management.py')
+            else:
+                refund_amount = 0
+                print("Sorry, ticket has been expired")
+
+            request_data = json.dumps({
+                'payload': {'ticket_id': selected_ticket['id']},
+                'url': 'cancel_ticket'
+            })
+            client.send(request_data.encode('utf-8'))
+            response = client.recv(5 * 1024).decode('utf-8')
+            response = json.loads(response)
+            if response['status_code'] == 200:
+                clear_terminal()
+                # add_to_wallet(refund_amount)
+                break
+            else:
+                clear_terminal()
+                print(response['msg'])
+        else:
+            clear_terminal()
+            print("Sorry, the ticket with the given ID could not be found.")
+
+
+def main(client, movie=None):
+    # Create dictionary to map day codes to numeric values
+    while True:
+        print("Please choose your action:\n1. Buy Ticket\n2. Cancel ticket\n3. Quit")
         # Get user input for action choice
-        action_choice = input("Enter your choice (1 or 2 or q): ").strip()
-        if action_choice == '2':
-            cancel_ticket()
-            print("Exiting the program...")
+        action_choice = input("Enter your choice (1 or 2 or 3): ").strip().lower()
+        if action_choice == '3' or action_choice == 'quit':
+            clear_terminal()
             break
-        elif action_choice != '1' and action_choice != 'q':
-            print("Invalid input. Please enter a valid choice.")
-            continue
+        elif action_choice == '1' and action_choice == 'buy ticket':
+            clear_terminal()
+            pass
+        elif action_choice == '2' or action_choice == 'cancel ticket':
+            clear_terminal()
+            if cancel_ticket(client):
+                clear_terminal()
+                break
+            else:
+                clear_terminal()
+                continue
 
         print("Please choose your movie")
         # Available movies
-        movies = [
-            {
-                'name': 'Spiderman',
-                'min_age': 12,
-                'rating': 8.8,
-                'length': 148,
-                'sans': [
-                    {'day': 'Sat', 'start_time': '14:00', 'end_time': '16:00'},
-                    {'day': 'Sat', 'start_time': '18:00', 'end_time': '20:00'},
-                    {'day': 'Wed', 'start_time': '21:00', 'end_time': '23:00'},
-                    {'day': 'Wed', 'start_time': '19:00', 'end_time': '20:00'},
-                    {'day': 'Thu', 'start_time': '14:00', 'end_time': '16:00'},
-                    {'day': 'Thu', 'start_time': '21:00', 'end_time': '23:00'}
-                ],
-                'comments number': 1050,
-                'ticket price': 12
-            },
-            {
-                'name': 'Batman',
-                'min_age': 13,
-                'rating': 9.0,
-                'length': 152,
-                'sans': [
-                    {'day': 'Fri', 'start_time': '15:00', 'end_time': '17:00'},
-                    {'day': 'Sat', 'start_time': '12:00', 'end_time': '14:00'},
-                    {'day': 'Sun', 'start_time': '18:00', 'end_time': '20:00'}
-                ],
-                'comments number': 876,
-                'ticket price': 11
-            }
-        ]
+        request_data = json.dumps({
+            'payload': {},
+            'url': 'get_movies'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            movies = response['payload']
+            movies = [movie for movie in movies if len(movie['sans']) != 0]
+
+        else:
+            print(response['msg'])
+            continue
 
         movies_dict = {}
 
         for movie in movies:
-            name = movie['name']
+            name = movie['title']
             sans = movie['sans']
             if name not in movies_dict:
                 movies_dict[name] = {'Sat': [], 'Sun': [], 'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': []}
             for san in sans:
-                day = san['day'][:3]
-                start_time = san['start_time']
-                end_time = san['end_time']
-                time_range = f"{start_time} to {end_time} (price {movie['ticket price']} Toman)"
-                movies_dict[name][day] = movies_dict[name].get(day, []) + [time_range]
+                day = san['premiere_date'][:3]
+                movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
         # Print available movies
         print("List of available movies:")
         for i, m in enumerate(movies, start=1):
-            print(f"{i}. {m['name']}")
-        print("q. Quit")
+            print(f"{i}. {m['title']}")
+        print(f"{len(movies) + 1}. Quit")
 
         # Get user input for movie choice
         movie_choice = input("Enter movie name or number: ").strip().lower()
         if movie_choice == 'q':
             print('Exiting the program...')
             break
-        elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['name'].lower() for movie in
+        elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
                                                                                 movies]:
             print("Invalid movie. Please try again.")
             continue
@@ -208,62 +223,104 @@ def main(user_info, movie=None):
 
         else:
             for m in movies:
-                if m['name'].lower() == movie_choice:
+                if m['title'].lower() == movie_choice:
                     movie = m
                     break
 
-        showtimes = movies_dict[movie['name']]
-
-        # Print available showtimes
-        print(f"\n{movie['name']}:")
+        show_times = movies_dict[movie['title']]
+        # Print available show_times
+        print(f"\n{movie['title']}:")
         while True:
-            table = PrettyTable(['Day', 'Showtimes'])
-            for day, times in showtimes.items():
-                if not times:
-                    continue
-                for i, t in enumerate(times, start=1):
-                    table.add_row([f"{day_codes[day]}. {day}", f"{i}. {t}"])
+            table = PrettyTable(['Id', 'Day', 'Show Times'])
+            for day, times in show_times.items():
+                for t in times:
+                    table.add_row(
+                        [f"{t['id']}", f"{day}", f"{t['start_time']} to {t['end_time']} (price {t['price']} Toman)"])
             print(table)
 
             # Get user input for showtime choice
-            selected_time = input("Enter day and time number (e.g. 1-2): ").strip().lower()
+            selected_time = input("Enter id number: ").strip().lower()
 
             if selected_time == 'q':
                 break
-
-            # Validate user input for showtime choice
             try:
-                day_number, time_number = map(int, selected_time.split('-'))
-            except ValueError:
-                print("Invalid input. Please enter day and time number like '1-2'.")
+                selected_sans = [sans for sans in movie['sans'] if selected_time == str(sans['id'])][0]
+            except IndexError:
+                clear_terminal()
+                print('Wrong id entered!')
                 continue
 
-            if not 1 <= day_number <= len(list(showtimes.keys())) or not 1 <= time_number <= len(
-                    showtimes[list(showtimes.keys())[day_number - 1]]):
-                print("Invalid input. Please enter a valid day and time number.")
+            request_data = json.dumps({
+                'payload': {
+                    'hall_id': selected_sans['hall_id'],
+                    'sans_id': selected_sans['id'],
+                },
+                'url': 'check_seats'
+            })
+            client.send(request_data.encode('utf-8'))
+            response = client.recv(5 * 1024).decode('utf-8')
+            response = json.loads(response)
+            if response['status_code'] == 200:
+                payload = response['payload']
+            else:
+                print(response['msg'])
                 continue
+            while True:
+                seats = [[str((d * 10) + (y + 1)).zfill(2) for y in range(10)] for d in
+                         range(payload['hall']['capacity'] // 10)]
+                reserved_tickets_seats = [ticket['sit_number'] for ticket in payload['sans_tickets']]
+                for seat_number in reserved_tickets_seats:
+                    seats[(seat_number // 10)][(seat_number % 10) - 1] = '**'
+                for seat in seats:
+                    print(seat)
 
-            day = list(showtimes.keys())[day_number - 1]
-            selected_time = showtimes[day][time_number - 1]
+                seat_to_reserve_input = input('Enter the seat you want: ')
 
-            print("Selected time: {0} - {1}".format(day, selected_time))
+                # Validate Not Reserved
+                reserved_seats = map(str, reserved_tickets_seats)
+                if seat_to_reserve_input in reserved_seats:
+                    clear_terminal()
+                    print('This seat has been reserved')
+                    continue
+                break
 
+            clear_terminal()
             # Print payment information
             while True:
                 print("\n============================")
-                print(f"Movie Name: {movie['name']}")
-                print(f"{day} {selected_time}")
-                print(f"Price: {movie['ticket price']} Toman")
+                print(f"Movie Name: {movie['title']}")
+                print(f"{selected_sans['premiere_date']} {selected_sans['start_time']} to {selected_sans['end_time']}")
+                print(f"Price: {selected_sans['price']} Toman")
                 print("\n1. Confirm Payment")
                 print("2. Go back")
-                print("q. Quit")
+                print("3. Quit")
 
                 # Get user input for payment choice
-                payment_choice = input("Enter your choice (1, 2, or q): ").strip()
-
-                if payment_choice == '1':
+                payment_choice = input("Enter your choice: ").strip().lower()
+                if payment_choice == '3' or payment_choice == 'quit':
+                    print('Exiting the program...')
+                    return 'Quited'
+                elif payment_choice == '1' or payment_choice == 'confirm payment':
+                    clear_terminal()
                     print("Payment successful. Thank you for your purchase!")
-                    return user_info
+                    request_data = json.dumps({
+                        'payload': {
+                            'sans_id': selected_sans['id'],
+                            'sit': seat_to_reserve_input
+                        },
+                        'url': 'add_ticket'
+                    })
+                    client.send(request_data.encode('utf-8'))
+                    response = client.recv(5 * 1024).decode('utf-8')
+                    response = json.loads(response)
+                    ticket = response['payload']
+                    if response['status_code'] == 200:
+                        print(
+                            f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']} {selected_sans['start_time']} to {selected_sans['end_time']}\n Seat Number: {ticket['sit_number']}")
+                        return 'Payed'
+                    else:
+                        print(response['msg'])
+                        continue
 
                 elif payment_choice == '2':
                     break
@@ -275,16 +332,10 @@ def main(user_info, movie=None):
 
                     # opt1 : use try except
                     # opt2 : use if elif else
-                elif payment_choice == 'q':
-                    print('Exiting the program...')
-                    return user_info
 
                 else:
                     print("Invalid input. Please enter a valid choice.")
                     continue
-
-            if payment_choice == '1' or payment_choice == 'q':
-                break
 
 
 # -------------------
@@ -309,6 +360,6 @@ def main(user_info, movie=None):
 
 # -------------------
 
-#sansegit pull origin m
+# sansegit pull origin m
 if __name__ == '__main__':
     main('m', 'm')
