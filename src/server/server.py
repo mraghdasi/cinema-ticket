@@ -4,11 +4,12 @@ import threading
 
 from dotenv import load_dotenv
 
-from src.server.views import do_login, register, show_profile
+from src.server.views import do_login, register, get_movies, add_ticket, check_seats, check_tickets, cancel_ticket
 
 load_dotenv()
 
 
+# Classes
 class Session:
     """
     A Class To Connect Socket Connection and User (Authentication)
@@ -28,7 +29,7 @@ class Request:
     data: str
     session: object
 
-    def __init__(self, data: str, session: object):
+    def __init__(self, data: bytes, session: object):
         self.session = session
 
         data = json.loads(data.decode('utf-8'))
@@ -40,16 +41,21 @@ class Response:
     """
     A Class To Handle Responses From Server Side to Client Side
     """
-    payload: str
+    payload: bytes
 
-    def __init__(self, payload: str):
+    def __init__(self, payload: dict):
         self.payload = json.dumps(payload).encode('utf-8')
 
 
+# Urls
 urls = {
     'login': do_login,
     'register': register,
-    'show_profile': show_profile,
+    'get_movies': get_movies,
+    'add_ticket': add_ticket,
+    'check_seats': check_seats,
+    'check_tickets': check_tickets,
+    'cancel_ticket': cancel_ticket,
 }
 
 HOST = '127.0.0.1'
@@ -60,18 +66,18 @@ server.listen(5)
 print(f'[*] Server is listening on {HOST}:{PORT}')
 
 
+# User Thread Handling
 def handle_client(client_socket):
     session = Session(client_socket)
     try:
         while True:
-            command = session.connection.recv(1024)
+            command = session.connection.recv(5 * 1024)
             if command:
                 # Convert Received Data To Request Instance
                 request = Request(command, session)
 
                 # Send Request To View Function
                 response = Response(urls[request.url](request))
-
                 # Send Response To Client Connection
                 session.connection.send(response.payload)
             else:
@@ -86,6 +92,7 @@ def handle_client(client_socket):
         client_socket.close()
 
 
+# Add New Thread Per User
 while True:
     client_socket, addr = server.accept()
     client_thread = threading.Thread(target=handle_client, args=(client_socket,))

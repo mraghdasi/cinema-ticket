@@ -1,5 +1,11 @@
+from datetime import time
+
+from src.server.models.film import Film
+from src.server.models.package import Package
 from src.server.models.bank_account import UserBankAccount
 from src.server.models.cinema_sans import CinemaSans
+from src.server.models.hall import Hall
+from src.server.models.subscription import Subscription
 from src.server.models.user import User
 from src.utils.utils import hash_string
 
@@ -45,17 +51,17 @@ from src.utils.utils import hash_string
 # from src.server.models.film import Film
 # from src.server.models.hall import Hall
 #
-# film1 = Film.objects.create('Film2', 20)
-# hall1 = Hall.objects.create('Hall2', 100)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('12:12:00', '16:00:00', film1.id, hall1.id, 4000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('16:12:00', '18:00:00', film1.id, hall1.id, 1000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
-# CinemaSans.objects.create('12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+film1 = Film.objects.create('Film2', 20)
+hall1 = Hall.objects.create('Hall2', 100)
+CinemaSans.objects.create('2024-03-02', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-03', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-04', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-05', '12:12:00', '16:00:00', film1.id, hall1.id, 4000)
+CinemaSans.objects.create('2024-03-06', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-07', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-08', '16:12:00', '18:00:00', film1.id, hall1.id, 1000)
+CinemaSans.objects.create('2024-03-09', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
+CinemaSans.objects.create('2024-03-10', '12:12:00', '14:00:00', film1.id, hall1.id, 5000)
 
 # q = """
 # SELECT cs.id     ,

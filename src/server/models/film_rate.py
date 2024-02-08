@@ -8,7 +8,7 @@ class FilmRate:
     film_id: int
     rate: int
     user_id: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

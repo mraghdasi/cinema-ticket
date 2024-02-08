@@ -10,7 +10,7 @@ from src.utils.utils import clear_terminal
 
 # outgoing : just the url for the next file
 
-def main():
+def main(client):
     while True:
         print("What do you want to do today ?\n")
 
@@ -22,7 +22,7 @@ def main():
             sys.exit('*\n**\n***\nHave A Nice Day :)\n***\n**\n*')
         elif user_input == '1' or user_input == 'buy tickets':
             clear_terminal()
-            buy_ticket.main()
+            buy_ticket.main(client)
         elif user_input == '2' or user_input == 'buy a subscription':
             clear_terminal()
             buy_subscription.main()

@@ -14,7 +14,7 @@ class UserBankAccount:
     amount: int
     minimum_amount: int
     expire_date: date
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

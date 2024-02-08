@@ -19,7 +19,7 @@ class User:
     balance: int
     role: int
     is_logged_in: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

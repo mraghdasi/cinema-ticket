@@ -23,10 +23,10 @@ while True:
         while True:
             request_data = login.main()
             client.send(request_data.encode('utf-8'))
-            response = json.loads(client.recv(1024).decode('utf-8'))
+            response = json.loads(client.recv(5 * 1024).decode('utf-8'))
             if response['status_code'] == 200:
                 print(f"\nWelcome <{response['user']['username']}> :)\n")
-                main_menu.main()
+                main_menu.main(client)
             else:
                 print(response['msg'])
 
@@ -35,11 +35,11 @@ while True:
         while True:
             request_data = register.main()
             client.send(request_data.encode('utf-8'))
-            response = json.loads(client.recv(1024).decode('utf-8'))
+            response = json.loads(client.recv(5 * 1024).decode('utf-8'))
 
             if response['status_code'] == 200:
                 print(f"\nWelcome to our app <{response['user']['username']}> :)\n")
-                main_menu.main()
+                main_menu.main(client)
             else:
                 print(response['msg'])
     else:

@@ -9,7 +9,7 @@ class Comment:
     user_id: int
     created_at: datetime
     reply_to: int
-    objects: object
+    objects: Manager
 
     @classmethod
     def set_manager(cls):

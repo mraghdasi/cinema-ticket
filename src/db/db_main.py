@@ -184,6 +184,7 @@ class DatabaseManager:
         query = '''
                     CREATE TABLE IF NOT EXISTS cinema_sans (
                         id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+                        premiere_date DATE,
                         start_time TIME,
                         end_time TIME,
                         film_id INT,

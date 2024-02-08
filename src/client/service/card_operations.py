@@ -1,9 +1,9 @@
 import sys
 
-import src.utils.custom_validators as Validators
 import src.utils.custom_exceptions as custom_exceptions
-
+import src.utils.custom_validators as Validators
 from src.utils.utils import clear_terminal
+
 
 # incoming : card info
 # outgoing : updates

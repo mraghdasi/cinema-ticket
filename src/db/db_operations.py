@@ -113,7 +113,7 @@ class DBOperation:
         query = f'DELETE FROM {table_name}'
         if condition is not None:
             query += f' WHERE {condition}'
-        return db_manager.execute_commit_query(query)
+        db_manager.execute_commit_query(query)
 
     @staticmethod
     def query(entity: object, queries: str, fetch=False):
