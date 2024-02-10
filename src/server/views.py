@@ -219,7 +219,8 @@ def check_db_for_transfer(request):
     destination_card = UserBankAccount.objects.read(f'card_number={payload["destination_card"]}')
     if destination_card:
         print(vars(destination_card[0]).items())
-        return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in vars(destination_card[0]).items()},
+        return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in
+                                         vars(destination_card[0]).items()},
                 'status_code': 200}
     else:
         return {'msg': 'Destination Card Is Not In Our DataBase', 'status_code': 400}
@@ -238,17 +239,19 @@ def do_transfer(request):
     payload = request.payload
     try:
         try:
-            selected_card_op = UserBankAccount.objects.update(f'amount={payload["selected_card"]["amount"]}',
+            selected_card_op = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
                                                               f'card_number={payload["selected_card"]["card_number"]}')
-            destination_card_op = UserBankAccount.objects.update(f'amount={payload["destination_card"]["amount"]}',
+            destination_card_op = UserBankAccount.objects.update({'amount': f'{payload["destination_card"]["amount"]}'},
                                                                  f'card_number={payload["destination_card"]["card_number"]}')
 
             if selected_card_op and destination_card_op:
                 return {'status_code': 200}
             else:
                 return {'msg': 'something went wrong', 'status_code': 500}
+
         except DBError:
             return {'msg': 'Error in DataBase', 'status_code': 400}
+
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -257,7 +260,7 @@ def do_card_op(request):
     payload = request.payload
     try:
         try:
-            selected_card_op = UserBankAccount.objects.update(f'amount={payload["selected_card"]["amount"]}',
+            selected_card_op = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
                                                               f'card_number={payload["selected_card"]["card_number"]}')
             if selected_card_op:
                 return {'status_code': 200}

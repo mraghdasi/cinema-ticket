@@ -31,6 +31,9 @@ def op_manager(client, op, selected_card, card_creds):
                         response = json.loads(response)
                         if response['status_code'] == 200:
                             destination_card = response['destination_card_obj']
+                            confirm = input(f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
+                            if confirm == 'n':
+                                return confirm
                         else:
                             print(response['msg'])
                             break
@@ -109,19 +112,19 @@ def op_manager(client, op, selected_card, card_creds):
                         print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
                         break
                     card_creds[selected_card]['amount'] -= int(op_amount)
-                    card_creds[destination_card]['amount'] += int(op_amount)
+                    destination_card['amount'] += int(op_amount)
 
                 clear_terminal()
 
                 if op == 'transfer':
                     request_data = json.dumps({
-                        'payload': {'selected_card': selected_card,
+                        'payload': {'selected_card': card_creds[selected_card],
                                     'destination_card': destination_card},
                         'url': 'do_transfer'
                     })
                 else:
                     request_data = json.dumps({
-                        'payload': {'selected_card': selected_card},
+                        'payload': {'selected_card': card_creds[selected_card]},
                         'url': 'do_card_op'
                     })
                 client.send(request_data.encode('utf-8'))
@@ -139,7 +142,7 @@ def op_manager(client, op, selected_card, card_creds):
             your current balance: {card_creds[selected_card]['amount']}""")
                 else:
                     print(
-                        f"""\n{op_amount} is {op}ed to {destination_card}\n
+                        f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
             your current balance: {card_creds[selected_card]['amount']}""")
 
                 break
@@ -202,7 +205,8 @@ def main(client, op):
             clear_terminal()
             print(f'\n{user_input} is not one of the menu options')
 
-        op_manager(client, op, selected_card, card_creds)
+        if op_manager(client, op, selected_card, card_creds) == 'n':
+            continue
 
         break
 
