@@ -126,6 +126,9 @@ def cancel_ticket(client):
                 refund_amount = 0
                 print("Sorry, ticket has been expired")
 
+            # $$$$$$$ Foroutan $$$$$$$
+            # Payment Method
+
             request_data = json.dumps({
                 'payload': {'ticket_id': selected_ticket['id']},
                 'url': 'cancel_ticket'
