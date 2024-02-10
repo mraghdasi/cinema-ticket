@@ -228,6 +228,7 @@ def check_db_for_transfer(request):
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
+
 def do_transfer(request):
     payload = request.payload
     try:
@@ -356,6 +357,7 @@ def add_comment_reply(request):
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
+
 def user_modification(request):
     payload = request.payload
     try:
@@ -369,5 +371,69 @@ def user_modification(request):
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
 
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def add_rate(request):
+    payload = request.payload
+    try:
+        rate = FilmRate.objects.create(**{'rate': payload['rate'], 'film_id': payload['movie_id'],
+                                          'user_id': request.session.user.id})
+        return {'rate': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                         vars(rate).items()},
+                'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def get_user_rates(request):
+    payload = request.payload
+    try:
+        rates = FilmRate.objects.read(f"user_id={request.session.user.id} AND film_id={payload['movie_id']}")
+        return {'rates': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                           vars(rate).items()} for rate in rates],
+                'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def delete_rate(request):
+    payload = request.payload
+    try:
+        FilmRate.objects.delete(f"user_id={request.session.user.id} AND id={payload['rate_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def update_rate(request):
+    payload = request.payload
+    try:
+        FilmRate.objects.update({'rate': payload['new_rate']},
+                                f"user_id={request.session.user.id} AND id={payload['rate_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def get_movie_rates(request):
+    payload = request.payload
+    try:
+        rates = FilmRate.objects.read(f"film_id={payload['id']}")
+        return {'rates': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                           vars(rate).items()} for rate in rates],
+                'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}

@@ -205,7 +205,7 @@ def main(client):
 
         # Get user input for movie choice
         movie_choice = input("Enter movie name or number: ").strip().lower()
-        if movie_choice == 'q':
+        if movie_choice == 'quit':
             print('Exiting the program...')
             break
         elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
@@ -246,7 +246,7 @@ def main(client):
             # Get user input for showtime choice
             selected_time = input("Enter id number: ").strip().lower()
 
-            if selected_time == 'q':
+            if selected_time == 'quit':
                 break
             try:
                 selected_sans = [sans for sans in movie['sans'] if selected_time == str(sans['id'])][0]

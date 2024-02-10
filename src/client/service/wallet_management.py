@@ -98,7 +98,7 @@ def main(user_info):
             else:
                 print('Balance:', card_info.get('balance', 0), 'Toman')
 
-        elif choice == '3' or choice.lower() == 'q':  # quit
+        elif choice == '3' or choice.lower() == 'quit':  # quit
             print('Goodbye!')
             break
 
