@@ -257,7 +257,7 @@ class DatabaseManager:
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (film_id) REFERENCES film(id),
                 FOREIGN KEY (user_id) REFERENCES user(id),            
-                FOREIGN KEY (reply_to) REFERENCES comment(id)            
+                FOREIGN KEY (reply_to) REFERENCES comment(id) ON DELETE CASCADE            
             );
         '''
         self.execute_commit_query(query)

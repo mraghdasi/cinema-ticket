@@ -71,6 +71,11 @@ urls = {
     'update_comment': update_comment,
     'add_comment_reply': add_comment_reply,
     'user_modification': user_modification,
+    'add_rate': add_rate,
+    'get_user_rates': get_user_rates,
+    'delete_rate': delete_rate,
+    'update_rate': update_rate,
+    'get_movie_rates': get_movie_rates,
 }
 
 

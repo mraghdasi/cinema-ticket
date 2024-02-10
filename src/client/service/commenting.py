@@ -29,7 +29,7 @@ def show_user_comments(client, movie):
             table.add_row([comment['id'], comment['description'][:15] + '...', comment['reply_to'] if comment['reply_to'] else None, comment['created_at']])
         print(table)
 
-        selected_comment = input('Enter Id of Comment: ')
+        selected_comment = input('Enter Id of Comment: ').strip().lower()
         if selected_comment in map(str, [comment['id'] for comment in comments]):
             return selected_comment
         elif selected_comment == 'quit':
@@ -42,8 +42,6 @@ def show_user_comments(client, movie):
 
 def main(client, movie):
     while True:
-        print("comments and id of comments")
-
         user_input = input(
             '\n1. Add comment\n2. Delete comment\n3. Update comment\n4. Reply to comment\n5. Quit\n\n:').strip().lower()
 
