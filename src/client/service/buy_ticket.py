@@ -148,7 +148,7 @@ def cancel_ticket(client):
             print("Sorry, the ticket with the given ID could not be found.")
 
 
-def main(client, movie=None):
+def main(client):
     # Create dictionary to map day codes to numeric values
     while True:
         print("Please choose your action:\n1. Buy Ticket\n2. Cancel ticket\n3. Quit")
@@ -229,6 +229,8 @@ def main(client, movie=None):
                 if m['title'].lower() == movie_choice:
                     movie = m
                     break
+            else:
+                continue
 
         show_times = movies_dict[movie['title']]
         # Print available show_times

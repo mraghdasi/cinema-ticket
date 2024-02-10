@@ -254,7 +254,7 @@ class DatabaseManager:
                 film_id INT,
                 user_id INT,
                 reply_to INT NULL,
-                created_at DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (film_id) REFERENCES film(id),
                 FOREIGN KEY (user_id) REFERENCES user(id),            
                 FOREIGN KEY (reply_to) REFERENCES comment(id)            
