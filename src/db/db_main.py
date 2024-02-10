@@ -68,7 +68,7 @@ class DatabaseManager:
 
     def execute_commit_query(self, query: str):
         """
-        Execute a SQL query on the connected database.
+        Execute & Commit a SQL query on the connected database.
 
         Parameters:
             query (str): The SQL query to be executed.
@@ -79,9 +79,33 @@ class DatabaseManager:
         except Exception as e:
             raise DBError()
 
-    def execute_commit_query_with_value(self, query: str, values: tuple):
+    def execute_query(self, query: str):
         """
         Execute a SQL query on the connected database.
+
+        Parameters:
+            query (str): The SQL query to be executed.
+        """
+        try:
+            self.db_connector.cursor.execute(query)
+        except Exception as e:
+            raise DBError()
+
+    def commit_changes(self):
+        """
+        Commit changes on the connected database.
+
+        Parameters:
+            query (str): The SQL query to be executed.
+        """
+        try:
+            self.db_connector.connection.commit()
+        except Exception as e:
+            raise DBError()
+
+    def execute_commit_query_with_value(self, query: str, values: tuple):
+        """
+        Execute & Commit a SQL query on the connected database.
 
         Params:
             query (str): The SQL query to be executed.

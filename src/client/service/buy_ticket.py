@@ -270,11 +270,19 @@ def main(client, movie=None):
                          range(payload['hall']['capacity'] // 10)]
                 reserved_tickets_seats = [ticket['sit_number'] for ticket in payload['sans_tickets']]
                 for seat_number in reserved_tickets_seats:
-                    seats[(seat_number // 10)][(seat_number % 10) - 1] = '**'
+                    seats[(seat_number // 10) if (seat_number % 10) != 0 else (seat_number // 10) - 1][
+                        (seat_number % 10) - 1] = '**'
                 for seat in seats:
                     print(seat)
 
                 seat_to_reserve_input = input('Enter the seat you want: ')
+
+                # Validate Valid Seat Number
+                if seat_to_reserve_input not in [seat.zfill(2) for seat in
+                                                 map(str, range(1, payload['hall']['capacity'] + 1))]:
+                    clear_terminal()
+                    print('This seat number is not valid')
+                    continue
 
                 # Validate Not Reserved
                 reserved_seats = map(str, reserved_tickets_seats)
@@ -285,7 +293,6 @@ def main(client, movie=None):
                 break
 
             clear_terminal()
-            # Print payment information
             while True:
                 print("\n============================")
                 print(f"Movie Name: {movie['title']}")
@@ -302,6 +309,8 @@ def main(client, movie=None):
                     return 'Quited'
                 elif payment_choice == '1' or payment_choice == 'confirm payment':
                     clear_terminal()
+                    # $$$$$$$ Foroutan $$$$$$$
+                    # Payment Method
                     print("Payment successful. Thank you for your purchase!")
                     request_data = json.dumps({
                         'payload': {
@@ -317,21 +326,51 @@ def main(client, movie=None):
                     if response['status_code'] == 200:
                         print(
                             f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']} {selected_sans['start_time']} to {selected_sans['end_time']}\n Seat Number: {ticket['sit_number']}")
-                        return 'Payed'
+
+                        # Check Subscription
+                        request_data = json.dumps({
+                            'payload': {},
+                            'url': 'check_subscription'
+                        })
+                        client.send(request_data.encode('utf-8'))
+                        response = client.recv(5 * 1024).decode('utf-8')
+                        response = json.loads(response)
+                        if response['status_code'] == 200:
+                            package = response['package']
+                            if package['title'] == 'Gold':
+                                cash_back_amount = selected_sans['price'] * 0.5
+                                print(f'Cash Back Amount: {cash_back_amount}')
+                                print('You Have A Free Cocktail!')
+                            elif package['title'] == 'Silver':
+                                request_data = json.dumps({
+                                    'payload': {},
+                                    'url': 'check_tickets'
+                                })
+                                client.send(request_data.encode('utf-8'))
+                                response = client.recv(5 * 1024).decode('utf-8')
+                                response = json.loads(response)
+                                if response['status_code'] == 200:
+                                    ticket_list = response['payload']
+                                    if len(ticket_list) < 3:
+                                        cash_back_amount = selected_sans['price'] * 0.2
+                                    else:
+                                        cash_back_amount = 0
+                                else:
+                                    print(response['msg'])
+                                    continue
+                                print(f'Cash Back Amount: {cash_back_amount}')
+                            else:
+                                pass
+                            return 'Payed'
+                        else:
+                            print(response['msg'])
+                            continue
                     else:
                         print(response['msg'])
                         continue
 
                 elif payment_choice == '2':
                     break
-                    # -----------
-
-                    # you didn't check for correct input here
-                    # first check for correct format (x-y)
-                    # second check if the indexing is right
-
-                    # opt1 : use try except
-                    # opt2 : use if elif else
 
                 else:
                     print("Invalid input. Please enter a valid choice.")

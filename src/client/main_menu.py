@@ -25,7 +25,7 @@ def main(client):
             buy_ticket.main(client)
         elif user_input == '2' or user_input == 'buy a subscription':
             clear_terminal()
-            buy_subscription.main()
+            buy_subscription.main(client)
         elif user_input == '3' or user_input == 'check available movies':
             clear_terminal()
             film_management.main()

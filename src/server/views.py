@@ -4,6 +4,8 @@ from hmac import compare_digest
 from src.server.models.cinema_sans import CinemaSans
 from src.server.models.film import Film
 from src.server.models.hall import Hall
+from src.server.models.package import Package
+from src.server.models.subscription import Subscription
 from src.server.models.ticket import Ticket
 from src.server.models.user import User
 from src.utils.custom_exceptions import DBError
@@ -143,6 +145,38 @@ def cancel_ticket(request):
     try:
         Ticket.objects.delete(f"id={payload['ticket_id']} AND user_id={request.session.user.id}")
         return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def buy_subscription(request):
+    payload = request.payload
+    try:
+        if len(Subscription.objects.read(
+                f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")) == 0:
+            package = Package.objects.read(f"title=\"{payload['user_package']}\"")[0]
+            subscription = Subscription.objects.create(request.session.user.id, package.id,
+                                                       (datetime.now() + timedelta(days=31)).strftime('%Y-%m-%d'))
+            return {'subscription': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                                     vars(subscription).items()},
+                    'package': vars(package),
+                    'status_code': 200}
+        else:
+            return {'msg': 'You already have a subscription', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def check_subscription(request):
+    try:
+        subscriptions = Subscription.objects.read(f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
+        if len(subscriptions) == 0:
+            package = Package.objects.read('title="Bronze"')[0]
+        else:
+            package = Package.objects.read(f'id={subscriptions[0].package_id}')[0]
+        return {'package': vars(package), 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
