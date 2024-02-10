@@ -207,8 +207,7 @@ def get_cards(request):
                                      'password': card.password, 'expire_date': card.expire_date.strftime('%Y-%m-%d'),
                                      'amount': card.amount,
                                      'minimum_amount': card.minimum_amount}
-        return {'cards': card_dict,
-                'status_code': 200}
+        return {'cards': card_dict, 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -268,5 +267,29 @@ def do_card_op(request):
                 return {'msg': 'something went wrong', 'status_code': 500}
         except DBError:
             return {'msg': 'Error in DataBase', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def show_profile(request):
+    try:
+        profile = {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for (k, v) in
+                   vars(request.session.user).items()}
+        return {'profile': profile, 'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def user_modification(request):
+    payload = request.payload
+    try:
+        # get user id
+        user = User.objects.read(f"id={payload['user_id']}")
+        user_updated = User.objects.update(request.session.user.id, user.username, user.email, user.phon_number,
+                                           user.password, user.birthday, user.created_at, user.subscription_id)
+        return {'user_update': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                                vars(user_updated).items()},
+                'package': vars(user_updated), 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
