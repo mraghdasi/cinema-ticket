@@ -1,23 +1,12 @@
+import json
 import sys
 
 import src.utils.custom_exceptions as custom_exceptions
 import src.utils.custom_validators as Validators
-from src.utils.utils import clear_terminal
+from src.utils.utils import clear_terminal, hash_string
 
 
-# incoming : card info
-# outgoing : updates
-
-def op_manager(op, selected_card):
-    available_cards = ['6104337387924085', '5859831112974042', '6037701540936439']
-
-    card_creds = {'6104337387924085': {'expire_date': '27-05', 'cvv2': '5498', 'password': '2020',
-                                       'balance': 5000, 'min_balance': 1000},
-                  '5859831112974042': {'expire_date': '24-05', 'cvv2': '1298', 'password': '1234',
-                                       'balance': 55000, 'min_balance': 1000},
-                  '6037701540936439': {'expire_date': '27-09', 'cvv2': '9876', 'password': '7894',
-                                       'balance': 69000, 'min_balance': 1000},
-                  }
+def op_manager(client, op, selected_card, card_creds):
     op_amount = input(f'\nHow much money you want to {op}? ')
 
     card_creds_input = {'expire_date': '', 'cvv2': '', 'password': ''}
@@ -28,13 +17,22 @@ def op_manager(op, selected_card):
                 try:
                     if op == 'transfer':
                         destination_card = input('\nPlease enter the destination card:')
-                        if destination_card not in available_cards:
-                            clear_terminal()
-                            print('\nDestination card is not in our DataBase')
-                            break
-                        elif destination_card == selected_card:
+                        if destination_card == selected_card:
                             clear_terminal()
                             print('\nYou can\'t transfer money to the origin card')
+                            break
+
+                        request_data = json.dumps({
+                            'payload': {'destination_card': destination_card},
+                            'url': 'check_db_for_transfer'
+                        })
+                        client.send(request_data.encode('utf-8'))
+                        response = client.recv(5 * 1024).decode('utf-8')
+                        response = json.loads(response)
+                        if response['status_code'] == 200:
+                            destination_card = response['destination_card_obj']
+                        else:
+                            print(response['msg'])
                             break
 
                     expire_date = ''
@@ -46,7 +44,7 @@ def op_manager(op, selected_card):
                             sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
                         expire_date_tries += 1
 
-                        expire_date = input('\nPlease enter your card\'s expire date 20YY-MM:')
+                        expire_date = input('\nPlease enter your card\'s expire date YYYY-MM-DD:')
 
                         if expire_date != card_creds[selected_card]['expire_date']:
                             clear_terminal()
@@ -80,7 +78,7 @@ def op_manager(op, selected_card):
                             sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
                         password_tries += 1
 
-                        password = input('\nPlease enter your card\'s password:')
+                        password = hash_string(input('\nPlease enter your card\'s password:'))
 
                         if password != card_creds[selected_card]['password']:
                             clear_terminal()
@@ -92,37 +90,57 @@ def op_manager(op, selected_card):
                     clear_terminal()
                     break
 
-                min_check = (card_creds[selected_card]['balance'] - int(op_amount)) < card_creds[selected_card][
-                    'min_balance']
+                min_check = (card_creds[selected_card]['amount'] - int(op_amount)) < card_creds[selected_card][
+                    'minimum_amount']
 
                 if op == 'deposit':
-                    card_creds[selected_card]['balance'] += int(op_amount)
+                    card_creds[selected_card]['amount'] += int(op_amount)
                 elif op == 'withdraw':
 
                     if min_check:
                         clear_terminal()
-                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["balance"]}')
+                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
                         break
 
-                    card_creds[selected_card]['balance'] -= int(op_amount)
-
+                    card_creds[selected_card]['amount'] -= int(op_amount)
                 elif op == 'transfer':
                     if min_check:
                         clear_terminal()
-                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["balance"]}')
+                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
                         break
-                    card_creds[selected_card]['balance'] -= int(op_amount)
-                    card_creds[destination_card]['balance'] += int(op_amount)
+                    card_creds[selected_card]['amount'] -= int(op_amount)
+                    card_creds[destination_card]['amount'] += int(op_amount)
 
                 clear_terminal()
+
+                if op == 'transfer':
+                    request_data = json.dumps({
+                        'payload': {'selected_card': selected_card,
+                                    'destination_card': destination_card},
+                        'url': 'do_transfer'
+                    })
+                else:
+                    request_data = json.dumps({
+                        'payload': {'selected_card': selected_card},
+                        'url': 'do_card_op'
+                    })
+                client.send(request_data.encode('utf-8'))
+                response = client.recv(5 * 1024).decode('utf-8')
+                response = json.loads(response)
+                if response['status_code'] == 200:
+                    pass
+                else:
+                    print(response['msg'])
+                    break
+
                 if op != 'transfer':
                     print(
                         f"""\n{op_amount} is {op}ed to {selected_card}\n
-            your current balance: {card_creds[selected_card]['balance']}""")
+            your current balance: {card_creds[selected_card]['amount']}""")
                 else:
                     print(
                         f"""\n{op_amount} is {op}ed to {destination_card}\n
-            your current balance: {card_creds[selected_card]['balance']}""")
+            your current balance: {card_creds[selected_card]['amount']}""")
 
                 break
 
@@ -131,7 +149,7 @@ def op_manager(op, selected_card):
         print(str(custom_exceptions.CardOpAmountValueError()))
 
 
-def main(user_info, op):
+def main(client, op):
     while True:
         print('\nCard operations\n')
 
@@ -142,7 +160,19 @@ def main(user_info, op):
 
         # return user info
 
-        available_cards = ['6104337387924085', '5859831112974042', '6037701540936439']
+        request_data = json.dumps({
+            'payload': {},
+            'url': 'get_cards'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            available_cards = list(response['cards'])
+            card_creds = response['cards']
+        else:
+            print(response['msg'])
+            break
 
         i = 1
         for card in available_cards:
@@ -172,7 +202,7 @@ def main(user_info, op):
             clear_terminal()
             print(f'\n{user_input} is not one of the menu options')
 
-        op_manager(op, selected_card)
+        op_manager(client, op, selected_card, card_creds)
 
         break
 

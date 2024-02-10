@@ -6,3 +6,59 @@ ERROR:root: Exception in payment_gateway : User_id = 124 , Not Found | DateTime 
 ERROR:root: Exception in payment_gateway : Destination Card Number = 43634734 , Not Found | DateTime : 2024-02-06 20:33:47
 ERROR:root: Exception in payment_gateway : Destination Card Number = 4567567845673456 , Expired | DateTime : 2024-02-06 20:34:30
 ERROR:root: Exception in payment_gateway : Destination Card Number = 23456704323678900 , Not Found | DateTime : 2024-02-06 20:38:54
+ERROR:root: Exception in len_validator : Length Must Be 3 | DateTime : 2024-02-10 18:37:42
+ERROR:root: Exception in len_validator : Length Must Be 3 | DateTime : 2024-02-10 18:37:47
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 18:55:41
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 18:55:43
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 18:55:45
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:21
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:21
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:21
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:22
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:22
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:22
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:22
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:22
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:23
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:24
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:24
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:24
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:24
+ERROR:root: Exception in len_validator : Length Must Be 16 | DateTime : 2024-02-10 19:03:24
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:20:27
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:20:29
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:20:30
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:23:32
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:23:34
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:01
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:03
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:04
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:05
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:06
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:06
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:07
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:08
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:09
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:29:10
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:48
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:49
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:50
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:50
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:52
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:53
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:54
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:55
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:56
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:57
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:30:59
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:10
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:10
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:28
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:29
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:38
+ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:39

@@ -31,7 +31,7 @@ def main(client):
             film_management.main()
         elif user_input == '4' or user_input == 'banking':
             clear_terminal()
-            banking.main()
+            banking.main(client)
         elif user_input == '5' or user_input == 'modify account':
             clear_terminal()
             user_modification.main()

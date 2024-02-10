@@ -1,67 +1,155 @@
+import json
+from datetime import date
 import sys
+
+from src.utils import custom_exceptions
 from src.utils.custom_validators import Validator
 import sys
+
+from src.utils.utils import clear_terminal, hash_string
+
 
 def get_input(prompt, validation_func):
     while True:
         user_input = input(prompt)
         if validation_func(user_input):
+            clear_terminal()
             return user_input
-        print("Invalid input. Please try again.")
+
+
+def validate_title(title):
+    try:
+        if not title.isdigit() and Validator.len_bound_validator(title, 3, 100):
+            return True
+        clear_terminal()
+        print("Title Can't be all numbers")
+    except custom_exceptions.LenBoundValidationError:
+        clear_terminal()
+        print(custom_exceptions.LenBoundValidationError())
+
 
 def validate_card_number(card_number):
-    return Validator.validate(card_number, (Validator.len_validator, 16))
+    try:
+        if card_number.isdigit() and Validator.len_validator(card_number, 16):
+            return True
+        clear_terminal()
+        print('Card number should be all numbers')
+    except custom_exceptions.LenValidationError:
+        clear_terminal()
+        print(custom_exceptions.LenValidationError())
+
+
+def validate_password(password):
+    try:
+        if password.isdigit() and Validator.len_bound_validator(password, 4, 10):
+            confirm_password = input("Enter your password again: ")
+            if password == confirm_password:
+                return True
+            clear_terminal()
+            print('Passwords does not match')
+            return False
+        clear_terminal()
+        print('Password should be all numbers')
+    except custom_exceptions.LenBoundValidationError:
+        clear_terminal()
+        print(custom_exceptions.LenBoundValidationError())
+
 
 def validate_cvv2(cvv2):
-    return Validator.validate(cvv2, (Validator.len_validator, 3))
-
-def validate_year(year):
-    return year.isdigit() and 0 <= int(year) <= 99
-
-def validate_month(month):
-    return month in {'01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'}
-
-def main(user_info):
-    card_list = []
+    try:
+        if cvv2.isdigit() and Validator.len_bound_validator(cvv2, 3, 4):
+            return True
+        clear_terminal()
+        print('Cvv2 should be all numbers')
+    except custom_exceptions.LenBoundValidationError:
+        clear_terminal()
+        print(custom_exceptions.LenBoundValidationError())
 
 
-       # card registration stuff
+def validate_expire_date(expire_date):
+    try:
+        if Validator.date_format_validator(expire_date):
+            current_date = date.today()
+            expire_date = date.fromisoformat(expire_date)
 
-       # returns user info
+            if current_date < expire_date:
+                return True
 
+            clear_terminal()
+            print("Your Card is expired")
+    except custom_exceptions.DateValidationError:
+        clear_terminal()
+        print(custom_exceptions.DateValidationError())
+
+
+def main(client):
+    # card registration stuff
+
+    # returns user info
 
     # ✔    for quiting the program in this file use KeyboardInterruptError
 
     # use the validations from custom_validations.py
 
-    # ✔    if we type card number correct but write for example cvv2 wrong the program should not take card num from us again
+    # ✔    if we type card number correct but write for
+    # example cvv2 wrong the program should not take card num from us again
     # (check registration.py for my approach)
 
     # ✔   the program should close if everything runs correct
 
-
-
+    card_creds_input = {'user_id': '', 'title': '', 'card_number': '', 'password': '', 'cvv2': '', 'expire_date': ''}
     while True:
-        print('fill the fields')
-        card_number = get_input("Enter card number (16 digits): ", validate_card_number)
-        cvv2 = get_input("Enter CVV2 code (3-4 digits): ", validate_cvv2)
-        year = get_input("Enter card expiration year (2 digits, e.g. 22): ", validate_year)
-        month = get_input("Enter card expiration month (2 digits, e.g. 01): ", validate_month)
+        try:
+            print('fill the fields')
+            if card_creds_input['title'] == '':
+                card_creds_input['title'] = get_input('Card Title Between 3 to 100 Chars: ', validate_title)
+            else:
+                print(card_creds_input['title'])
 
-        card_info = (card_number, cvv2, year, month)
-        if card_info in card_list:
-            print("The card {} has already been registered.".format(card_number))
-            raise KeyboardInterrupt
+            if card_creds_input['card_number'] == '':
+                card_creds_input['card_number'] = get_input("Enter card number (16 digits): ",
+                                                            validate_card_number)
+            else:
+                print(card_creds_input['card_number'])
 
-        card_list.append(card_info)
-        print("The card {} has been successfully registered.".format(card_number))
-        print("The card information: {}".format(card_info))
-        print("List of registered cards: {}".format(card_list))
+            if card_creds_input['password'] == '':
+                card_creds_input['password'] = hash_string(
+                    get_input("Enter password (4 to 10 digits): ", validate_password))
+            else:
+                print('Password Has Already Been Set')
+
+            if card_creds_input['cvv2'] == '':
+                card_creds_input['cvv2'] = get_input("Enter CVV2 code (3-4 digits): ", validate_cvv2)
+            else:
+                print(card_creds_input['cvv2'])
+
+            if card_creds_input['expire_date'] == '':
+                card_creds_input['expire_date'] = get_input("Enter card expiration date yyyy-mm-dd: ",
+                                                            validate_expire_date)
+            else:
+                print(card_creds_input['expire_date'])
+        except KeyboardInterrupt:
+            clear_terminal()
+            break
+
+        request_data = json.dumps({
+            'payload': card_creds_input,
+            'url': 'register_cards'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            clear_terminal()
+            print('Your Card Has Been Registered')
+            break
+        elif response['status_code'] == 400:
+            print("The Card Already Exists In Our Database")
+            break
+        else:
+            print(response['msg'])
+            break
 
 
 if __name__ == '__main__':
-    try:
-        main(user_info=0)
-    except KeyboardInterrupt:
-        print('Exiting the program...')
-        sys.exit(0)
+    main('m')

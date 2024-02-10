@@ -77,12 +77,12 @@ def main():
                     creds['password'] = hash_string(password)
 
             else:
-                print(f'Password : {creds["password"]}')
+                print(f'Password : Already set')
 
             if creds['birthday'] == '':
                 birthday = input('Birthday*(yyyy-mm-dd):').strip()
 
-                if Validators.Validator.birthday_format_validator(birthday):
+                if Validators.Validator.date_format_validator(birthday):
                     creds['birthday'] = birthday
 
             else:
@@ -95,7 +95,6 @@ def main():
             js = json.dumps(data)
             clear_terminal()
             return js
-
 
         except KeyboardInterrupt:
             clear_terminal()
@@ -116,16 +115,10 @@ def main():
             clear_terminal()
             print('\n' + str(CustomException.PasswordValidationError()))
             continue
-        except CustomException.BirthdayValidationError:
+        except CustomException.DateValidationError:
             clear_terminal()
-            print('\n' + str(CustomException.BirthdayValidationError()))
+            print('\n' + str(CustomException.DateValidationError()))
             continue
-
-        # some code to connect to db and stuff
-
-        user_info = ''
-        clear_terminal()
-        return user_info
 
 
 if __name__ == '__main__':

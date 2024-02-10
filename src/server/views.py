@@ -1,6 +1,7 @@
 from datetime import datetime, date, timedelta
 from hmac import compare_digest
 
+from src.server.models.bank_account import UserBankAccount
 from src.server.models.cinema_sans import CinemaSans
 from src.server.models.film import Film
 from src.server.models.hall import Hall
@@ -54,6 +55,20 @@ def register(request):
             return {'msg': 'Duplication Error', 'status_code': 400}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def register_cards(request):
+    payload = request.payload
+    # try:
+    try:
+        payload['user_id'] = request.session.user.id
+        bank_account = UserBankAccount.objects.create(**payload)
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Duplication Error', 'status_code': 400}
+    # except Exception as e:
+    #     return {'msg': 'Server Error', 'status_code': 500}
 
 
 def _convert_not_serializable(v):
@@ -171,7 +186,8 @@ def buy_subscription(request):
 @login_required
 def check_subscription(request):
     try:
-        subscriptions = Subscription.objects.read(f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
+        subscriptions = Subscription.objects.read(
+            f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
         if len(subscriptions) == 0:
             package = Package.objects.read('title="Bronze"')[0]
         else:
@@ -180,9 +196,74 @@ def check_subscription(request):
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
-# @login_required
-# def show_profile(request):
-#     data = {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for (k, v) in
-#             vars(request.session.user).items()}
-#     data['status_code']: 200
-#     return data
+
+@login_required
+def get_cards(request):
+    try:
+        cards = UserBankAccount.objects.read(f'user_id={request.session.user.id}')
+        card_dict = {}
+        for card in cards:
+            card_dict[card.title] = {'id': card.id, 'card_number': card.card_number, 'cvv2': card.cvv2,
+                                     'password': card.password, 'expire_date': card.expire_date.strftime('%Y-%m-%d'),
+                                     'amount': card.amount,
+                                     'minimum_amount': card.minimum_amount}
+        return {'cards': card_dict,
+                'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def check_db_for_transfer(request):
+    payload = request.payload
+    # try:
+    destination_card = UserBankAccount.objects.read(f'card_number={payload["destination_card"]}')
+    if destination_card:
+        print(vars(destination_card[0]).items())
+        return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in vars(destination_card[0]).items()},
+                'status_code': 200}
+    else:
+        return {'msg': 'Destination Card Is Not In Our DataBase', 'status_code': 400}
+    # except Exception as e:
+    #     return {'msg': 'Server Error', 'status_code': 500}
+
+    # @login_required
+    # def show_profile(request):
+    #     data = {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for (k, v) in
+    #             vars(request.session.user).items()}
+    #     data['status_code']: 200
+    #     return data
+
+
+def do_transfer(request):
+    payload = request.payload
+    try:
+        try:
+            selected_card_op = UserBankAccount.objects.update(f'amount={payload["selected_card"]["amount"]}',
+                                                              f'card_number={payload["selected_card"]["card_number"]}')
+            destination_card_op = UserBankAccount.objects.update(f'amount={payload["destination_card"]["amount"]}',
+                                                                 f'card_number={payload["destination_card"]["card_number"]}')
+
+            if selected_card_op and destination_card_op:
+                return {'status_code': 200}
+            else:
+                return {'msg': 'something went wrong', 'status_code': 500}
+        except DBError:
+            return {'msg': 'Error in DataBase', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def do_card_op(request):
+    payload = request.payload
+    try:
+        try:
+            selected_card_op = UserBankAccount.objects.update(f'amount={payload["selected_card"]["amount"]}',
+                                                              f'card_number={payload["selected_card"]["card_number"]}')
+            if selected_card_op:
+                return {'status_code': 200}
+            else:
+                return {'msg': 'something went wrong', 'status_code': 500}
+        except DBError:
+            return {'msg': 'Error in DataBase', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}

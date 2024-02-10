@@ -39,7 +39,7 @@ class PasswordValidationError(Exception):
             'Please Enter a Valid Password (length 8-100 , 2 uppercase letters , 2 digits , 2 special characters)')
 
 
-class BirthdayValidationError(Exception):
+class DateValidationError(Exception):
     """
         Birthday Validation Error Exception
     """
@@ -85,12 +85,19 @@ class RateNotBetweenZeroAndFive(Exception):
 
 
 class CardOpAmountValueError(Exception):
-    """
-        Rate Not Between Zero And Five Exception
-    """
 
     def __init__(self):
         super().__init__('Please Enter Numeric Value Without Any Decimal Portions!')
+
+
+class LenBoundValidationError(Exception):
+    def __init__(self):
+        super().__init__('Please Enter Input Within The Given Length Limit!')
+        
+
+class LenValidationError(Exception):
+    def __init__(self):
+        super().__init__('The Input Length Must Be Equal To Given Length!')
 
 
 class DBError(Exception):

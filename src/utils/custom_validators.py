@@ -8,17 +8,6 @@ from src.utils.custom_exceptions import exception_log
 
 
 class Validator:
-    @staticmethod
-    def validate(string: str, validator_functions: tuple):
-        """
-        Check Multi (Or One) Validation Functions on String, If All Of That Are Returning True,
-        This Function Will Return True,  But If Some Of Them Returning Exception Message,
-         It Will Return a Multi Line String Of Exception Messages.
-        :param string:
-        :param validator_functions:
-        :return:
-        True Or String of Exceptions Messages
-        """
 
     @staticmethod
     def username_validator(username_str):
@@ -86,20 +75,20 @@ class Validator:
             raise custom_exceptions.PasswordValidationError()
 
     @staticmethod
-    def birthday_format_validator(birthday_str):
+    def date_format_validator(date_str):
         """
         A function to validate birthday
 
-        :param birthday_str:
+        :param date_str:
         :return:
         True or BirthdayValidationError
         """
 
         try:
-            datetime.date.fromisoformat(birthday_str)
+            datetime.date.fromisoformat(date_str)
             return True
         except ValueError:
-            raise custom_exceptions.BirthdayValidationError()
+            raise custom_exceptions.DateValidationError()
 
     @staticmethod
     def min_age_validator(min_age):
@@ -132,7 +121,6 @@ class Validator:
             raise custom_exceptions.MinAgeNotPositive()
 
     @staticmethod
-    @exception_log()
     def len_validator(str_input: str, length: int):
         """
        A function to validate the length of a string.
@@ -159,7 +147,7 @@ class Validator:
         if len(str_input) == length:
             return True
         else:
-            raise Exception(f'Length Must Be {length}')
+            raise custom_exceptions.LenValidationError()
 
     @staticmethod
     @exception_log()
@@ -178,3 +166,8 @@ class Validator:
 
         return True
 
+    @staticmethod
+    def len_bound_validator(str_input: str, start: int, end: int):
+        if start <= len(str_input) <= end:
+            return True
+        raise custom_exceptions.LenBoundValidationError()

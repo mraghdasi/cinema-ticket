@@ -169,7 +169,7 @@ class DatabaseManager:
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
                 user_id INT NOT NULL,
                 title VARCHAR(255) NOT NULL,
-                card_number VARCHAR(255) NOT NULL,
+                card_number VARCHAR(255) NOT NULL UNIQUE,
                 cvv2 VARCHAR(255) NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 amount INT NOT NULL,

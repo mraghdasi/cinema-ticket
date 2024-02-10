@@ -5,7 +5,7 @@ import threading
 from dotenv import load_dotenv
 
 from src.server.views import do_login, register, get_movies, add_ticket, check_seats, check_tickets, cancel_ticket, \
-    buy_subscription, check_subscription
+    buy_subscription, check_subscription, get_cards, register_cards, check_db_for_transfer, do_transfer, do_card_op
 
 load_dotenv()
 
@@ -59,6 +59,11 @@ urls = {
     'cancel_ticket': cancel_ticket,
     'buy_subscription': buy_subscription,
     'check_subscription': check_subscription,
+    'register_cards': register_cards,
+    'get_cards': get_cards,
+    'check_db_for_transfer': check_db_for_transfer,
+    'do_transfer': do_transfer,
+    'do_card_op': do_card_op,
 }
 
 HOST = '127.0.0.1'
