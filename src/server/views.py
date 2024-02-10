@@ -3,7 +3,9 @@ from hmac import compare_digest
 
 from src.server.models.bank_account import UserBankAccount
 from src.server.models.cinema_sans import CinemaSans
+from src.server.models.comment import Comment
 from src.server.models.film import Film
+from src.server.models.film_rate import FilmRate
 from src.server.models.hall import Hall
 from src.server.models.package import Package
 from src.server.models.subscription import Subscription
@@ -60,15 +62,15 @@ def register(request):
 @login_required
 def register_cards(request):
     payload = request.payload
-    # try:
     try:
-        payload['user_id'] = request.session.user.id
-        bank_account = UserBankAccount.objects.create(**payload)
-        return {'status_code': 200}
-    except DBError:
-        return {'msg': 'Duplication Error', 'status_code': 400}
-    # except Exception as e:
-    #     return {'msg': 'Server Error', 'status_code': 500}
+        try:
+            payload['user_id'] = request.session.user.id
+            UserBankAccount.objects.create(**payload)
+            return {'status_code': 200}
+        except DBError:
+            return {'msg': 'Duplication Error', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
 
 
 def _convert_not_serializable(v):
@@ -215,25 +217,17 @@ def get_cards(request):
 
 def check_db_for_transfer(request):
     payload = request.payload
-    # try:
-    destination_card = UserBankAccount.objects.read(f'card_number={payload["destination_card"]}')
-    if destination_card:
-        print(vars(destination_card[0]).items())
-        return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in
-                                         vars(destination_card[0]).items()},
-                'status_code': 200}
-    else:
-        return {'msg': 'Destination Card Is Not In Our DataBase', 'status_code': 400}
-    # except Exception as e:
-    #     return {'msg': 'Server Error', 'status_code': 500}
-
-    # @login_required
-    # def show_profile(request):
-    #     data = {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for (k, v) in
-    #             vars(request.session.user).items()}
-    #     data['status_code']: 200
-    #     return data
-
+    try:
+        destination_card = UserBankAccount.objects.read(f'card_number={payload["destination_card"]}')
+        if destination_card:
+            print(vars(destination_card[0]).items())
+            return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in
+                                             vars(destination_card[0]).items()},
+                    'status_code': 200}
+        else:
+            return {'msg': 'Destination Card Is Not In Our DataBase', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
 
 def do_transfer(request):
     payload = request.payload
@@ -268,5 +262,95 @@ def do_card_op(request):
                 return {'msg': 'something went wrong', 'status_code': 500}
         except DBError:
             return {'msg': 'Error in DataBase', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def get_movie_rating(request):
+    payload = request.payload
+    try:
+        rates = [rate.rate for rate in FilmRate.objects.read(f"film_id={payload['id']}")]
+        if len(rates):
+            film_rating = sum(rates) / len(rates)
+        else:
+            film_rating = 0
+        return {'payload': film_rating, 'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+def get_movie_comments(request):
+    payload = request.payload
+    try:
+        comments = Comment.objects.read(f"film_id={payload['id']}")
+        return {'comments': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                              vars(comment).items()} for comment in comments],
+                'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def add_comment(request):
+    payload = request.payload
+    try:
+        comment = Comment.objects.create(**{'description': payload['description'], 'film_id': payload['movie_id'],
+                                            'user_id': request.session.user.id})
+        return {'comment': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                            vars(comment).items()},
+                'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def get_user_comments(request):
+    payload = request.payload
+    try:
+        comments = Comment.objects.read(f"user_id={request.session.user.id} AND film_id={payload['movie_id']}")
+        return {'comments': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                              vars(comment).items()} for comment in comments],
+                'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def delete_comment(request):
+    payload = request.payload
+    try:
+        Comment.objects.delete(f"user_id={request.session.user.id} AND id={payload['comment_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def update_comment(request):
+    payload = request.payload
+    try:
+        Comment.objects.update({'description': payload['new_description']},
+                               f"user_id={request.session.user.id} AND id={payload['comment_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def add_comment_reply(request):
+    payload = request.payload
+    try:
+        comment = Comment.objects.create(**{'description': payload['description'], 'film_id': payload['movie_id'],
+                                            'user_id': request.session.user.id, 'reply_to': payload['reply_to']})
+        return {'comment': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                            vars(comment).items()},
+                'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}

@@ -1,128 +1,118 @@
-import os
-from prettytable import PrettyTable
+import json
+
+from src.client.service import commenting
+from src.utils.utils import clear_terminal
 
 
-# ======================```============install  PrettyTable library ============```=============
-
-# incoming : all the film details
-
-def main(user_info):
-    movies = [
-        {
-            'name': 'Spiderman',
-            'min_age': 12,
-            'rating': 8.8,
-            'length': 148,
-            'shows': [
-                {'day': 'Saturday', 'start_time': '14:00', 'end_time': '16:00'},
-                {'day': 'Saturday', 'start_time': '18:00', 'end_time': '20:00'},
-                {'day': 'Wednesday', 'start_time': '21:00', 'end_time': '23:00'},
-                {'day': 'Wednesday', 'start_time': '19:00', 'end_time': '20:00'},
-                {'day': 'Thursday', 'start_time': '14:00', 'end_time': '16:00'},
-                {'day': 'Thursday', 'start_time': '21:00', 'end_time': '23:00'}
-            ],
-            'comments_number': 1050,
-            'ticket_price': 12
-        },
-        {
-            'name': 'Batman',
-            'min_age': 13,
-            'rating': 9.0,
-            'length': 152,
-            'shows': [
-                {'day': 'Friday', 'start_time': '15:00', 'end_time': '17:00'},
-                {'day': 'Saturday', 'start_time': '12:00', 'end_time': '14:00'},
-                {'day': 'Sunday', 'start_time': '18:00', 'end_time': '20:00'}
-            ],
-            'comments_number': 876,
-            'ticket_price': 11
-        }
-    ]
-
+def main(client):
     while True:
         print("Please choose your movie:")
-
-        # input(a list of available movies)
-
-        # if input in available movies :
-        #     show details (name min age rating length sans comments num, buy ticket)
-        #     input
-        #     (buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
-        #     comment (runs commenting.py)))
-
-        # ========================Please Check The Code =======================
-
-        # Display a list of available movies
-        movie_dict = {}
-        for i, movie in enumerate(movies):
-            movie_dict[str(i + 1)] = movie
-            print(f"{i + 1}. {movie['name'].title()}")
-
-        selected_movie = input("Enter the name or number of the movie: ").title()
-        selected_movie_details = None
-        if selected_movie.isdigit():
-            selected_movie_details = movie_dict.get(selected_movie)
+        request_data = json.dumps({
+            'payload': {},
+            'url': 'get_movies'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            movies = response['payload']
         else:
-            for movie in movies:
-                if movie['name'].title() == selected_movie:
-                    selected_movie_details = movie
-                    break
+            clear_terminal()
+            print(response['msg'])
+            continue
 
-        if selected_movie_details:
-            # please do all this in one print statement (use multi line str)
-            print("\n" + "=" * 50)
-            print(selected_movie_details['name'])
-            print("=" * 50)
-            print(f"Minimum Age: {selected_movie_details['min_age']}")
-            print(f"Rating: {selected_movie_details['rating']:.1f}/10")
-            print(f"Duration: {selected_movie_details['length']} minutes")
+        movies_dict = {}
 
-            # Create a table for the movie schedule
-            table = PrettyTable()
-            table.field_names = ["Day", "Time", "Price"]
-            for show in selected_movie_details['shows']:
-                day = show['day']
-                start_time = show['start_time']
-                end_time = show['end_time']
-                price = selected_movie_details['ticket_price']
-                table.add_row([day, f"{start_time}-{end_time}", f"{price} Toman"])
+        for movie in movies:
+            name = movie['title']
+            sans = movie['sans']
+            if name not in movies_dict:
+                movies_dict[name] = {'Sat': [], 'Sun': [], 'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': []}
+            for san in sans:
+                day = san['premiere_date'][:3]
+                movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
-            print("Showtimes:")
-            print(table)
+        # Print available movies
+        print("List of available movies:")
+        for i, m in enumerate(movies, start=1):
+            print(f"{i}. {m['title']}")
+        print(f"{len(movies) + 1}. Quit")
 
-            print(f"Number of comments: {selected_movie_details['comments_number']}")
-            print(f"Ticket price: {selected_movie_details['ticket_price']} Toman")
-            print("\nPlease select one of the options below:")
-            print("1) Buy ticket")
-            print("2) Leave a comment")
-            print("3) Quit")
+        # Get user input for movie choice
+        movie_choice = input("Enter movie name or number: ").strip().lower()
+        if movie_choice == 'q':
+            print('Exiting the program...')
+            break
+        elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
+                                                                                movies]:
+            print("Invalid movie. Please try again.")
+            continue
 
-            selected_option = input("Enter your choice: ")
-            if selected_option.isdigit():
-                selected_option = int(selected_option)
-
-                # A very fun and cool approach to use os.system, but we have to import these files
-                # Keep in mind that buying ticket (from this file) and commenting both have an input called movie name
-                # you have to pass movie name to them
-                # don't forget that we have to clear terminal in some cases, and we have a function for it in utils
-                # options should be selected by numbers or names selected_option == 1 or  selected_option == 'Buy'
-
-                if selected_option == 1:
-                    os.system("python buy_ticket.py")
-                elif selected_option == 2:
-                    os.system("python commenting.py")
-                elif selected_option == 3:
-                    print("Thanks for using our app!")
-                    break
-                else:
-                    print("Invalid option selected!")
+        if movie_choice.isdigit():
+            movie = movies[int(movie_choice) - 1]
+        else:
+            for m in movies:
+                if m['title'].lower() == movie_choice:
+                    movie = m
                     break
             else:
-                print("Invalid input! Please enter a valid number")
+                continue
+
+        # please do all this in one print statement (use multi line str)
+        print("\n" + "=" * 50)
+        print(movie['title'])
+        print("=" * 50)
+        print(f"Minimum Age: {movie['min_age']}")
+
+        request_data = json.dumps({
+            'payload': {'id': movie['id']},
+            'url': 'get_movie_rating'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            film_rating = response['payload']
+        else:
+            clear_terminal()
+            print(response['msg'])
+            continue
+
+        print(f"Rating: {film_rating:.1f}/10")
+
+        request_data = json.dumps({
+            'payload': {'id': movie['id']},
+            'url': 'get_movie_comments'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            film_comments = response['comments']
+        else:
+            clear_terminal()
+            print(response['msg'])
+            continue
+
+        print(f"Number of comments: {len(film_comments)}")
+        print("\nPlease select one of the options below:")
+        print("1) Leave a comment")
+        print("2) Quit")
+
+        selected_option = input("Enter your choice: ")
+        if selected_option == '1' or selected_option == 'leave a comment':
+            commenting.main(client, movie)
+        elif selected_option == '2' or selected_option == 'quit':
+            print("Thanks for using our app!")
+            break
+        else:
+            clear_terminal()
+            print("Invalid option selected!")
+            continue
 
 
 if __name__ == "__main__":
-    main('m')
+    main()
 
 # input(buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
 # comment (runs commenting.py)))

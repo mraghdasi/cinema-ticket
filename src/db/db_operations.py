@@ -40,7 +40,7 @@ class DBOperation:
         query = f'INSERT INTO {table_name} ({", ".join(columns)}) VALUES ({", ".join(["%s"] * len(values))})'
         db_manager.execute_commit_query_with_value(query, values)
 
-        return DBOperation.read(entity, ' AND '.join([f'{c}={repr(v)}' for c, v in zip(columns, values)]))[0]
+        return DBOperation.read(entity, ' AND '.join([f'{c}={repr(v)}' for c, v in zip(columns, values) if v]))[0]
 
     @staticmethod
     def read(entity: object, condition: str = None, order: list = None):
