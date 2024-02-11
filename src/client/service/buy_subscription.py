@@ -2,6 +2,8 @@ import json
 
 # incoming : package and subscription details
 # outgoing : banking process and updating user
+from prettytable import PrettyTable
+
 from src.utils.utils import clear_terminal
 
 
@@ -19,24 +21,41 @@ def main(client):
     # check buy_ticket.py and card_registration.py
 
     while True:
-        print('Please choose your package:\n  1. Bronze\n  2. Silver\n  3. Gold\n 4. Quit')
+        print('Please choose your package:\n')
 
-        user_choice = input("Enter package number (1/2/3) or 4 to quit: ").strip().lower()
+        # Get Packages From Server
 
-        if user_choice == '4' or user_choice == 'quit':
-            print('Exiting the program...')
-            break
-        elif user_choice == '1' or user_choice == 'bronze':
-            user_package = 'Bronze'
-        elif user_choice == '2' or user_choice == 'silver':
-            user_package = 'Silver'
-        elif user_choice == '3' or user_choice == 'gold':
-            user_package = 'Gold'
-            # else can be 100000000000000000 other stuff . use elif and have bronze in opts
-            # edited.
+        request_data = json.dumps({
+            'payload': {},
+            'url': 'get_packages'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            packages = response['packages']
         else:
-            print("Invalid package number. Please try again.")
+            clear_terminal()
+            print(response['msg'])
             continue
+
+        table = PrettyTable(['Id', 'Package Title'])
+
+        for package in packages:
+            table.add_row([package['id'], package['title']])
+        print(table)
+
+        selected_package = input('Enter Id of Package: ').strip().lower()
+        if selected_package in map(str, [package['id'] for package in packages]):
+            selected_package = [package for package in packages if str(package['id']) == selected_package][0]
+        elif selected_package == 'quit':
+            break
+        else:
+            clear_terminal()
+            print('Invalid Package ID')
+            continue
+
+        user_package = selected_package['title']
 
         clear_terminal()
         print(f"You selected {user_package} package.")
