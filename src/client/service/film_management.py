@@ -40,7 +40,7 @@ def main(client):
 
         # Get user input for movie choice
         movie_choice = input("Enter movie name or number: ").strip().lower()
-        if movie_choice == 'quit':
+        if movie_choice == (len(movies) + 1) or movie_choice == 'quit':
             print('Exiting the program...')
             break
         elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
@@ -131,7 +131,7 @@ def main(client):
 
 
 if __name__ == "__main__":
-    main()
+    main('client')
 
 # input(buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
 # comment (runs commenting.py)))
