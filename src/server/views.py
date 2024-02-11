@@ -436,7 +436,7 @@ def add_rate(request):
                          vars(rate).items()},
                 'status_code': 200}
     except DBError:
-        return {'msg': 'Error in Database', 'status_code': 400}
+        return {'msg': 'Duplicate Rate Error', 'status_code': 400}
 
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
@@ -496,12 +496,22 @@ def get_movie_rates(request):
         return {'msg': 'Server Error', 'status_code': 500}
 
 
+def get_packages(request):
+    try:
+        packages = Package.objects.read()
+        return {'packages': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                              vars(package).items()} for package in packages],
+                'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
 @login_required
 def show_profile(request):
     try:
-        profile = {k: v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v) in
+        profile = {k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
                    vars(request.session.user).items()}
-        return {'user_info': profile, 'status_code': 200}
+        return {'user': profile, 'status_code': 200}
     except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
 

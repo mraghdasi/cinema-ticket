@@ -26,7 +26,8 @@ def show_user_comments(client, movie):
         table = PrettyTable(['Id', 'Description', 'Reply To', 'Created At'])
 
         for comment in comments:
-            table.add_row([comment['id'], comment['description'][:15] + '...', comment['reply_to'] if comment['reply_to'] else None, comment['created_at']])
+            table.add_row([comment['id'], comment['description'], comment['reply_to'] if comment['reply_to'] else None,
+                           comment['created_at']])
         print(table)
 
         selected_comment = input('Enter Id of Comment: ').strip().lower()
@@ -43,14 +44,41 @@ def show_user_comments(client, movie):
 def main(client, movie):
     while True:
         user_input = input(
-            '\n1. Add comment\n2. Delete comment\n3. Update comment\n4. Reply to comment\n5. Quit\n\n:').strip().lower()
+            '\n1. Show comments\n2. Add comment\n3. Delete comment\n4. Update comment\n5. Reply to comment\n6. Quit\n\n:').strip().lower()
 
-        if user_input == '5' or user_input == 'quit':
+        if user_input == '6' or user_input == 'quit':
             clear_terminal()
             break
-        elif user_input == '1' or user_input == 'add comment':
+        elif user_input == '1' or user_input == 'show comments':
             while True:
-                description = input("Enter a description: ").strip().lower()
+
+                request_data = json.dumps({
+                    'payload': {
+                        'id': movie['id'],
+                    },
+                    'url': 'get_movie_comments'
+                })
+                client.send(request_data.encode('utf-8'))
+                response = client.recv(5 * 1024).decode('utf-8')
+                response = json.loads(response)
+                if response['status_code'] == 200:
+                    comments = response['comments']
+                else:
+                    clear_terminal()
+                    print(response['msg'])
+                    continue
+
+                table = PrettyTable(['Id', 'Description', 'Reply To', 'Created At'])
+
+                for comment in comments:
+                    table.add_row([comment['id'], comment['description'],
+                                   comment['reply_to'] if comment['reply_to'] else None, comment['created_at']])
+                print(table)
+                break
+
+        elif user_input == '2' or user_input == 'add comment':
+            while True:
+                description = input("Enter a description: ").strip()
 
                 request_data = json.dumps({
                     'payload': {
@@ -66,14 +94,14 @@ def main(client, movie):
                     comment = response['comment']
                     print("Comment Added!")
                     print(
-                        f"Comment ID: {comment['id']} \nDescription: {comment['description'][:15]}...\nCreated At: {comment['created_at']}")
+                        f"Comment ID: {comment['id']} \nDescription: {comment['description']}\nCreated At: {comment['created_at']}")
                     break
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
 
-        elif user_input == '2' or user_input == 'delete comment':
+        elif user_input == '3' or user_input == 'delete comment':
             while True:
                 selected_comment = show_user_comments(client, movie)
                 if not selected_comment:
@@ -96,12 +124,12 @@ def main(client, movie):
                     print(response['msg'])
                     continue
 
-        elif user_input == '3' or user_input == 'update comment':
+        elif user_input == '4' or user_input == 'update comment':
             while True:
                 selected_comment = show_user_comments(client, movie)
                 if not selected_comment:
                     break
-                new_description = input('Enter New Description: ')
+                new_description = input('Enter New Description: ').strip()
 
                 if not new_description:
                     clear_terminal()
@@ -126,12 +154,12 @@ def main(client, movie):
                     print(response['msg'])
                     continue
 
-        elif user_input == '4' or user_input == 'reply to comment':
+        elif user_input == '5' or user_input == 'reply to comment':
             while True:
                 selected_comment = show_user_comments(client, movie)
                 if not selected_comment:
                     break
-                description = input("Enter a description: ").strip().lower()
+                description = input("Enter a description: ").strip()
 
                 request_data = json.dumps({
                     'payload': {
@@ -148,7 +176,7 @@ def main(client, movie):
                     comment = response['comment']
                     print("Comment Added!")
                     print(
-                        f"Comment ID: {comment['id']} \nDescription: {comment['description'][:15]}...\nCreated At: {comment['created_at']}")
+                        f"Comment ID: {comment['id']} \nDescription: {comment['description']}\nCreated At: {comment['created_at']}")
                     break
                 else:
                     clear_terminal()
