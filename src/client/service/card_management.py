@@ -1,4 +1,6 @@
 # import os
+import json
+import sys
 
 # def main(user_info):
 #     while True:
@@ -22,6 +24,8 @@
 # outgoing : any updates
 
 from prettytable import PrettyTable
+
+from src.utils.utils import clear_terminal
 
 
 def edit_card_number(card_list, selected_card):
@@ -52,59 +56,85 @@ def change_expiration_date():
     print(f"Expiration date updated. New expiration date is {new_date}.")
 
 
-def main(card_list):
-    if not card_list:
-        print("There is no card in your profile.")
+def main(client):
+    request_data = json.dumps({
+        'payload': {},
+        'url': 'get_cards'
+    })
+    client.send(request_data.encode('utf-8'))
+    response = client.recv(5 * 1024).decode('utf-8')
+    response = json.loads(response)
+    if response['status_code'] == 200:
+        available_cards = list(response['cards'])
+        card_creds = response['cards']
+    elif response['status_code'] == 400:
+        clear_terminal()
+        sys.exit(response['msg'])
     else:
-        print("Your cards:")
+        clear_terminal()
+        print(response['msg'])
+
+    while True:
+        i = 1
+        print('Your Cards:')
         table = PrettyTable(['#', 'Card Number'])
-        for i, card in enumerate(card_list, start=1):
+        for card in available_cards:
             table.add_row([i, card])
-        print(table)
-        while True:
-            selected = input("Please choose a card number: ")
-            try:
-                index = int(selected) - 1
-                selected_card = card_list[index]
-                break
-            except (ValueError, IndexError):
-                print("Invalid selection.")
+            i += 1
 
-        print("Selected card: ", selected_card)
-        while True:
-            print("You can choose one of the following options:")
-            print("1. Edit card number")
-            print("2. Change CVV2")
-            print("3. Change expiration date")
-
-            # Option to change password
-            print("4. Change password")
-
-            print("5. Cancel")
-            choice = input("Please choose an option: ")
-            if choice == '1':
-                edit_card_number(card_list, selected_card)
-            elif choice == '2':
-                change_cvv2()
-            elif choice == '3':
-                change_expiration_date()
-            elif choice == '4':
-                current_password = input("Please enter your current password: ")
-                if current_password == "1234":
-                    new_password = input("Please enter your new password: ")
-                    print("Password changed successfully!")
-                else:
-                    print("Incorrect password. Please try again.")
-            elif choice == '5':
-                print("Canceled.")
+        print(table + f'\n{i}.Quit')
+        user_input = input("Please Select Your Card").replace(" ", "").lower()
+        if user_input == str(i) or user_input == 'quit':
+            clear_terminal()
+            break
+        try:
+            if len(user_input) == 1:
+                selected_card = available_cards[int(user_input) - 1]
                 break
             else:
-                print("Invalid selection. Please try again.")
+                if user_input in available_cards:
+                    selected_card = available_cards[available_cards.index(user_input)]
+                    break
+                else:
+                    clear_terminal()
+                    print(f'\n{user_input} is not one of the available cards.\n')
+                    continue
+        except IndexError:
+            clear_terminal()
+            print(f'\n{user_input} is not one of the menu options')
+            continue
 
-    return card_list
+    clear_terminal()
+    print("Selected card: ", selected_card)
+
+    while True:
+        print("You can choose one of the following options:")
+        print("1. Edit card number")
+        print("2. Change CVV2")
+        print("3. Change expiration date")
+        print("4. Change password")
+        print("5. Cancel")
+
+        choice = input("Please choose an option: ")
+        if choice == '1':
+            edit_card_number(available_cards, selected_card)
+        elif choice == '2':
+            change_cvv2()
+        elif choice == '3':
+            change_expiration_date()
+        elif choice == '4':
+            current_password = input("Please enter your current password: ")
+            if current_password == "1234":
+                new_password = input("Please enter your new password: ")
+                print("Password changed successfully!")
+            else:
+                print("Incorrect password. Please try again.")
+        elif choice == '5':
+            print("Canceled.")
+            break
+        else:
+            print("Invalid selection. Please try again.")
 
 
 if __name__ == '__main__':
-    card_list = ['2656435571048868', '7988634497364006', '4328353309086601', '2498525345064556', '3500037762653692',
-                 '3971687107588513', '8353272705341641', '7215425071807050', '6715821371280480', '7644452566589771']
-    card_list = main(card_list)
+    main('client')

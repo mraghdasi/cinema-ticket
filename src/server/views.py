@@ -209,7 +209,9 @@ def get_cards(request):
                                      'password': card.password, 'expire_date': card.expire_date.strftime('%Y-%m-%d'),
                                      'amount': card.amount,
                                      'minimum_amount': card.minimum_amount}
-        return {'cards': card_dict, 'status_code': 200}
+        if len(card_dict) != 0:
+            return {'cards': card_dict, 'status_code': 200}
+        return {'msg': 'You Have No Cards In Our DataBase', 'status_code': 400}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -366,13 +368,17 @@ def wallet_payment(request):
         if user:
             user = user[0]
             if payload['wallet_payment_type'] == 'deposit':
-                user_updated = User.objects.update({'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
+                user_updated = User.objects.update(
+                    {'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
                 return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
                         'status_code': 200}
             elif payload['wallet_payment_type'] == 'withdraw':
                 if user.balance >= payload['amount']:
-                    user_updated = User.objects.update({'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
-                    return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
+                    user_updated = User.objects.update(
+                        {'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
+                    return {
+                        'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
+                        'status_code': 200}
                 else:
                     return {'msg': 'Your Balance Not enough', 'status_code': 400}
 
