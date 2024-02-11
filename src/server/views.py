@@ -486,3 +486,15 @@ def show_profile(request):
         return {'user': profile, 'status_code': 200}
     except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
+
+
+def update_cards(request):
+    payload = request.payload
+    try:
+        UserBankAccount.objects.update({k: v if type(v) not in [date] else v.strftime('%Y-%m-%d')
+                                        for (k, v) in payload.items()}, f'id={payload["id"]}')
+        return {'status_code': 200}
+    except DBError:
+        return {'status_code': 400}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}

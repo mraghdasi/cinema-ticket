@@ -79,6 +79,7 @@ urls = {
     'get_movie_rates': get_movie_rates,
     'get_packages': get_packages,
     'show_profile': show_profile,
+    'update_cards': update_cards,
 }
 
 
