@@ -1,4 +1,5 @@
 from src.server.models.package import Package
+from src.utils.utils import hash_string
 
 # operations = DBOperation()
 
@@ -77,5 +78,4 @@ from src.server.models.package import Package
 # print(list(map(vars, list1)))
 
 
-package = Package.objects.read('title="Bronze"')[0]
-print(vars(package))
+print(hash_string('3213'))

@@ -14,7 +14,7 @@ def main(client):
         if user_input == '5' or user_input == 'quit':
             clear_terminal()
             break
-        elif user_input == '1' and user_input == 'card management':
+        elif user_input == '1' or user_input == 'card management':
             clear_terminal()
             card_management.main(client)
         elif user_input == '2' or user_input == 'card registration':
@@ -46,7 +46,6 @@ def main(client):
         elif user_input == '4' or user_input == 'wallet management':
             clear_terminal()
             wallet_management.main(client)
-
         else:
             clear_terminal()
             print("Invalid input. Please try again.")
