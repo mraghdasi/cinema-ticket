@@ -80,8 +80,8 @@ urls = {
     'get_packages': get_packages,
     'show_profile': show_profile,
     'update_cards': update_cards,
+    'add_amount_to_wallet': add_amount_to_wallet,
 }
-
 
 HOST = '127.0.0.1'
 PORT = 5555
