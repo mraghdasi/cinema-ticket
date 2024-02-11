@@ -1,5 +1,6 @@
 import json
 import os
+from src.utils.custom_validators import Validator
 
 from src.server.models.user import User
 
@@ -18,14 +19,11 @@ def main(client):
     response = json.loads(response)
 
     if response['status_code'] == 200:
-        user = response['profile']
+        user = response['user_info']
     else:
         print(response['msg'])
 
-
-
     while True:
-
         # use \n for spacing and you should use one print
         print(f'1.Username: {user["username"]}')
         print(f'2.Email: {user["email"]}')
@@ -35,67 +33,69 @@ def main(client):
         print(f'6.Created At: {user["created_at"]}')
         print(f'7.Subscription: {user["subscription"]}')
 
-            # input (1.username ...)
+        # input (1.username ...)
         try:
             select_option = input(
-                "Which Setting Do You Want To Change ?: ").lower().split()
-            if select_option == '1' or 'username':
+                "Which Setting Do You Want To Change ?: ").lower().strip()
+            payload = {}
+            if select_option == '1' or select_option == 'username':
                 new_username = input("Enter New Username: ")
                 # Validation ?
-                User.objects.update({"username": new_username}, f"id={user.id}")
-                print("Username has been updated successfully!")
+                if not Validator.username_validator(new_username):
+                    raise ValueError("Invalid username format.")
+                payload['username'] = new_username
 
-            elif select_option == '2' or 'email':
-                new_email = input("Enter New Email: ").lower().split()
+            elif select_option == '2' or select_option == 'email':
+                new_email = input("Enter New Email: ").lower().strip()
                 # Validation ?
-                User.objects.update({"email": new_email}, f"id={user.id}")
-                print("Email has been updated successfully!")
+                if not Validator.email_validator(new_email):
+                    raise ValueError("Invalid email format.")
+                payload['email'] = new_email
 
-            elif select_option == '3' or 'phone number':
+            elif select_option == '3' or select_option == 'phone number':
                 new_phone_number = int(input('Enter New Phone Number :'))
                 # Validation ?
-                User.objects.update(
-                    {"phone number": new_phone_number}, f"id={user.id}")
-                print("Phone number has been updated successfully!")
+                if not Validator.phone_number_validator(new_phone_number):
+                    raise ValueError("Invalid phone number format.")
+                payload['phone number'] = new_phone_number
 
-            elif select_option == '4' or 'password':
+            elif select_option == '4' or select_option == 'password':
                 password = input("Enter Current Password: ")
                 new_password = input("Enter New Password: ")
                 confirm_new_password = input("Confirm New Password: ")
                 if (new_password == confirm_new_password) and (password == user.password):
                     # hash string and Validator ?
-                    User.objects.update({"password": new_password}, f"id={user.id}")
-                    print("Password has been updated successfully!")
+                    if not Validator.password_validator(new_password):
+                        raise ValueError("Invalid password format.")
+                    payload['password'] = new_password
                 else:
-                    print("Password could not be updated due to invalid input or verification error.")
+                    print(
+                        "Password could not be updated due to invalid input or verification error.")
+                    continue
 
-        except ValueError:
-            print("Invalid input! Please enter a valid option number.")
+            else:
+                print("Invalid input! Please enter a valid option number.")
+                continue
 
             request_data = json.dumps({
-                'payload': {
-                    'user_id': user.id,
-                },
+                'payload': payload,
                 'url': 'user_modification'
             })
             client.send(request_data.encode('utf-8'))
             response = client.recv(5 * 1024).decode('utf-8')
             response = json.loads(response)
 
-
             if response['status_code'] == 200:
-                pass
+                user = response['user_info']
+                print("User information has been updated successfully!")
+                break
             else:
                 print(response['msg'])
                 continue
-        break
 
-
-        # where is the else statement and error handling ?
-        # success message
-        # ctrl+c for exiting the loop
-
-        # change username, email, phone no (change or add) , pass
+        except Exception as e:
+            print("Error occurred: ", e)
+            continue
 
 
 if __name__ == '__main__':
