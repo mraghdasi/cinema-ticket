@@ -9,6 +9,7 @@ from src.utils.utils import hash_string
 
 class PaymentType(Enum):
     DEPOSIT_CARD = 'deposit_card'
+    WITHDRAW_CARD = 'withdraw_card'
     TRANSFER = 'transfer'
 
 
@@ -153,7 +154,7 @@ def payment_gateway(payType: PaymentType,
 
     if payType.value == PaymentType.DEPOSIT_CARD.value:
         UserBankAccount.objects.update({'amount': origin_card_result.amount + amount}, f'id="{origin_card_result.id}"')
-    else:
+    elif payType.value == PaymentType.TRANSFER.value:
         validate_user(destination_user_id)
         validate_card_number(destination_card_number, 'Destination')
         validate_card_number_amount(origin_card_number, amount)

@@ -358,6 +358,33 @@ def add_comment_reply(request):
         return {'msg': 'Server Error', 'status_code': 500}
 
 
+@login_required
+def wallet_payment(request):
+    payload = request.payload
+    try:
+        user = User.objects.read(f"user_id={request.session.user}")
+        if user:
+            user = user[0]
+            if payload['wallet_payment_type'] == 'deposit':
+                user_updated = User.objects.update({'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
+                return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
+                        'status_code': 200}
+            elif payload['wallet_payment_type'] == 'withdraw':
+                if user.balance >= payload['amount']:
+                    user_updated = User.objects.update({'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
+                    return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
+                else:
+                    return {'msg': 'Your Balance Not enough', 'status_code': 400}
+
+        else:
+            return {'msg': 'User Not Found', 'status_code': 400}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
 def user_modification(request):
     payload = request.payload
     try:
