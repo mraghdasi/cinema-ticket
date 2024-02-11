@@ -79,8 +79,8 @@ urls = {
     'get_movie_rates': get_movie_rates,
     'get_packages': get_packages,
     'show_profile': show_profile,
+    'add_amount_to_wallet': add_amount_to_wallet,
 }
-
 
 HOST = '127.0.0.1'
 PORT = 5555
