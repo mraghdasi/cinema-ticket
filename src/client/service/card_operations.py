@@ -33,7 +33,7 @@ def op_manager(client, op, selected_card, card_creds):
                             destination_card = response['destination_card_obj']
                             confirm = input(f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
                             if confirm == 'n':
-                                return confirm
+                                return False
                         else:
                             print(response['msg'])
                             break
@@ -205,8 +205,11 @@ def main(client, op):
             clear_terminal()
             print(f'\n{user_input} is not one of the menu options')
 
-        if op_manager(client, op, selected_card, card_creds) == 'n':
-            continue
+        amount = op_manager(client, op, selected_card, card_creds)
+        if amount:
+            return amount
+        else:
+            return False
 
         break
 

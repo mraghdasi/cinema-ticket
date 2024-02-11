@@ -502,3 +502,15 @@ def show_profile(request):
         return {'user_info': profile, 'status_code': 200}
     except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
+
+
+@login_required
+def add_amount_to_wallet(request):
+    payload = request.payload
+    try:
+        new_balance = request.session.user.balance + int(payload['amount'])
+        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
+        request.session.user = user
+        return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
