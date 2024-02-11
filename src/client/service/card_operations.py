@@ -212,4 +212,4 @@ def main(client, op):
 
 
 if __name__ == '__main__':
-    main('m', 'transfer')
+    main()
