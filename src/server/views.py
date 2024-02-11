@@ -366,13 +366,17 @@ def wallet_payment(request):
         if user:
             user = user[0]
             if payload['wallet_payment_type'] == 'deposit':
-                user_updated = User.objects.update({'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
+                user_updated = User.objects.update(
+                    {'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
                 return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
                         'status_code': 200}
             elif payload['wallet_payment_type'] == 'withdraw':
                 if user.balance >= payload['amount']:
-                    user_updated = User.objects.update({'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
-                    return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
+                    user_updated = User.objects.update(
+                        {'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
+                    return {
+                        'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
+                        'status_code': 200}
                 else:
                     return {'msg': 'Your Balance Not enough', 'status_code': 400}
 
@@ -388,13 +392,9 @@ def wallet_payment(request):
 def user_modification(request):
     payload = request.payload
     try:
-        # get user id
-        user = User.objects.read(f"id={payload['user_id']}")
-        user_updated = User.objects.update(request.session.user.id, user.username, user.email, user.phon_number,
-                                           user.password, user.birthday, user.created_at, user.subscription_id)
-        return {'user_update': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
-                                vars(user_updated).items()},
-                'package': vars(user_updated), 'status_code': 200}
+        user_updated = User.objects.update(payload, f'id={request.session.user.id}')[0]
+        request.session.user = user_updated
+        return {'status_code': 200}
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
 
@@ -474,13 +474,13 @@ def get_packages(request):
                 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
-    
-    
+
+
 @login_required
 def show_profile(request):
     try:
-        profile = {k:v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v)in
+        profile = {k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
                    vars(request.session.user).items()}
-        return {'user_info': profile, 'status_code': 200}
+        return {'user': profile, 'status_code': 200}
     except Exception as e:
-        return {'msg':'server Error', 'status_code': 500}
+        return {'msg': 'server Error', 'status_code': 500}
