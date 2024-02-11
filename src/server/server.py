@@ -77,6 +77,7 @@ urls = {
     'delete_rate': delete_rate,
     'update_rate': update_rate,
     'get_movie_rates': get_movie_rates,
+    'get_packages': get_packages,
     'show_profile': show_profile,
 }
 

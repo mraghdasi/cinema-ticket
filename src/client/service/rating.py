@@ -42,7 +42,7 @@ def show_rate(client, movie):
             table.add_row([rate['id'], rate['rate']])
         print(table)
 
-        selected_rate = input('Enter Id of Comment: ').strip().lower()
+        selected_rate = input('Enter Id of Rate: ').strip().lower()
         if selected_rate in map(str, [rate['id'] for rate in rates]):
             return selected_rate
         elif selected_rate == 'quit':
@@ -64,7 +64,8 @@ def main(client, movie):
         elif user_input == '1' or user_input == 'add rate':
             while True:
                 rate = get_rate()
-
+                if not rate:
+                    break
                 request_data = json.dumps({
                     'payload': {
                         'rate': rate,
@@ -116,6 +117,8 @@ def main(client, movie):
                     break
 
                 new_rate = get_rate()
+                if not new_rate:
+                    break
 
                 if not new_rate:
                     clear_terminal()
