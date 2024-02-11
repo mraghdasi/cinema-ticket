@@ -70,6 +70,7 @@ urls = {
     'delete_comment': delete_comment,
     'update_comment': update_comment,
     'add_comment_reply': add_comment_reply,
+    'wallet_payment': wallet_payment,
     'user_modification': user_modification,
     'add_rate': add_rate,
     'get_user_rates': get_user_rates,
