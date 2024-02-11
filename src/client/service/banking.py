@@ -4,41 +4,52 @@ from src.client.service import card_operations, card_management, card_registerat
 from src.utils.utils import clear_terminal
 
 
-# outgoing : urls
-
 def main(client):
     while True:
-        # show my cards(runs card_management.py)
-        # add a card(runs card_registration.py)
-        # wallet management (runs wallet_management.py)
-        # (deposit , withdraw , card to card(IDK what this called in eng XD) (runs card_operations.py))
 
-        # return user info
+        user_input = input(
+            "Please choose your action:\n1.Card Management\n2.Card Registration\n3.Card Operations\n4.Wallet "
+            "Management\n5.Quit\n\n:").strip().lower()
 
-        # 4.card op
-        # depo
-        # with
-        # transfer
-
-        # 4 or card op
-
-        print("Please choose your action:\n1. Card Management\n2. Card Registration\n3. Wallet Management\n4. Quit")
-        # Get user input for action choice
-        action_choice = input("Enter your choice (1 or 2 or 3): ").strip().lower()
-        if action_choice == '4' or action_choice == 'quit':
+        if user_input == '5' or user_input == 'quit':
             clear_terminal()
             break
-        elif action_choice == '1' and action_choice == 'card management':
+        elif user_input == '1' and user_input == 'card management':
             clear_terminal()
-            card_management.main()
-        elif action_choice == '2' or action_choice == 'card registration':
+            card_management.main(client)
+        elif user_input == '2' or user_input == 'card registration':
             clear_terminal()
             card_registeration.main(client)
-        elif action_choice == '3' or action_choice == 'wallet management':
+        elif user_input == '3' or user_input == 'card operations':
             clear_terminal()
-            card_operations.main(client, input('input card operation (deposit, withdraw, card_to_card) : '))
+
+            while True:
+                op = input(
+                    "Please Choose your operation:\n1.Deposit\n2.Withdraw\n3.Transfer\n4.Quit\n\n:").strip().lower()
+
+                if op == '4' or op == 'quit':
+                    clear_terminal()
+                    break
+                elif op == '1' or op == 'deposit':
+                    operation = 'deposit'
+                elif op == '2' or op == 'withdraw':
+                    operation = 'withdraw'
+                elif op == '3' or op == 'transfer':
+                    operation = 'transfer'
+                else:
+                    clear_terminal()
+                    print("Invalid input. Please try again.")
+                    continue
+
+                clear_terminal()
+                card_operations.main(client, operation)
+        elif user_input == '4' or user_input == 'wallet management':
+            clear_terminal()
+            wallet_management.main(client)
+
         else:
             clear_terminal()
+            print("Invalid input. Please try again.")
             continue
 
 

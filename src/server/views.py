@@ -213,7 +213,9 @@ def get_cards(request):
                                      'password': card.password, 'expire_date': card.expire_date.strftime('%Y-%m-%d'),
                                      'amount': card.amount,
                                      'minimum_amount': card.minimum_amount}
-        return {'cards': card_dict, 'status_code': 200}
+        if len(card_dict) != 0:
+            return {'cards': card_dict, 'status_code': 200}
+        return {'msg': 'You Have No Cards In Our DataBase', 'status_code': 400}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
