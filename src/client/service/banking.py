@@ -1,6 +1,6 @@
 import os
 
-from src.client.service import card_operations
+from src.client.service import card_operations, card_registeration
 
 
 # outgoing : urls
@@ -23,7 +23,7 @@ def main(client):
 
         # 4 or card op
 
-        card_operations.main(client, input('input card op'))
+        card_registeration.main(client)
 
 
 if __name__ == '__main__':

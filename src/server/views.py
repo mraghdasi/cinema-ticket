@@ -437,11 +437,13 @@ def get_movie_rates(request):
                 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
+
+
 @login_required
 def show_profile(request):
     try:
-        profile = {k:v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v)in
+        profile = {k: v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v) in
                    vars(request.session.user).items()}
         return {'user_info': profile, 'status_code': 200}
     except Exception as e:
-        return {'msg':'server Error', 'status_code': 500}
+        return {'msg': 'server Error', 'status_code': 500}

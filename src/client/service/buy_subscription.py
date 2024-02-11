@@ -27,11 +27,11 @@ def main(client):
             print('Exiting the program...')
             break
         elif user_choice == '1' or user_choice == 'bronze':
-            user_package = 'Bronze'
+            user_package = 'bronze'
         elif user_choice == '2' or user_choice == 'silver':
-            user_package = 'Silver'
+            user_package = 'silver'
         elif user_choice == '3' or user_choice == 'gold':
-            user_package = 'Gold'
+            user_package = 'gold'
             # else can be 100000000000000000 other stuff . use elif and have bronze in opts
             # edited.
         else:
@@ -39,7 +39,7 @@ def main(client):
             continue
 
         clear_terminal()
-        print(f"You selected {user_package} package.")
+        print(f"You selected {user_package.capitalize()} package.")
         # print("At this step the user should be taken to the payment stuff and changes in the database.")
 
         # $$$$$$$ Foroutan $$$$$$$
@@ -56,7 +56,7 @@ def main(client):
         if response['status_code'] == 200:
             payload = response['subscription']
             print(
-                f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpired At: {payload['expire_at']}")
+                f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpires At: {payload['expire_at']}")
             break
         else:
             print(response['msg'])
