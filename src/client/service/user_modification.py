@@ -1,6 +1,7 @@
 import json
 import os
 from src.utils.custom_validators import Validator
+import signal
 
 from src.server.models.user import User
 
@@ -32,6 +33,7 @@ def main(client):
         print(f'5.Birth Date: {user["birthday"]}')
         print(f'6.Created At: {user["created_at"]}')
         print(f'7.Subscription: {user["subscription"]}')
+        print(f'8.Quit')
 
         # input (1.username ...)
         try:
@@ -73,9 +75,9 @@ def main(client):
                         "Password could not be updated due to invalid input or verification error.")
                     continue
 
-            else:
-                print("Invalid input! Please enter a valid option number.")
-                continue
+            elif select_option == '8' or select_option == 'quit':
+                print("\nExiting program...")
+                exit()
 
             request_data = json.dumps({
                 'payload': payload,
@@ -93,10 +95,15 @@ def main(client):
                 print(response['msg'])
                 continue
 
+        except KeyboardInterrupt:
+            print("\nExiting program...")
+            exit()
+
         except Exception as e:
             print("Error occurred: ", e)
-            continue
+        continue
 
 
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     main('m')
