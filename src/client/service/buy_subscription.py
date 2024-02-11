@@ -58,7 +58,7 @@ def main(client):
         user_package = selected_package['title']
 
         clear_terminal()
-        print(f"You selected {user_package} package.")
+        print(f"You selected {user_package.capitalize()} package.")
         # print("At this step the user should be taken to the payment stuff and changes in the database.")
 
         # $$$$$$$ Foroutan $$$$$$$
@@ -75,7 +75,7 @@ def main(client):
         if response['status_code'] == 200:
             payload = response['subscription']
             print(
-                f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpired At: {payload['expire_at']}")
+                f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpires At: {payload['expire_at']}")
             break
         else:
             print(response['msg'])
