@@ -447,14 +447,3 @@ def get_packages(request):
                 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
-
-
-@login_required
-def show_profile(request):
-    payload = request.payload
-    try:
-        return {'user': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
-                         vars(payload.session.user).items()},
-                'status_code': 200}
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
