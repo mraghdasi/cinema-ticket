@@ -25,7 +25,7 @@ def main(client):
                 continue
             request_data = json.dumps({
                 'payload': {"amount": amount},
-                'url': 'add_amount_to_wallet'
+                'url': 'add_amount_to_wallet' # Foroutan Change
             })
             client.send(request_data.encode('utf-8'))
             response = client.recv(5 * 1024).decode('utf-8')
