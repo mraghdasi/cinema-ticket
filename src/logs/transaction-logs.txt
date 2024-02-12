@@ -3,3 +3,6 @@ INFO:root: Username : mraghdasi | Card Number : 5892-1001457-568568 | Amount : 2
 INFO:root: Username : Mraghdasi33  | Amount : 5000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 03:40:14.011969
 INFO:root: Username : Mraghdasi33  | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-12 03:40:53.959647
 INFO:root: Username : Mraghdasi33  | Amount : 2500.0 | Transaction Type : deposit_wallet | DateTime : 2024-02-12 03:40:53.964141
+INFO:root: Username : soroush223132  | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-12 19:24:49.198352
+INFO:root: Username : soroush223132  | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-12 19:26:33.107650
+INFO:root: Username : soroush223132  | Amount : 0 | Transaction Type : withdraw | DateTime : 2024-02-12 19:28:10.451836
