@@ -113,6 +113,8 @@ def handle_client(client_socket):
         print('[!] Connection reset by client.')
     finally:
         print('[!] Connection Closed.')
+        if session.user:
+            User.objects.update({'is_logged_in': 0}, f"id={session.user.id}")
         client_socket.close()
 
 
