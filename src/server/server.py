@@ -82,7 +82,6 @@ urls = {
     'show_profile': show_profile,
     'add_amount_to_wallet': add_amount_to_wallet,
     'update_cards': update_cards,
-    'add_amount_to_wallet': add_amount_to_wallet,
 }
 
 HOST = '127.0.0.1'
