@@ -184,7 +184,7 @@ class DatabaseManager:
         query = '''
         CREATE TABLE IF NOT EXISTS package (
                 id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                title VARCHAR(255),
+                title VARCHAR(255) UNIQUE,
                 cash_back INTEGER DEFAULT 0,
                 price INT
             );
@@ -260,6 +260,21 @@ class DatabaseManager:
                 FOREIGN KEY (user_id) REFERENCES user(id),            
                 FOREIGN KEY (reply_to) REFERENCES comment(id) ON DELETE CASCADE            
             );
+        '''
+        self.execute_commit_query(query)
+
+        # Add Packages To Package Table
+        query = '''
+            INSERT IGNORE INTO package (title, cash_back, price) VALUES ("Gold", 50, 50000);
+        '''
+        self.execute_commit_query(query)
+        query = '''
+            INSERT IGNORE INTO package (title, cash_back, price) VALUES ("Silver", 20, 30000);
+
+        '''
+        self.execute_commit_query(query)
+        query = '''
+            INSERT IGNORE INTO package (title, cash_back, price) VALUES ("Bronze", 0, 0);
         '''
         self.execute_commit_query(query)
 
