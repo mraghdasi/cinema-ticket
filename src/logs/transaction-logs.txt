@@ -1,15 +1,4 @@
-INFO:root: Username : gjhghk | Card Number : 4574584 | Amount : 10000 | Transaction Type : buy_ticket | DateTime : 2024-02-02 21:52:35.515611
-INFO:root: Username : mraghdasi | Card Number : 5892-1001457-568568 | Amount : 20000 | Transaction Type : withdraw_card | DateTime : 2024-02-03 00:05:27.934382
-INFO:root: Username : Mraghdasi33  | Amount : 5000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 03:40:14.011969
-INFO:root: Username : Mraghdasi33  | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-12 03:40:53.959647
-INFO:root: Username : Mraghdasi33  | Amount : 2500.0 | Transaction Type : deposit_wallet | DateTime : 2024-02-12 03:40:53.964141
-INFO:root: Username : soroush223132  | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-12 19:24:49.198352
-INFO:root: Username : soroush223132  | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-12 19:26:33.107650
-INFO:root: Username : soroush223132  | Amount : 0 | Transaction Type : withdraw | DateTime : 2024-02-12 19:28:10.451836
-INFO:root: Username : soroush223132  | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-12 20:04:54.551079
-INFO:root: Username : soroush223132  | Amount : 0 | Transaction Type : withdraw | DateTime : 2024-02-12 20:04:54.579400
 INFO:root: Username : aA11  | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-12 20:55:22.295811
-INFO:root: Username : aA11  | Amount : 0 | Transaction Type : deposit_wallet | DateTime : 2024-02-12 20:55:22.303987
 INFO:root: Username : aA11  | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-12 20:56:21.093770
 INFO:root: Username : aA11  | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-12 20:57:27.938006
 INFO:root: Username : aA11  | Amount : 2500.0 | Transaction Type : deposit_wallet | DateTime : 2024-02-12 20:57:27.949573
@@ -26,3 +15,27 @@ INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket |
 INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 20:59:59.454212
 INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 21:00:02.374659
 INFO:root: Username : aA1  | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-12 21:32:41.804328
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : 3000 | Transaction Type : deposit_card | DateTime : 2024-02-13 01:28:05.228021
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : 5000 | Transaction Type : deposit_card | DateTime : 2024-02-13 01:32:10.316326
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -5000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 01:34:25.387073
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 01:41:23.169732
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 01:43:57.813818
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 01:45:08.441179
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 01:46:48.555312
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 01:53:35.973689
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : 3000 | Transaction Type : deposit_card | DateTime : 2024-02-13 01:58:02.563198
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:00:46.462453
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:06:02.539920
+INFO:root: Username : Mraghdasi33    | Amount : -4000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:08:14.186938
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -1000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 02:09:08.744480
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234 | Origin Card Number : 4321432143214321  | Amount : 6000 | Transaction Type : transfer | DateTime : 2024-02-13 02:12:28.221802
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 4321432143214321   | Amount : -2500 | Transaction Type : withdraw_card | DateTime : 2024-02-13 02:15:36.498503
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -1000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 02:35:27.098239
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -1500 | Transaction Type : withdraw_card | DateTime : 2024-02-13 02:38:27.407542
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:56:04.967818
+INFO:root: Username : Mraghdasi33    | Amount : -5000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:56:58.925406
+INFO:root: Username : Mraghdasi33    | Amount : -4000 | Transaction Type : buy_ticket | DateTime : 2024-02-13 02:57:33.393271
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : 1000 | Transaction Type : deposit_card | DateTime : 2024-02-13 02:58:48.317067
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -6000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:00:12.775855
+INFO:root: Username : Mraghdasi33 | Origin Card Number : 4321432143214321   | Amount : -2000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:01:49.642948
+INFO:root: Username : Mraghdasi33    | Amount : 2000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 03:01:49.644653

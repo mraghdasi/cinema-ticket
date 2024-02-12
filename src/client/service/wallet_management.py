@@ -2,6 +2,7 @@ import json
 import os
 
 from src.client.service import card_operations
+from src.utils.transaction import TransactionType
 from src.utils.utils import clear_terminal
 
 
@@ -24,8 +25,11 @@ def main(client):
                 print("Cart Operation Error")
                 continue
             request_data = json.dumps({
-                'payload': {"amount": amount},
-                'url': 'add_amount_to_wallet' # Foroutan Change
+                'payload': {
+                    'amount': amount,
+                    'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                },
+                'url': 'wallet_deposit'
             })
             client.send(request_data.encode('utf-8'))
             response = client.recv(5 * 1024).decode('utf-8')

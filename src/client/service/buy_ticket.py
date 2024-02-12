@@ -301,7 +301,7 @@ def main(client):
                     continue
 
                 # Validate Not Reserved
-                reserved_seats = map(str, reserved_tickets_seats)
+                reserved_seats = [seat.zfill(2) for seat in map(str, reserved_tickets_seats)]
                 if seat_to_reserve_input in reserved_seats:
                     clear_terminal()
                     print('This seat has been reserved')
@@ -367,7 +367,7 @@ def main(client):
                                 cash_back_amount = 0
                                 package = response['package']
                                 if package['title'] == 'Gold':
-                                    cash_back_amount = selected_sans['price'] * (int(package['cash_back'])/100)
+                                    cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
                                     print(f'Cash Back Amount: {cash_back_amount}')
                                     print('You Have A Free Cocktail!')
                                 elif package['title'] == 'Silver':
@@ -381,7 +381,7 @@ def main(client):
                                     if response['status_code'] == 200:
                                         ticket_list = response['payload']
                                         if len(ticket_list) < 3:
-                                            cash_back_amount = selected_sans['price'] * (int(package['cash_back'])/100)
+                                            cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
                                         else:
                                             cash_back_amount = 0
                                     else:

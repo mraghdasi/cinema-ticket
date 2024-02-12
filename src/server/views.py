@@ -334,7 +334,7 @@ def delete_comment(request):
 def wallet_deposit(request):
     payload = request.payload
     try:
-        amount = payload['amount']
+        amount = int(payload['amount'])
         transaction_log_type = payload['transaction_log_type']
         user = request.session.user
         user_updated = User.objects.update({'balance': amount + user.balance}, f'id="{user.id}"')[0]
@@ -516,20 +516,6 @@ def show_profile(request):
         return {'msg': 'server Error', 'status_code': 500}
 
 
-@login_required
-def add_amount_to_wallet(request):
-    payload = request.payload
-    try:
-        new_balance = request.session.user.balance + int(payload['amount'])
-        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
-        request.session.user = user
-        return {'status_code': 200}
-    except DBError:
-        return {'status_code': 400}
-    except Exception as e:
-        return {'msg': 'server Error', 'status_code': 500}
-
-
 def update_cards(request):
     payload = request.payload
     try:
@@ -538,4 +524,3 @@ def update_cards(request):
         return {'status_code': 200}
     except DBError:
         return {'status_code': 400}
-
