@@ -4,6 +4,7 @@ import json
 # outgoing : banking process and updating user
 from prettytable import PrettyTable
 
+from src.utils.transaction import TransactionType
 from src.utils.utils import clear_terminal
 
 
@@ -61,23 +62,37 @@ def main(client):
         print(f"You selected {user_package.capitalize()} package.")
         # print("At this step the user should be taken to the payment stuff and changes in the database.")
 
-        # $$$$$$$ Foroutan $$$$$$$
         # Payment Method
-        request_data = json.dumps({
+        wallet_withdraw_payload = json.dumps({
             'payload': {
-                'user_package': user_package,
+                'amount': selected_package['price'],
+                'transaction_log_type': TransactionType.BUY_PACKAGE.value
             },
-            'url': 'buy_subscription'
+            'url': 'wallet_withdraw'
         })
-        client.send(request_data.encode('utf-8'))
+        client.send(wallet_withdraw_payload.encode('utf-8'))
         response = client.recv(5 * 1024).decode('utf-8')
         response = json.loads(response)
         if response['status_code'] == 200:
-            payload = response['subscription']
-            print(
-                f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpires At: {payload['expire_at']}")
-            break
+            request_data = json.dumps({
+                'payload': {
+                    'user_package': user_package,
+                },
+                'url': 'buy_subscription'
+            })
+            client.send(request_data.encode('utf-8'))
+            response = client.recv(5 * 1024).decode('utf-8')
+            response = json.loads(response)
+            if response['status_code'] == 200:
+                payload = response['subscription']
+                print(
+                    f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpires At: {payload['expire_at']}")
+                break
+            else:
+                print(response['msg'])
+                continue
         else:
+            clear_terminal()
             print(response['msg'])
             continue
 
