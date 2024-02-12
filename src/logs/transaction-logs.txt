@@ -25,3 +25,4 @@ INFO:root: Username : aA11  | Amount : 500.0 | Transaction Type : deposit_wallet
 INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 20:59:56.944364
 INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 20:59:59.454212
 INFO:root: Username : aA11  | Amount : 1000 | Transaction Type : cancel_ticket | DateTime : 2024-02-12 21:00:02.374659
+INFO:root: Username : aA1  | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-12 21:32:41.804328
