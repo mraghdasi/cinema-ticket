@@ -70,17 +70,17 @@ urls = {
     'delete_comment': delete_comment,
     'update_comment': update_comment,
     'add_comment_reply': add_comment_reply,
-    'wallet_payment': wallet_payment,
+    'wallet_deposit': wallet_deposit,
+    'wallet_withdraw': wallet_withdraw,
     'user_modification': user_modification,
     'add_rate': add_rate,
     'get_user_rates': get_user_rates,
     'delete_rate': delete_rate,
     'update_rate': update_rate,
     'get_movie_rates': get_movie_rates,
-    'get_packages': get_packages,
     'show_profile': show_profile,
-    'add_amount_to_wallet': add_amount_to_wallet,
 }
+
 
 HOST = '127.0.0.1'
 PORT = 5555

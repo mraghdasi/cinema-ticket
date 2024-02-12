@@ -40,7 +40,7 @@ def main(client):
 
         # Get user input for movie choice
         movie_choice = input("Enter movie name or number: ").strip().lower()
-        if movie_choice == (len(movies) + 1) or movie_choice == 'quit':
+        if movie_choice == 'quit':
             print('Exiting the program...')
             break
         elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
@@ -112,7 +112,7 @@ def main(client):
 
         print(f"Number of comments: {len(film_comments)}")
         print("\nPlease select one of the options below:")
-        print("1) Comments")
+        print("1) Leave a comment")
         print("2) Rate film")
         print("3) Quit")
 
@@ -120,7 +120,7 @@ def main(client):
         if selected_option == '3' or selected_option == 'quit':
             print("Thanks for using our app!")
             break
-        elif selected_option == '1' or selected_option == 'comments':
+        elif selected_option == '1' or selected_option == 'leave a comment':
             commenting.main(client, movie)
         elif selected_option == '2' or selected_option == 'rate film':
             rating.main(client, movie)
@@ -131,7 +131,7 @@ def main(client):
 
 
 if __name__ == "__main__":
-    main('client')
+    main()
 
 # input(buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
 # comment (runs commenting.py)))

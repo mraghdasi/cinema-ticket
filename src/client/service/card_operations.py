@@ -31,13 +31,12 @@ def op_manager(client, op, selected_card, card_creds):
                         response = json.loads(response)
                         if response['status_code'] == 200:
                             destination_card = response['destination_card_obj']
-                            confirm = input(
-                                f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
+                            confirm = input(f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
                             if confirm == 'n':
-                                return False
+                                return confirm
                         else:
                             print(response['msg'])
-                            continue
+                            break
 
                     expire_date = ''
                     expire_date_tries = 0
@@ -141,12 +140,12 @@ def op_manager(client, op, selected_card, card_creds):
                     print(
                         f"""\n{op_amount} is {op}ed to {selected_card}\n
             your current balance: {card_creds[selected_card]['amount']}""")
-                    return op_amount
                 else:
                     print(
                         f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
             your current balance: {card_creds[selected_card]['amount']}""")
-                    break
+
+                break
 
     except custom_exceptions.CardOpAmountValueError:
         clear_terminal()
@@ -156,6 +155,13 @@ def op_manager(client, op, selected_card, card_creds):
 def main(client, op):
     while True:
         print('\nCard operations\n')
+
+        # input(available cards)
+        # if op == deposit : ...
+        # if op == withdraw : ...
+        # if op == card_to_card : ...
+
+        # return user info
 
         request_data = json.dumps({
             'payload': {},
@@ -167,9 +173,6 @@ def main(client, op):
         if response['status_code'] == 200:
             available_cards = list(response['cards'])
             card_creds = response['cards']
-        elif response['status_code'] == 400:
-            print(response['msg'])
-            break
         else:
             print(response['msg'])
             break
@@ -202,14 +205,11 @@ def main(client, op):
             clear_terminal()
             print(f'\n{user_input} is not one of the menu options')
 
-        amount = op_manager(client, op, selected_card, card_creds)
-        if amount:
-            return amount
-        else:
-            return False
+        if op_manager(client, op, selected_card, card_creds) == 'n':
+            continue
 
         break
 
 
 if __name__ == '__main__':
-    main()
+    main('m', 'transfer')

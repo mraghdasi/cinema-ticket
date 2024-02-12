@@ -12,6 +12,7 @@ from src.server.models.subscription import Subscription
 from src.server.models.ticket import Ticket
 from src.server.models.user import User
 from src.utils.custom_exceptions import DBError
+from src.utils.transaction import set_transaction_log, TransactionType
 
 
 def login_required(func):
@@ -187,16 +188,15 @@ def buy_subscription(request):
 
 @login_required
 def check_subscription(request):
-    try:
-        subscriptions = Subscription.objects.read(
-            f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
-        if len(subscriptions) == 0:
-            package = Package.objects.read('title="Bronze"')[0]
-        else:
-            package = Package.objects.read(f'id={subscriptions[0].package_id}')[0]
-        return {'package': vars(package), 'status_code': 200}
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
+    # try:
+    subscriptions = Subscription.objects.read(f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
+    if len(subscriptions) == 0:
+        package = Package.objects.read('title="Bronze"')[0]
+    else:
+        package = Package.objects.read(f'id={subscriptions[0].package_id}')[0]
+    return {'package': vars(package), 'status_code': 200}
+    # except Exception as e:
+    #     return {'msg': 'Server Error', 'status_code': 500}
 
 
 @login_required
@@ -209,9 +209,7 @@ def get_cards(request):
                                      'password': card.password, 'expire_date': card.expire_date.strftime('%Y-%m-%d'),
                                      'amount': card.amount,
                                      'minimum_amount': card.minimum_amount}
-        if len(card_dict) != 0:
-            return {'cards': card_dict, 'status_code': 200}
-        return {'msg': 'You Have No Cards In Our DataBase', 'status_code': 400}
+        return {'cards': card_dict, 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -333,6 +331,55 @@ def delete_comment(request):
 
 
 @login_required
+def wallet_deposit(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        user_updated = User.objects.update({'balance': amount + user.balance}, f'id="{user.id}"')[0]
+        set_transaction_log(amount, transaction_log_type, user.username)
+        request.session.user = user_updated
+        return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
+                'status_code': 200}
+
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def wallet_withdraw(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        discount = 0
+        if payload.get('operation', None) == 'ticket':
+            user_birthday_month = user.birthday.month
+            user_birthday_day = user.birthday.day
+            discount = 0.5 if datetime.today().month == user_birthday_month and datetime.today().day == user_birthday_day else 0
+        actual_amount = amount - (amount * discount)
+
+        if user.balance >= actual_amount:
+            user_updated = User.objects.update({'balance': user.balance - actual_amount}, f'id="{user.id}"')[0]
+            set_transaction_log(-amount, transaction_log_type, user.username)
+            request.session.user = user_updated
+            return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
+        else:
+            return {'msg': 'Your Balance Not enough', 'status_code': 400}
+
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
 def update_comment(request):
     payload = request.payload
     try:
@@ -360,43 +407,16 @@ def add_comment_reply(request):
         return {'msg': 'Server Error', 'status_code': 500}
 
 
-@login_required
-def wallet_payment(request):
-    payload = request.payload
-    try:
-        user = User.objects.read(f"user_id={request.session.user}")
-        if user:
-            user = user[0]
-            if payload['wallet_payment_type'] == 'deposit':
-                user_updated = User.objects.update(
-                    {'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
-                return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
-                        'status_code': 200}
-            elif payload['wallet_payment_type'] == 'withdraw':
-                if user.balance >= payload['amount']:
-                    user_updated = User.objects.update(
-                        {'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
-                    return {
-                        'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
-                        'status_code': 200}
-                else:
-                    return {'msg': 'Your Balance Not enough', 'status_code': 400}
-
-        else:
-            return {'msg': 'User Not Found', 'status_code': 400}
-    except DBError:
-        return {'msg': 'Error in Database', 'status_code': 400}
-
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
-
-
 def user_modification(request):
     payload = request.payload
     try:
-        user_updated = User.objects.update(payload, f'id={request.session.user.id}')[0]
-        request.session.user = user_updated
-        return {'status_code': 200}
+        # get user id
+        user = User.objects.read(f"id={payload['user_id']}")
+        user_updated = User.objects.update(request.session.user.id, user.username, user.email, user.phon_number,
+                                           user.password, user.birthday, user.created_at, user.subscription_id)
+        return {'user_update': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                                vars(user_updated).items()},
+                'package': vars(user_updated), 'status_code': 200}
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
 
@@ -414,7 +434,7 @@ def add_rate(request):
                          vars(rate).items()},
                 'status_code': 200}
     except DBError:
-        return {'msg': 'Duplicate Rate Error', 'status_code': 400}
+        return {'msg': 'Error in Database', 'status_code': 400}
 
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
@@ -468,33 +488,11 @@ def get_movie_rates(request):
         return {'msg': 'Server Error', 'status_code': 500}
 
 
-def get_packages(request):
-    try:
-        packages = Package.objects.read()
-        return {'packages': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
-                              vars(package).items()} for package in packages],
-                'status_code': 200}
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
-
-
 @login_required
 def show_profile(request):
     try:
-        profile = {k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
+        profile = {k: v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v) in
                    vars(request.session.user).items()}
-        return {'user': profile, 'status_code': 200}
-    except Exception as e:
-        return {'msg': 'server Error', 'status_code': 500}
-
-
-@login_required
-def add_amount_to_wallet(request):
-    payload = request.payload
-    try:
-        new_balance = request.session.user.balance + int(payload['amount'])
-        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
-        request.session.user = user
-        return {'status_code': 200}
+        return {'user_info': profile, 'status_code': 200}
     except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}

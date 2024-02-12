@@ -34,7 +34,7 @@ def main(client):
             banking.main(client)
         elif user_input == '5' or user_input == 'modify account':
             clear_terminal()
-            user_modification.main(client)
+            user_modification.main()
 
 
 if __name__ == "__main__":

@@ -241,8 +241,7 @@ class DatabaseManager:
                 rate INT,
                 user_id INT,
                 FOREIGN KEY (film_id) REFERENCES film(id),
-                FOREIGN KEY (user_id) REFERENCES user(id),
-                CONSTRAINT unique_film_user_pair UNIQUE (film_id, user_id)
+                FOREIGN KEY (user_id) REFERENCES user(id)
             );
         '''
         self.execute_commit_query(query)
