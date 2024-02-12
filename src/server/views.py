@@ -331,6 +331,55 @@ def delete_comment(request):
 
 
 @login_required
+def wallet_deposit(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        user_updated = User.objects.update({'balance': amount + user.balance}, f'id="{user.id}"')[0]
+        set_transaction_log(amount, transaction_log_type, user.username)
+        request.session.user = user_updated
+        return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
+                'status_code': 200}
+
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def wallet_withdraw(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        discount = 0
+        if payload.get('operation', None) == 'ticket':
+            user_birthday_month = user.birthday.month
+            user_birthday_day = user.birthday.day
+            discount = 0.5 if datetime.today().month == user_birthday_month and datetime.today().day == user_birthday_day else 0
+        actual_amount = amount - (amount * discount)
+
+        if user.balance >= actual_amount:
+            user_updated = User.objects.update({'balance': user.balance - actual_amount}, f'id="{user.id}"')[0]
+            set_transaction_log(-amount, transaction_log_type, user.username)
+            request.session.user = user_updated
+            return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
+        else:
+            return {'msg': 'Your Balance Not enough', 'status_code': 400}
+
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
 def update_comment(request):
     payload = request.payload
     try:
