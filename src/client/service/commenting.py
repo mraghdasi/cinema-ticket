@@ -41,6 +41,42 @@ def show_user_comments(client, movie):
             continue
 
 
+def show_movie_comments(client, movie):
+    while True:
+        request_data = json.dumps({
+            'payload': {
+                'id': movie['id'],
+            },
+            'url': 'get_movie_comments'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            comments = response['comments']
+        else:
+            clear_terminal()
+            print(response['msg'])
+            continue
+
+        table = PrettyTable(['Id', 'Description', 'Reply To', 'Created At'])
+
+        for comment in comments:
+            table.add_row([comment['id'], comment['description'], comment['reply_to'] if comment['reply_to'] else None,
+                           comment['created_at']])
+        print(table)
+
+        selected_comment = input('Enter Id of Comment: ').strip().lower()
+        if selected_comment in map(str, [comment['id'] for comment in comments]):
+            return selected_comment
+        elif selected_comment == 'quit':
+            break
+        else:
+            clear_terminal()
+            print('Invalid Comment ID')
+            continue
+
+
 def main(client, movie):
     while True:
         user_input = input(
@@ -156,7 +192,7 @@ def main(client, movie):
 
         elif user_input == '5' or user_input == 'reply to comment':
             while True:
-                selected_comment = show_user_comments(client, movie)
+                selected_comment = show_movie_comments(client, movie)
                 if not selected_comment:
                     break
                 description = input("Enter a description: ").strip()
