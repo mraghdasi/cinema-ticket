@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-
+from src.server.models import *
 from src.server.views import *
 from src.utils.utils import hash_string
 
@@ -866,5 +866,6 @@ class TestShowProfile(unittest.TestCase):
 
         self.assertEqual(show_profile(self.request)['status_code'], 200)
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
