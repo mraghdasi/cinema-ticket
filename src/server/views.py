@@ -12,6 +12,7 @@ from src.server.models.subscription import Subscription
 from src.server.models.ticket import Ticket
 from src.server.models.user import User
 from src.utils.custom_exceptions import DBError
+from src.utils.transaction import set_transaction_log, TransactionType
 
 
 def login_required(func):
@@ -187,16 +188,15 @@ def buy_subscription(request):
 
 @login_required
 def check_subscription(request):
-    try:
-        subscriptions = Subscription.objects.read(
-            f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
-        if len(subscriptions) == 0:
-            package = Package.objects.read('title="Bronze"')[0]
-        else:
-            package = Package.objects.read(f'id={subscriptions[0].package_id}')[0]
-        return {'package': vars(package), 'status_code': 200}
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
+    # try:
+    subscriptions = Subscription.objects.read(f"user_id={request.session.user.id} AND expire_at > {datetime.now().strftime('%Y-%m-%d')}")
+    if len(subscriptions) == 0:
+        package = Package.objects.read('title="Bronze"')[0]
+    else:
+        package = Package.objects.read(f'id={subscriptions[0].package_id}')[0]
+    return {'package': vars(package), 'status_code': 200}
+    # except Exception as e:
+    #     return {'msg': 'Server Error', 'status_code': 500}
 
 
 @login_required
@@ -359,25 +359,47 @@ def add_comment_reply(request):
 
 
 @login_required
-def wallet_payment(request):
+def wallet_deposit(request):
     payload = request.payload
     try:
-        user = User.objects.read(f"user_id={request.session.user}")
-        if user:
-            user = user[0]
-            if payload['wallet_payment_type'] == 'deposit':
-                user_updated = User.objects.update({'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
-                return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
-                        'status_code': 200}
-            elif payload['wallet_payment_type'] == 'withdraw':
-                if user.balance >= payload['amount']:
-                    user_updated = User.objects.update({'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
-                    return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
-                else:
-                    return {'msg': 'Your Balance Not enough', 'status_code': 400}
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        user_updated = User.objects.update({'balance': amount + user.balance}, f'id="{user.id}"')[0]
+        set_transaction_log(amount, transaction_log_type, user.username)
+        request.session.user = user_updated
+        return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
+                'status_code': 200}
 
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def wallet_withdraw(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        discount = 0
+        if payload.get('operation', None) == 'ticket':
+            user_birthday_month = user.birthday.month
+            user_birthday_day = user.birthday.day
+            discount = 0.5 if datetime.today().month == user_birthday_month and datetime.today().day == user_birthday_day else 0
+        actual_amount = amount - (amount * discount)
+
+        if user.balance >= actual_amount:
+            user_updated = User.objects.update({'balance': user.balance - actual_amount}, f'id="{user.id}"')[0]
+            set_transaction_log(-amount, transaction_log_type, user.username)
+            request.session.user = user_updated
+            return {'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}', 'status_code': 200}
         else:
-            return {'msg': 'User Not Found', 'status_code': 400}
+            return {'msg': 'Your Balance Not enough', 'status_code': 400}
+
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
 
@@ -464,11 +486,13 @@ def get_movie_rates(request):
                 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
+
+
 @login_required
 def show_profile(request):
     try:
-        profile = {k:v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v)in
+        profile = {k: v if type(v) not in [datetime.date] else v.strftime('%y-%m-%d') for (k, v) in
                    vars(request.session.user).items()}
         return {'user_info': profile, 'status_code': 200}
     except Exception as e:
-        return {'msg':'server Error', 'status_code': 500}
+        return {'msg': 'server Error', 'status_code': 500}

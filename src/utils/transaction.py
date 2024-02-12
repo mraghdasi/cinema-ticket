@@ -13,10 +13,11 @@ class TransactionType(Enum):
     TRANSFER = 'transfer'
     BUY_PACKAGE = 'buy_package'
     BUY_TICKET = 'buy_ticket'
+    CANCEL_TICKET = 'cancel_ticket'
 
 
 @exception_log()
-def set_transaction_log(amount: int, transaction_type: TransactionType, username: str, card_number: None):
+def set_transaction_log(amount: int, transaction_type: str, username: str, card_number=None):
     """
     Logs a transaction to a file.
 
@@ -26,15 +27,11 @@ def set_transaction_log(amount: int, transaction_type: TransactionType, username
         transaction_type (TransactionType): The type of transaction.
         username (str): The username of the customer.
 
-    Raises:
-        Exception: If the transaction type is not valid.
-
     """
 
-    if not isinstance(transaction_type, TransactionType):
-        raise Exception(f'Invalid Transaction Type: {transaction_type}')
-
     logging.basicConfig(filename='../logs/transaction-logs.txt', level=logging.INFO)
-    logging.info(f' Username : {username} {f"| Card Number : {card_number}" if card_number else ""} | Amount : {amount} | Transaction Type : {transaction_type.value} | DateTime : {datetime.datetime.now()}')
+    logging.info(
+        f' Username : {username} {f"| Card Number : {card_number}" if card_number else ""} | Amount : {amount} | Transaction Type : {transaction_type} | DateTime : {datetime.datetime.now()}')
 
-# set_transaction_log('4574584', 10000, TransactionType.BUY_TICKET, 'mraghdasi')
+
+# set_transaction_log(10000, TransactionType.BUY_TICKET.value, 'mraghdasi')
