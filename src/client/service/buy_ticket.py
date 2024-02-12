@@ -367,7 +367,7 @@ def main(client):
                                 cash_back_amount = 0
                                 package = response['package']
                                 if package['title'] == 'Gold':
-                                    cash_back_amount = selected_sans['price'] * 0.5
+                                    cash_back_amount = selected_sans['price'] * (int(package['chash_back'])/100)
                                     print(f'Cash Back Amount: {cash_back_amount}')
                                     print('You Have A Free Cocktail!')
                                 elif package['title'] == 'Silver':
@@ -381,7 +381,7 @@ def main(client):
                                     if response['status_code'] == 200:
                                         ticket_list = response['payload']
                                         if len(ticket_list) < 3:
-                                            cash_back_amount = selected_sans['price'] * 0.2
+                                            cash_back_amount = selected_sans['price'] * (int(package['chash_back'])/100)
                                         else:
                                             cash_back_amount = 0
                                     else:
