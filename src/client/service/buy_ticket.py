@@ -4,7 +4,6 @@ from datetime import datetime
 from prettytable import PrettyTable
 from prettytable import ORGMODE
 
-
 from src.utils import custom_exceptions
 
 from src.utils.transaction import TransactionType
@@ -330,27 +329,14 @@ def main(client):
                             break
                         elif payment_choice == '1' or payment_choice == 'confirm payment':
                             clear_terminal()
-                            # $$$$$$$ Foroutan $$$$$$$
-                            # Payment Method
                             print("Payment successful. Thank you for your purchase!")
                             request_data = json.dumps({
-                                'payload': {
-                                    'sans_id': selected_sans['id'],
-                                    'sit': seat_to_reserve_input
-                                },
-                                'url': 'add_ticket'
-                            })
+                                'payload': {},
+                                'url': 'check_subscription'})
                             client.send(request_data.encode('utf-8'))
                             response = client.recv(5 * 1024).decode('utf-8')
                             response = json.loads(response)
-                            ticket = response['payload']
                             if response['status_code'] == 200:
-                                print(
-                                    f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']} {selected_sans['start_time']} to {selected_sans['end_time']}\n Seat Number: {ticket['sit_number']}")
-
-                                request_data = json.dumps({
-                                    'payload': {},
-                                    'url': 'check_subscription'})
                                 cash_back_amount = 0
                                 package = response['package']
                                 if package['title'] == 'Gold':
@@ -368,87 +354,57 @@ def main(client):
                                     if response['status_code'] == 200:
                                         ticket_list = response['payload']
                                         if len(ticket_list) < 3:
-                                            cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
+                                            cash_back_amount = selected_sans['price'] * (
+                                                    int(package['cash_back']) / 100)
                                         else:
                                             cash_back_amount = 0
                                     else:
                                         print(response['msg'])
                                         continue
-
-                                else:
-                                    pass
-
-                                wallet_deposit_payload = json.dumps({
+                            else:
+                                print(response['msg'])
+                                continue
+                            wallet_deposit_payload = json.dumps({
+                                'payload': {
+                                    'amount': cash_back_amount,
+                                    'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                                },
+                                'url': 'wallet_deposit'
+                            })
+                            client.send(wallet_deposit_payload.encode('utf-8'))
+                            response = client.recv(5 * 1024).decode('utf-8')
+                            response = json.loads(response)
+                            if response['status_code'] == 200:
+                                request_data = json.dumps({
                                     'payload': {
-                                        'amount': cash_back_amount,
-                                        'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                                        'sans_id': selected_sans['id'],
+                                        'sit': seat_to_reserve_input
                                     },
-                                    'url': 'wallet_deposit'
+                                    'url': 'add_ticket'
                                 })
-                                client.send(wallet_deposit_payload.encode('utf-8'))
+                                client.send(request_data.encode('utf-8'))
                                 response = client.recv(5 * 1024).decode('utf-8')
                                 response = json.loads(response)
-
+                                ticket = response['payload']
                                 if response['status_code'] == 200:
-                                    package = response['package']
-                                    if package['title'] == 'Gold':
-                                        cash_back_amount = selected_sans['price'] * 0.5
-                                        print(f'Cash Back Amount: {cash_back_amount}')
-                                        print('You Have A Free Cocktail!')
-                                    elif package['title'] == 'Silver':
-                                        request_data = json.dumps({
-                                            'payload': {},
-                                            'url': 'check_tickets'
-                                        })
-                                        client.send(request_data.encode('utf-8'))
-                                        response = client.recv(5 * 1024).decode('utf-8')
-                                        response = json.loads(response)
-                                        if response['status_code'] == 200:
-                                            ticket_list = response['payload']
-                                            if len(ticket_list) < 3:
-                                                cash_back_amount = selected_sans['price'] * 0.2
-                                            else:
-                                                cash_back_amount = 0
-                                        else:
-                                            print(response['msg'])
-                                            continue
-                                        print(f'Cash Back Amount: {cash_back_amount}')
-                                    else:
-                                        pass
+                                    clear_terminal()
+                                    print(
+                                        f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']}"
+                                        f" {selected_sans['start_time']} to {selected_sans['end_time']}\n "
+                                        f"Seat Number: {ticket['sit_number']}")
                                     return 'Payed'
                                 else:
+                                    clear_terminal()
                                     print(response['msg'])
-                                    continue
                             else:
+                                clear_terminal()
                                 print(response['msg'])
                                 continue
                         else:
+                            clear_terminal()
                             print("Invalid input. Please enter a valid choice.")
                             continue
-                                    print(f'Cash Back Amount: {cash_back_amount}')
-                                    print(response['msg'])
-
-                                else:
-                                    print(response['msg'])
-                                    continue
-
-                                return 'Payed'
-
-                            else:
-                                print(response['msg'])
-                                continue
-                    else:
-                        clear_terminal()
-                        print(response['msg'])
-                        continue
-
-                elif payment_choice == '2':
-                    break
-
-                else:
-                    print("Invalid input. Please enter a valid choice.")
-                    continue
 
 
 if __name__ == '__main__':
-    main('m', 'm')
+    main()

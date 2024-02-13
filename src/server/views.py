@@ -530,6 +530,19 @@ def update_cards(request):
 def add_amount_to_wallet(request):
     payload = request.payload
     try:
+        new_balance = request.session.user.balance + int(payload['amount'])
+        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
+        request.session.user = user
+        return {'status_code': 200}
+    except DBError:
+        return {'status_code': 400}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def add_movie(request):
+    payload = request.payload
+    try:
         film = Film.objects.create(**{'title': payload['title'], 'min_age': payload['min_age']})
         return {'film': {k: v if type(v) not in [date, datetime, timedelta] else v.strftime('%Y-%m-%d')
                          for (k, v) in vars(film).items()}, 'status_code': 200}
