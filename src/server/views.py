@@ -526,27 +526,13 @@ def update_cards(request):
         return {'status_code': 400}
 
 
-@login_required
-def add_amount_to_wallet(request):
-    payload = request.payload
-    try:
-        new_balance = request.session.user.balance + int(payload['amount'])
-        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
-        request.session.user = user
-        return {'status_code': 200}
-    except DBError:
-        return {'status_code': 400}
-    except Exception as e:
-        return {'msg': 'server Error', 'status_code': 500}
-
-
 def add_movie(request):
     payload = request.payload
     try:
         film = Film.objects.create(**{'title': payload['title'], 'min_age': payload['min_age']})
         return {'film': {k: v if type(v) not in [date, datetime, timedelta] else v.strftime('%Y-%m-%d')
                          for (k, v) in vars(film).items()}, 'status_code': 200}
-    except DBError:
+    except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
 
 
@@ -555,7 +541,7 @@ def delete_movie(request):
     try:
         Film.objects.delete(f"id={payload['movie_id']}")
         return {'status_code': 200}
-    except DBError:
+    except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
 
 
@@ -564,16 +550,101 @@ def update_movie(request):
     try:
         Film.objects.update(payload['fields'], f"id={payload['movie_id']}")
         return {'status_code': 200}
-    except DBError:
+    except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
 
 
 def get_movie_sans(request):
     payload = request.payload
     try:
-        sansses = CinemaSans.objects.read(f"film_id={payload['movie_id']}")
+        sansses = CinemaSans.objects.query(f'''
+                    SELECT cinema_sans.id,
+                   premiere_date,
+                   start_time,
+                   end_time,
+                   film_id,
+                   hall_id,
+                   price,
+                   title,
+                   capacity
+            FROM cinema_sans
+            JOIN hall ha ON ha.id = cinema_sans.hall_id
+            WHERE film_id = {payload['movie_id']}''', fetch=True)
         return {
-            'sansses': [{k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
-                         vars(sans).items()} for sans in sansses], 'status_code': 200}
+            'sansses': [
+                {k: v if type(v) not in [datetime, date, timedelta] else _convert_not_serializable2(v) for (k, v) in
+                 vars(sans).items()} for sans in sansses], 'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def get_halls(request):
+    payload = request.payload
+    try:
+        halls = Hall.objects.read()
+        return {
+            'halls': [
+                {k: v if type(v) not in [datetime, date, timedelta] else _convert_not_serializable2(v) for (k, v) in
+                 vars(hall).items()} for hall in halls], 'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def add_sans(request):
+    payload = request.payload
+    try:
+        CinemaSans.objects.create(**payload)
+        return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def delete_sans(request):
+    payload = request.payload
+    try:
+        CinemaSans.objects.delete(f"id={payload['sans_id']}")
+        return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def update_sans(request):
+    payload = request.payload
+    try:
+        sans = CinemaSans.objects.update(payload['data'], f"id={payload['sans_id']}")[0]
+        return {
+            'sans': {k: v if type(v) not in [datetime, date, timedelta] else _convert_not_serializable2(v) for (k, v) in
+                     vars(sans).items()}, 'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def add_hall(request):
+    payload = request.payload
+    try:
+        Hall.objects.create(**payload)
+        return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def delete_hall(request):
+    payload = request.payload
+    try:
+        Hall.objects.delete(f"id={payload['hall_id']}")
+        return {'status_code': 200}
     except DBError:
+        return {'msg': 'Can Not Delete Hall Because Existing Relation With Other Entities', 'status_code': 400}
+    except Exception as e:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def update_hall(request):
+    payload = request.payload
+    try:
+        hall = Hall.objects.update(payload['data'], f"id={payload['hall_id']}")[0]
+        return {
+            'hall': {k: v if type(v) not in [datetime, date, timedelta] else _convert_not_serializable2(v) for (k, v) in
+                     vars(hall).items()}, 'status_code': 200}
+    except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}

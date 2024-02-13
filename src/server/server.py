@@ -80,11 +80,18 @@ urls = {
     'get_movie_rates': get_movie_rates,
     'get_packages': get_packages,
     'show_profile': show_profile,
-    'add_amount_to_wallet': add_amount_to_wallet,
     'update_cards': update_cards,
     'add_movie': add_movie,
     'delete_movie': delete_movie,
     'update_movie': update_movie,
+    'get_movie_sans': get_movie_sans,
+    'get_halls': get_halls,
+    'add_sans': add_sans,
+    'delete_sans': delete_sans,
+    'update_sans': update_sans,
+    'add_hall': add_hall,
+    'delete_hall': delete_hall,
+    'update_hall': update_hall,
 }
 
 HOST = '127.0.0.1'

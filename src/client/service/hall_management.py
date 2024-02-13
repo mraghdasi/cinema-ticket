@@ -8,165 +8,153 @@ from src.utils.utils import clear_terminal
 def main(client):
     while True:
         user_input = input(
-            '\n1. Show Movies\n2. Add Movie\n3. Delete Movie\n4. Update Movie\n5. Quit\n\n:').strip().lower()
+            '\n1. Show Halls\n2. Add Hall\n3. Delete Hall\n4. Update Hall\n5. Quit\n\n:').strip().lower()
 
         if user_input == '5' or user_input == 'quit':
             clear_terminal()
             break
-        elif user_input == '1' or user_input == 'show movies':
+        elif user_input == '1' or user_input == 'show halls':
             while True:
                 request_data = json.dumps({
                     'payload': {},
-                    'url': 'get_movies'
+                    'url': 'get_halls'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    movies = response['payload']
+                    halls = response['halls']
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
 
-                table = PrettyTable(['Id', 'title', 'min_age'])
-
-                for movie in movies:
-                    table.add_row([movie['id'], movie['title'],
-                                   movie['min_age']])
+                table = PrettyTable(['Id', 'Title', 'Capacity'])
+                table.add_rows([[hall['id'], hall['title'], hall['capacity']] for hall in halls])
                 print(table)
                 break
 
-        elif user_input == '2' or user_input == 'add movie':
+        elif user_input == '2' or user_input == 'add hall':
             while True:
                 title = input("Enter a title: ").strip()
-                min_age = input("Enter a min age: ").strip()
-                if min_age.isdigit():
-                    min_age = int(min_age)
+                capacity = input("Enter a capacity: ").strip()
+                if capacity.isdigit():
+                    capacity = int(capacity)
                 else:
                     clear_terminal()
+                    print("Wrong Capacity")
                     continue
                 request_data = json.dumps({
                     'payload': {
                         'title': title,
-                        'min_age': min_age,
+                        'capacity': capacity,
                     },
-                    'url': 'add_movie'
+                    'url': 'add_hall'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    film = response['film']
-                    print("Movie Added!")
-                    print(
-                        f"Film ID: {film['id']} \nTitle: {film['title']}\nMin Age: {film['min_age']}")
+                    print("Hall Added!")
                     break
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
 
-        elif user_input == '3' or user_input == 'delete movie':
+        elif user_input == '3' or user_input == 'delete hall':
             while True:
                 request_data = json.dumps({
                     'payload': {},
-                    'url': 'get_movies'
+                    'url': 'get_halls'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    movies = response['payload']
+                    halls = response['halls']
+
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
-
-                table = PrettyTable(['Id', 'title', 'min_age'])
-
-                for movie in movies:
-                    table.add_row([movie['id'], movie['title'],
-                                   movie['min_age']])
+                table = PrettyTable(['Id', 'Title', 'Capacity'])
+                table.add_rows([[hall['id'], hall['title'], hall['capacity']] for hall in halls])
                 print(table)
-                selected_movie = input('Enter Id of Movie: ').strip().lower()
-                if selected_movie == 'quit':
+
+                selected_hall = input("Enter Hall Id: ")
+                if selected_hall == 'quit':
                     break
-                elif selected_movie not in map(str, [movie['id'] for movie in movies]):
+                elif selected_hall not in map(str, [hall['id'] for hall in halls]):
                     clear_terminal()
-                    print("Invalid Movie Id")
+                    print("Wrong Hall Id")
                     continue
+
                 request_data = json.dumps({
                     'payload': {
-                        'movie_id': selected_movie,
+                        'hall_id': selected_hall,
                     },
-                    'url': 'delete_movie'
+                    'url': 'delete_hall'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    print('Movie Deleted Successfully')
+                    print('Hall Deleted Successfully')
                     break
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
 
-        elif user_input == '4' or user_input == 'update movie':
+        elif user_input == '4' or user_input == 'update hall':
             while True:
                 request_data = json.dumps({
                     'payload': {},
-                    'url': 'get_movies'
+                    'url': 'get_halls'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    movies = response['payload']
+                    halls = response['halls']
+
                 else:
                     clear_terminal()
                     print(response['msg'])
                     continue
-
-                table = PrettyTable(['Id', 'title', 'min_age'])
-
-                for movie in movies:
-                    table.add_row([movie['id'], movie['title'],
-                                   movie['min_age']])
+                table = PrettyTable(['Id', 'Title', 'Capacity'])
+                table.add_rows([[hall['id'], hall['title'], hall['capacity']] for hall in halls])
                 print(table)
-                selected_movie = input('Enter Id of Movie: ').strip().lower()
 
-                if selected_movie == 'quit':
+                selected_hall = input("Enter Hall Id: ")
+                if selected_hall == 'quit':
                     break
-                elif selected_movie not in map(str, [movie['id'] for movie in movies]):
+                elif selected_hall not in map(str, [hall['id'] for hall in halls]):
                     clear_terminal()
-                    print('Invalid Movie ID')
+                    print("Wrong Hall Id")
                     continue
 
-                new_title = input("Enter New Title: ")
-                new_min_age = input("Enter New Min Age: ")
-                if new_min_age.isdigit():
-                    new_min_age = int(new_min_age)
+                new_title = input("Enter a title: ").strip()
+                new_capacity = input("Enter a capacity: ").strip()
+                if new_capacity.isdigit():
+                    new_capacity = int(new_capacity)
                 else:
                     clear_terminal()
-                    print("Wrong New Min Age")
+                    print("Wrong Capacity")
                     continue
                 request_data = json.dumps({
-                    'payload': {
-                        'movie_id': selected_movie,
-                        'fields': {
-                            'title': new_title,
-                            'min_age': new_min_age
-                        }
-                    },
-                    'url': 'update_movie'
+                    'payload': {'data': {
+                        'title': new_title,
+                        'capacity': new_capacity,
+                    }, 'hall_id': selected_hall},
+                    'url': 'update_hall'
                 })
                 client.send(request_data.encode('utf-8'))
                 response = client.recv(5 * 1024).decode('utf-8')
                 response = json.loads(response)
                 if response['status_code'] == 200:
-                    print('Movie Updated Successfully')
+                    print('Hall Updated Successfully')
                     break
                 else:
                     clear_terminal()
