@@ -49,3 +49,4 @@ INFO:root: Username : Behdad13 | Origin Card Number : 6104337387924085   | Amoun
 INFO:root: Username : Behdad13    | Amount : 100000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 13:04:54.153477
 INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:05:33.281817
 INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:05:54.845865
+INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 18:26:49.210764

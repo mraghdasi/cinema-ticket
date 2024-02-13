@@ -3,7 +3,7 @@ import socket
 
 import sys
 
-from src.client import main_menu
+import main_menu
 from src.client.auth import login, register
 from src.utils.utils import clear_terminal
 from prettytable import PrettyTable

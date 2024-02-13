@@ -3,12 +3,9 @@ import sys
 
 from prettytable import PrettyTable
 
-import service.banking as banking
-import service.buy_subscription as buy_subscription
-import service.buy_ticket as buy_ticket
-import service.film_management as film_management
-import service.user_modification as user_modification
-from src.client.service import movie_management, sans_management, hall_management
+
+from src.client.service import movie_management, sans_management, hall_management, buy_ticket, buy_subscription, \
+    film_management, banking, user_modification
 from src.utils.utils import clear_terminal
 
 
