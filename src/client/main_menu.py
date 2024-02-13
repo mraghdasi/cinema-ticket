@@ -34,7 +34,7 @@ def main(client):
         table.add_rows([['1.Buy tickets'], ['2.Buy A Subscription'], ['3.Check Available Movies'],
                         ['4.Banking'], ['5.Modify Account'], ['6.Quit']])
         if user['role'] == 0:
-            table.add_rows([['7. Movies'], ['8. Sans'], ['9. Hall']])
+            table.add_rows([['7. Movies'], ['8. Sans'], ['9. Halls']])
 
         print(table)
         user_input = input('Choose One Option:').lower().strip()
@@ -65,7 +65,7 @@ def main(client):
                 elif user_input == '8' or user_input == 'sans':
                     clear_terminal()
                     sans_management.main(client)
-                elif user_input == '9' or user_input == 'sans':
+                elif user_input == '9' or user_input == 'halls':
                     clear_terminal()
                     hall_management.main(client)
                 else:
