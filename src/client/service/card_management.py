@@ -71,12 +71,10 @@ def main(client):
         response = json.loads(response)
         if response['status_code'] == 200:
             card_creds = response['cards']
-        elif response['status_code'] == 400:
-            clear_terminal()
-            sys.exit(response['msg'])
         else:
             clear_terminal()
             print(response['msg'])
+            break
 
         i = 1
         table = PrettyTable(['Number', 'Title', 'Card Number'])

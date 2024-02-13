@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.server.models import *
+
 from src.server.views import *
 from src.utils.utils import hash_string
 
@@ -301,7 +301,7 @@ class TestGetCards(unittest.TestCase):
     def tearDown(self):
         User.objects.delete(f'id={self.request.session.user.id}')
 
-    def test_check_subscription(self):
+    def test_get_cards(self):
         self.request.payload = {}
 
         self.assertEqual(get_cards(self.request)['status_code'], 200)
@@ -865,6 +865,266 @@ class TestShowProfile(unittest.TestCase):
         self.request.payload = {}
 
         self.assertEqual(show_profile(self.request)['status_code'], 200)
+
+
+class TestUpdateCards(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.request.session.user = User.objects.create(
+            **{'username': 'soroush223132', 'password': hash_string('asdasadsd'), 'email': 'asdasadsd',
+               'phone_number': '09390468833', 'birthday': '2021-02-03'})
+        self.bank_account_1 = UserBankAccount.objects.create(
+            **{'user_id': self.request.session.user.id, 'title': 'first_card', 'cvv2': '111',
+               'password': hash_string('1234'),
+               'card_number': '01234567890123456', 'expire_date': '2025-02-03'})
+
+    def tearDown(self):
+        UserBankAccount.objects.delete(f'id={self.bank_account_1.id}')
+        User.objects.delete(f'id={self.request.session.user.id}')
+
+    def test_update_cards_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(update_cards(self.request)['status_code'], 500)
+
+    def test_update_cards_with_wrong_payload(self):
+        self.request.payload = {'id': 'asddhasash'}
+
+        self.assertEqual(update_cards(self.request)['status_code'], 400)
+
+    def test_update_cards_with_correct_payload(self):
+        self.request.payload = {'id': self.bank_account_1.id}
+
+        self.assertEqual(update_cards(self.request)['status_code'], 200)
+
+
+class TestAddMovie(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+
+    def tearDown(self):
+        Film.objects.delete(f'title="TEST_FILM1"')
+
+    def test_add_movie_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(add_movie(self.request)['status_code'], 500)
+
+    def test_add_movie_with_correct_payload(self):
+        self.request.payload = {'min_age': 20, 'title': "TEST_FILM1"}
+
+        self.assertEqual(add_movie(self.request)['status_code'], 200)
+
+
+class TestDeleteMovie(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+
+    def tearDown(self):
+        Film.objects.delete(f'id="{self.film1.id}"')
+
+    def test_delete_movie_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(delete_movie(self.request)['status_code'], 500)
+
+    def test_delete_movie_with_correct_payload(self):
+        self.request.payload = {'movie_id': self.film1.id}
+
+        self.assertEqual(delete_movie(self.request)['status_code'], 200)
+
+
+class TestUpdateMovie(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+
+    def tearDown(self):
+        Film.objects.delete(f'id="{self.film1.id}"')
+
+    def test_update_movie_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(update_movie(self.request)['status_code'], 500)
+
+    def test_update_movie_with_correct_payload(self):
+        self.request.payload = {'movie_id': self.film1.id, 'fields': {'title': 'Film22'}}
+
+        self.assertEqual(update_movie(self.request)['status_code'], 200)
+
+
+class TestGetMovieSans(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+        self.hall1 = Hall.objects.create('Hall11', 100)
+        self.cinema_sans_1 = CinemaSans.objects.create('2024-03-02', '12:12:00', '14:00:00', self.film1.id,
+                                                       self.hall1.id, 5000)
+
+    def tearDown(self):
+        CinemaSans.objects.delete(f'film_id={self.film1.id}')
+        Film.objects.delete(f'id="{self.film1.id}"')
+        Hall.objects.delete(f'id="{self.hall1.id}"')
+
+    def test_get_movie_sans_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(get_movie_sans(self.request)['status_code'], 500)
+
+    def test_get_movie_sans_with_correct_payload(self):
+        self.request.payload = {'movie_id': self.film1.id}
+
+        self.assertEqual(get_movie_sans(self.request)['status_code'], 200)
+
+
+class TestGetHalls(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.hall1 = Hall.objects.create('Hall11', 100)
+
+    def tearDown(self):
+        Hall.objects.delete(f'id="{self.hall1.id}"')
+
+    def test_get_halls(self):
+        self.request.payload = {}
+
+        self.assertEqual(get_halls(self.request)['status_code'], 200)
+
+
+class TestAddSans(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+        self.hall1 = Hall.objects.create('Hall11', 100)
+
+    def tearDown(self):
+        CinemaSans.objects.delete(f'film_id={self.film1.id}')
+        Film.objects.delete(f'id="{self.film1.id}"')
+        Hall.objects.delete(f'id="{self.hall1.id}"')
+
+    def test_add_sans_without_payload(self):
+        self.request.payload = {}
+
+        self.assertEqual(add_sans(self.request)['status_code'], 500)
+
+    def test_add_sans_with_correct_payload(self):
+        self.request.payload = {'film_id': self.film1.id, 'hall_id': self.hall1.id, 'premiere_date': '2025-01-01',
+                                'start_time': '10:10:10', 'end_time': '10:10:10', 'price': 15000,
+                                }
+
+        self.assertEqual(add_sans(self.request)['status_code'], 200)
+
+
+class TestDeleteSans(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+        self.hall1 = Hall.objects.create('Hall11', 100)
+        self.cinema_sans_1 = CinemaSans.objects.create('2024-03-02', '12:12:00', '14:00:00', self.film1.id,
+                                                       self.hall1.id, 5000)
+
+    def tearDown(self):
+        CinemaSans.objects.delete(f'film_id={self.film1.id}')
+        Film.objects.delete(f'id="{self.film1.id}"')
+        Hall.objects.delete(f'id="{self.hall1.id}"')
+
+    def test_delete_sans_without_payload(self):
+        self.request.payload = {}
+        self.assertEqual(delete_sans(self.request)['status_code'], 500)
+
+    def test_delete_sans_with_correct_payload(self):
+        self.request.payload = {'sans_id': self.cinema_sans_1.id}
+
+        self.assertEqual(delete_sans(self.request)['status_code'], 200)
+
+
+class TestUpdateSans(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.film1 = Film.objects.create('Film11', 20)
+        self.hall1 = Hall.objects.create('Hall11', 100)
+        self.cinema_sans_1 = CinemaSans.objects.create('2024-03-02', '12:12:00', '14:00:00', self.film1.id,
+                                                       self.hall1.id, 5000)
+
+    def tearDown(self):
+        CinemaSans.objects.delete(f'film_id={self.film1.id}')
+        Film.objects.delete(f'id="{self.film1.id}"')
+        Hall.objects.delete(f'id="{self.hall1.id}"')
+
+    def test_update_sans_without_payload(self):
+        self.request.payload = {}
+        self.assertEqual(update_sans(self.request)['status_code'], 500)
+
+    def test_update_sans_with_correct_payload(self):
+        self.request.payload = {'sans_id': self.cinema_sans_1.id, 'data': {'end_time': '18:00:00'}}
+
+        self.assertEqual(update_sans(self.request)['status_code'], 200)
+
+
+class TestAddHall(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+
+    def tearDown(self):
+        Hall.objects.delete(f'title="TESTHAll1"')
+
+    def test_add_hall_without_payload(self):
+        self.request.payload = {}
+        self.assertEqual(add_hall(self.request)['status_code'], 500)
+
+    def test_add_hall_with_correct_payload(self):
+        self.request.payload = {'title': "TESTHAll1", 'capacity': 40}
+
+        self.assertEqual(add_hall(self.request)['status_code'], 200)
+
+
+class TestDeleteHall(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.hall1 = Hall.objects.create('Hall11', 100)
+
+    def tearDown(self):
+        Hall.objects.delete(f'id={self.hall1.id}')
+
+    def test_delete_hall_without_payload(self):
+        self.request.payload = {}
+        self.assertEqual(delete_hall(self.request)['status_code'], 500)
+
+    def test_delete_hall_with_correct_payload(self):
+        self.request.payload = {'hall_id': self.hall1.id}
+
+        self.assertEqual(delete_hall(self.request)['status_code'], 200)
+
+
+class TestUpdateHall(unittest.TestCase):
+
+    def setUp(self):
+        self.request = MagicMock()
+        self.hall1 = Hall.objects.create('Hall11', 100)
+
+    def tearDown(self):
+        Hall.objects.delete(f'id={self.hall1.id}')
+
+    def test_update_hall_without_payload(self):
+        self.request.payload = {}
+        self.assertEqual(update_hall(self.request)['status_code'], 500)
+
+    def test_update_hall_with_correct_payload(self):
+        self.request.payload = {'hall_id': self.hall1.id, 'data': {'title': 'sdaasdas'}}
+
+        self.assertEqual(update_hall(self.request)['status_code'], 200)
 
 
 if __name__ == '__main__':
