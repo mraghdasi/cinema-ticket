@@ -3,12 +3,20 @@ import sys
 
 import src.utils.custom_exceptions as custom_exceptions
 import src.utils.custom_validators as Validators
+from src.utils.utils import clear_terminal, hash_string
+from prettytable import PrettyTable
 from src.utils.transaction import set_transaction_log, TransactionType
 from src.utils.utils import clear_terminal, hash_string, get_user_info
 
 
 def op_manager(client, op, selected_card, card_creds):
-    op_amount = input(f'\nHow much money you want to {op}? ')
+    while True:
+        op_amount = input(f'\nHow much money you want to {op}? ')
+
+        if op_amount <= str(2000):
+            clear_terminal()
+            print(f'Operation Amount must be at least 2000.')
+            continue
 
     card_creds_input = {'expire_date': '', 'cvv2': '', 'password': ''}
 
@@ -172,7 +180,6 @@ def main(client, op):
         response = client.recv(5 * 1024).decode('utf-8')
         response = json.loads(response)
         if response['status_code'] == 200:
-            available_cards = list(response['cards'])
             card_creds = response['cards']
         elif response['status_code'] == 400:
             print(response['msg'])
@@ -182,25 +189,32 @@ def main(client, op):
             break
 
         i = 1
-        for card in available_cards:
-            print(f'{i}.{card}')
+        table = PrettyTable(['Number', 'Title', 'Card Number'])
+        for card in card_creds:
+            table.add_row([i, card, card_creds[card]['card_number']])
             i += 1
-        print(f'{i}.Quit')
+        table.add_row(['', '', ''], divider=True)
+        table.add_row(['Other Options', 'Functionality', ''], divider=True)
+        table.add_row([str(i), 'Quit', ''])
+        print(table)
 
-        user_input = input('\nPlease select one of your cards:').lower().replace(" ", "")
+        available_cards = [card for card in card_creds]
 
-        if user_input == f'{i}' or user_input == 'quit':
+        user_input = input("\nPlease Select Your Card:").strip()
+        if user_input == str(i) or user_input == 'quit':
             clear_terminal()
             break
-
-        selected_card = ''
-
         try:
             if len(user_input) == 1:
+                clear_terminal()
                 selected_card = available_cards[int(user_input) - 1]
             else:
-                if user_input in available_cards:
-                    selected_card = available_cards[available_cards.index(user_input)]
+                if user_input in [card for card in card_creds]:
+                    clear_terminal()
+                    selected_card = user_input
+                elif user_input in [card_creds[card]['card_number'] for card in card_creds]:
+                    clear_terminal()
+                    selected_card = [card for card in card_creds if card_creds[card]['card_number'] == user_input][0]
                 else:
                     clear_terminal()
                     print(f'\n{user_input} is not one of the available cards.\n')
@@ -208,14 +222,13 @@ def main(client, op):
         except IndexError:
             clear_terminal()
             print(f'\n{user_input} is not one of the menu options')
+            continue
 
         amount = op_manager(client, op, selected_card, card_creds)
         if amount:
             return amount
         else:
             return False
-
-        break
 
 
 if __name__ == '__main__':

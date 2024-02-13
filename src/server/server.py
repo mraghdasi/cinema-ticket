@@ -82,6 +82,9 @@ urls = {
     'get_packages': get_packages,
     'show_profile': show_profile,
     'update_cards': update_cards,
+    'add_movie': add_movie,
+    'delete_movie': delete_movie,
+    'update_movie': update_movie,
 }
 
 HOST = '127.0.0.1'

@@ -28,14 +28,15 @@ from src.utils.utils import input_client
 
 def main():
     creds = {'username': '', 'email': '', 'phone_number': '', 'password': '', 'birthday': ''}
+    print('\nHi! we are very happy to have you on our app.\n\nPlease fill in the fields.\n'
+          'Pay attention to the requirements for each field (press Ctrl+C to quit)\n')
+
     while True:
-        print('\nHi! we are very happy to have you on our app.\nPlease fill in the fields.\n'
-              'Pay attention to the requirements for each field (press Ctrl+C to quit)\n')
         try:
 
             if creds['username'] == '':
                 username = input(
-                    'Username*(Must Contain lower/uppercase letters and numbers 3~100):').strip()
+                    'Username*(Must Contain lower and uppercase letters and numbers 3~100):').strip()
 
                 if Validators.Validator.username_validator(username):
                     creds['username'] = username
@@ -82,7 +83,8 @@ def main():
             if creds['birthday'] == '':
                 birthday = input('Birthday*(yyyy-mm-dd):').strip()
 
-                if Validators.Validator.date_format_validator(birthday):
+                if Validators.Validator.date_format_validator(birthday) and Validators.Validator.min_date_validator(
+                        birthday, '2013-01-01'):
                     creds['birthday'] = birthday
 
             else:
@@ -118,6 +120,10 @@ def main():
         except CustomException.DateValidationError:
             clear_terminal()
             print('\n' + str(CustomException.DateValidationError()))
+            continue
+        except CustomException.MinDateValidationError:
+            clear_terminal()
+            print('\n' + str(CustomException.MinDateValidationError()))
             continue
 
 

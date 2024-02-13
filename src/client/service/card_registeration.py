@@ -83,24 +83,11 @@ def validate_expire_date(expire_date):
 
 
 def main(client):
-    # card registration stuff
-
-    # returns user info
-
-    # ✔    for quiting the program in this file use KeyboardInterruptError
-
-    # use the validations from custom_validations.py
-
-    # ✔    if we type card number correct but write for
-    # example cvv2 wrong the program should not take card num from us again
-    # (check registration.py for my approach)
-
-    # ✔   the program should close if everything runs correct
 
     card_creds_input = {'user_id': '', 'title': '', 'card_number': '', 'password': '', 'cvv2': '', 'expire_date': ''}
     while True:
         try:
-            print('fill the fields')
+            print('Please Fill In The Fields (press ctrl+c to quit)\n')
             if card_creds_input['title'] == '':
                 card_creds_input['title'] = get_input('Card Title Between 3 to 100 Chars: ', validate_title)
             else:
@@ -152,4 +139,4 @@ def main(client):
 
 
 if __name__ == '__main__':
-    main('m')
+    main()

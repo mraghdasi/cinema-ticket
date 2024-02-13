@@ -36,16 +36,25 @@ class PasswordValidationError(Exception):
 
     def __init__(self):
         super().__init__(
-            'Please Enter a Valid Password (length 8-100 , 2 uppercase letters , 2 digits , 2 special characters)')
+            'Please Enter a Valid Password (length 8-100, 2 uppercase letters, 2 digits, 2 special characters and no whitespace)')
 
 
 class DateValidationError(Exception):
     """
-        Birthday Validation Error Exception
+        Date Validation Error Exception
     """
 
     def __init__(self):
         super().__init__('Please Enter a Valid Format of date (yyyy-mm-dd) and Make Sure You Write a Valid Date')
+
+
+class MinDateValidationError(Exception):
+    """
+        Min Date Validation Error Exception
+    """
+
+    def __init__(self):
+        super().__init__('You Are Not Old Enough To Register On This App')
 
 
 class UserPasswordNotCorrect(Exception):
@@ -66,13 +75,13 @@ class NewPasswordsNotSame(Exception):
         super().__init__('New Password and Confirm New Password are Not Same')
 
 
-class MinAgeNotPositive(Exception):
+class MinAgeValidationError(Exception):
     """
         Min Age Not Positive Exception
     """
 
     def __init__(self):
-        super().__init__('Min Age Must Be a Positive Integer')
+        super().__init__('You Are Not Old Enough To Attend To This Movie')
 
 
 class RateNotBetweenZeroAndFive(Exception):
@@ -93,7 +102,7 @@ class CardOpAmountValueError(Exception):
 class LenBoundValidationError(Exception):
     def __init__(self):
         super().__init__('Please Enter Input Within The Given Length Limit!')
-        
+
 
 class LenValidationError(Exception):
     def __init__(self):

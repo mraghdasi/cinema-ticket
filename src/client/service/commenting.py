@@ -24,10 +24,12 @@ def show_user_comments(client, movie):
             continue
 
         table = PrettyTable(['Id', 'Description', 'Reply To', 'Created At'])
-
+        table.align['Description'] = 'l'
         for comment in comments:
             table.add_row([comment['id'], comment['description'], comment['reply_to'] if comment['reply_to'] else None,
                            comment['created_at']])
+        table.add_row(['', '', '', ''], divider=True)
+        table.add_row(["To","Quit","Type","Quit"])
         print(table)
 
         selected_comment = input('Enter Id of Comment: ').strip().lower()
@@ -79,11 +81,15 @@ def show_movie_comments(client, movie):
 
 def main(client, movie):
     while True:
-        user_input = input(
-            '\n1. Show comments\n2. Add comment\n3. Delete comment\n4. Update comment\n5. Reply to comment\n6. Quit\n\n:').strip().lower()
-
+        table = PrettyTable([f'{movie["title"].capitalize()} Comment Section'])
+        table.align[f'{movie["title"].capitalize()} Comment Section'] = 'l'
+        table.add_rows(
+            [['1.Show comments'], ['2.Add comment'], ['3.Delete comment'],
+             ['4.Update comment'], ['5.Reply to comment'], ['6.Quit']])
+        print(table)
+        user_input = input('Please Choose One Option:').strip().lower()
+        clear_terminal()
         if user_input == '6' or user_input == 'quit':
-            clear_terminal()
             break
         elif user_input == '1' or user_input == 'show comments':
             while True:
@@ -105,17 +111,17 @@ def main(client, movie):
                     continue
 
                 table = PrettyTable(['Id', 'Description', 'Reply To', 'Created At'])
-
+                table.align['Description'] = 'l'
                 for comment in comments:
                     table.add_row([comment['id'], comment['description'],
                                    comment['reply_to'] if comment['reply_to'] else None, comment['created_at']])
-                print(table)
+                print(table, '\n', sep=None)
                 break
 
         elif user_input == '2' or user_input == 'add comment':
             while True:
                 description = input("Enter a description: ").strip()
-
+                clear_terminal()
                 request_data = json.dumps({
                     'payload': {
                         'description': description,
@@ -130,7 +136,7 @@ def main(client, movie):
                     comment = response['comment']
                     print("Comment Added!")
                     print(
-                        f"Comment ID: {comment['id']} \nDescription: {comment['description']}\nCreated At: {comment['created_at']}")
+                        f"Comment ID: {comment['id']} \nDescription: {comment['description']}\nCreated At: {comment['created_at']}\n")
                     break
                 else:
                     clear_terminal()
@@ -140,6 +146,7 @@ def main(client, movie):
         elif user_input == '3' or user_input == 'delete comment':
             while True:
                 selected_comment = show_user_comments(client, movie)
+                clear_terminal()
                 if not selected_comment:
                     break
 
@@ -166,6 +173,7 @@ def main(client, movie):
                 if not selected_comment:
                     break
                 new_description = input('Enter New Description: ').strip()
+                clear_terminal()
 
                 if not new_description:
                     clear_terminal()
@@ -196,6 +204,7 @@ def main(client, movie):
                 if not selected_comment:
                     break
                 description = input("Enter a description: ").strip()
+                clear_terminal()
 
                 request_data = json.dumps({
                     'payload': {

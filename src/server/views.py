@@ -524,3 +524,43 @@ def update_cards(request):
         return {'status_code': 200}
     except DBError:
         return {'status_code': 400}
+
+
+@login_required
+def add_amount_to_wallet(request):
+    payload = request.payload
+    try:
+        film = Film.objects.create(**{'title': payload['title'], 'min_age': payload['min_age']})
+        return {'film': {k: v if type(v) not in [date, datetime, timedelta] else v.strftime('%Y-%m-%d')
+                         for (k, v) in vars(film).items()}, 'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def delete_movie(request):
+    payload = request.payload
+    try:
+        Film.objects.delete(f"id={payload['movie_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def update_movie(request):
+    payload = request.payload
+    try:
+        Film.objects.update(payload['fields'], f"id={payload['movie_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def get_movie_sans(request):
+    payload = request.payload
+    try:
+        sansses = CinemaSans.objects.read(f"film_id={payload['movie_id']}")
+        return {
+            'sansses': [{k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
+                         vars(sans).items()} for sans in sansses], 'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}

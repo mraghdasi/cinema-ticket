@@ -2,11 +2,11 @@ import json
 
 from src.client.service import commenting, rating
 from src.utils.utils import clear_terminal
+from prettytable import PrettyTable
 
 
 def main(client):
     while True:
-        print("Please choose your movie:")
         request_data = json.dumps({
             'payload': {},
             'url': 'get_movies'
@@ -32,37 +32,38 @@ def main(client):
                 day = san['premiere_date'][:3]
                 movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
-        # Print available movies
         print("List of available movies:")
-        for i, m in enumerate(movies, start=1):
-            print(f"{i}. {m['title']}")
-        print(f"{len(movies) + 1}. Quit")
 
-        # Get user input for movie choice
+        table = PrettyTable(['Number', 'Title'])
+
+        for i, m in enumerate(movies, start=1):
+            table.add_row([str(i), m['title'].capitalize()])
+        table.add_row(['', ''], divider=True)
+        table.add_row(['Other Options', 'Functionality'], divider=True)
+        table.add_row([(len(movies) + 1), 'Quit'])
+        print(table)
+
         movie_choice = input("Enter movie name or number: ").strip().lower()
-        if movie_choice == str(len(movies) + 1) or movie_choice == 'quit':
-            print('Exiting the program...')
+        if movie_choice == (len(movies) + 1) or movie_choice == 'quit':
+            clear_terminal()
             break
         elif movie_choice not in [str(i) for i in range(1, len(movies) + 1)] + [movie['title'].lower() for movie in
                                                                                 movies]:
+            clear_terminal()
             print("Invalid movie. Please try again.")
             continue
 
         if movie_choice.isdigit():
+            clear_terminal()
             movie = movies[int(movie_choice) - 1]
         else:
+            clear_terminal()
             for m in movies:
                 if m['title'].lower() == movie_choice:
                     movie = m
                     break
             else:
                 continue
-
-        # please do all this in one print statement (use multi line str)
-        print("\n" + "=" * 50)
-        print(movie['title'])
-        print("=" * 50)
-        print(f"Minimum Age: {movie['min_age']}")
 
         request_data = json.dumps({
             'payload': {'id': movie['id']},
@@ -78,8 +79,6 @@ def main(client):
             print(response['msg'])
             continue
 
-        print(f"Rating: {film_rating:.1f}/10")
-
         request_data = json.dumps({
             'payload': {'id': movie['id']},
             'url': 'get_movie_rates'
@@ -93,8 +92,6 @@ def main(client):
             clear_terminal()
             print(response['msg'])
             continue
-
-        print(f"Number of rates: {len(film_rates)}")
 
         request_data = json.dumps({
             'payload': {'id': movie['id']},
@@ -110,20 +107,29 @@ def main(client):
             print(response['msg'])
             continue
 
-        print(f"Number of comments: {len(film_comments)}")
-        print("\nPlease select one of the options below:")
-        print("1) Comments")
-        print("2) Rate film")
-        print("3) Quit")
+        table = PrettyTable([movie['title'].capitalize()])
+        table.add_rows([[f"Minimum Age: {movie['min_age']}"], [f"Rating: {film_rating:.1f}/10"],
+                       [f"Number of rates: {len(film_rates)}"], [f"Number of comments: {len(film_comments)}"]])
+        print(table, '\n', sep=None)
 
-        selected_option = input("Enter your choice: ")
+        table = PrettyTable(["Please select one of the options below:"])
+        table.align["Please select one of the options below:"] = 'l'
+        table.add_rows([["1.Comments"], ["2.Rate film"], ["3.Quit"]])
+        print(table)
+
+        selected_option = input("Enter your choice: ").lower().strip()
+
         if selected_option == '3' or selected_option == 'quit':
-            print("Thanks for using our app!")
+            clear_terminal()
             break
         elif selected_option == '1' or selected_option == 'comments':
+            clear_terminal()
             commenting.main(client, movie)
+            break
         elif selected_option == '2' or selected_option == 'rate film':
+            clear_terminal()
             rating.main(client, movie)
+            break
         else:
             clear_terminal()
             print("Invalid option selected!")

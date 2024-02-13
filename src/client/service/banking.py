@@ -2,14 +2,19 @@ import os
 
 from src.client.service import card_operations, card_management, card_registeration, wallet_management
 from src.utils.utils import clear_terminal
+from prettytable import PrettyTable
 
 
 def main(client):
     while True:
 
-        user_input = input(
-            "Please choose your action:\n1.Card Management\n2.Card Registration\n3.Card Operations\n4.Wallet "
-            "Management\n5.Quit\n\n:").strip().lower()
+        table = PrettyTable(["Welcome to the Banking Service! What Can We Do For You?"])
+        table.align["Welcome to the Banking Service! What Can We Do For You?"] = "l"
+        table.add_rows([["1.Card Management"], ["2.Card Registration"],
+                        ["3.Card Operations"], ["4.Wallet Management"],["5.Quit"]])
+
+        print(table)
+        user_input = input("Please choose your action:").strip().lower()
 
         if user_input == '5' or user_input == 'quit':
             clear_terminal()
@@ -24,8 +29,12 @@ def main(client):
             clear_terminal()
 
             while True:
-                op = input(
-                    "Please Choose your operation:\n1.Deposit\n2.Withdraw\n3.Transfer\n4.Quit\n\n:").strip().lower()
+                table = PrettyTable(["Offered Operations:"])
+                table.align["Offered Operations:"] = "l"
+                table.add_rows([["1.Deposit"], ["2.Withdraw"], ["3.Transfer"],["4.Quit"]])
+
+                print(table)
+                op = input("Please Choose your operation:").strip().lower()
 
                 if op == '4' or op == 'quit':
                     clear_terminal()
