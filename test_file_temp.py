@@ -1,4 +1,4 @@
-from src.server.models.package import Package
+rom src.server.models.package import Package
 from src.utils.utils import hash_string
 
 # operations = DBOperation()
