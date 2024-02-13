@@ -12,6 +12,7 @@ from src.server.models.subscription import Subscription
 from src.server.models.ticket import Ticket
 from src.server.models.user import User
 from src.utils.custom_exceptions import DBError
+from src.utils.transaction import set_transaction_log
 
 
 def login_required(func):
@@ -35,6 +36,7 @@ def do_login(request):
             user = user[0]
             if compare_digest(user.password, payload['password']):
                 request.session.user = user
+                User.objects.update({'is_logged_in': 1, 'last_login': datetime.now().isoformat()}, f"id={user.id}")
                 return {'user': {k: v if type(v) not in [date, datetime] else v.strftime('%Y-%m-%d') for k, v in
                                  vars(user).items()}, 'status_code': 200}
             else:
@@ -51,6 +53,8 @@ def register(request):
         try:
             user = User.objects.create(**payload)
             request.session.user = user
+            User.objects.update({'is_logged_in': 1}, f"id={user.id}")
+
             return {'user': {k: v if type(v) not in [date, datetime] else v.strftime('%Y-%m-%d') for k, v in
                              vars(user).items()}, 'status_code': 200}
         except DBError:
@@ -221,7 +225,7 @@ def check_db_for_transfer(request):
     try:
         destination_card = UserBankAccount.objects.read(f'card_number={payload["destination_card"]}')
         if destination_card:
-            print(vars(destination_card[0]).items())
+            # print(vars(destination_card[0]).items())
             return {'destination_card_obj': {k: v if type(v) != date else v.strftime('%Y-%m-%d') for (k, v) in
                                              vars(destination_card[0]).items()},
                     'status_code': 200}
@@ -234,19 +238,16 @@ def check_db_for_transfer(request):
 def do_transfer(request):
     payload = request.payload
     try:
-        try:
-            selected_card_op = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
-                                                              f'card_number={payload["selected_card"]["card_number"]}')
-            destination_card_op = UserBankAccount.objects.update({'amount': f'{payload["destination_card"]["amount"]}'},
-                                                                 f'card_number={payload["destination_card"]["card_number"]}')
-
-            if selected_card_op and destination_card_op:
-                return {'status_code': 200}
-            else:
-                return {'msg': 'something went wrong', 'status_code': 500}
-
-        except DBError:
-            return {'msg': 'Error in DataBase', 'status_code': 400}
+        selected_card = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
+                                                       f'card_number={payload["selected_card"]["card_number"]}')
+        destination_card = UserBankAccount.objects.update({'amount': f'{payload["destination_card"]["amount"]}'},
+                                                          f'card_number={payload["destination_card"]["card_number"]}')
+        if selected_card and destination_card:
+            return {'status_code': 200}
+        else:
+            return {'msg': 'Wrong Selected Card or Destination Card Info', 'status_code': 400}
+    except DBError:
+        return {'msg': 'Error in DataBase', 'status_code': 400}
 
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
@@ -255,15 +256,14 @@ def do_transfer(request):
 def do_card_op(request):
     payload = request.payload
     try:
-        try:
-            selected_card_op = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
-                                                              f'card_number={payload["selected_card"]["card_number"]}')
-            if selected_card_op:
-                return {'status_code': 200}
-            else:
-                return {'msg': 'something went wrong', 'status_code': 500}
-        except DBError:
-            return {'msg': 'Error in DataBase', 'status_code': 400}
+        selected_card_op = UserBankAccount.objects.update({'amount': f'{payload["selected_card"]["amount"]}'},
+                                                          f'card_number={payload["selected_card"]["card_number"]}')
+        if selected_card_op:
+            return {'status_code': 200}
+        else:
+            return {'msg': 'Wrong Card Info', 'status_code': 400}
+    except DBError:
+        return {'msg': 'Error in DataBase', 'status_code': 400}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -326,8 +326,57 @@ def delete_comment(request):
     try:
         Comment.objects.delete(f"user_id={request.session.user.id} AND id={payload['comment_id']}")
         return {'status_code': 200}
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def wallet_deposit(request):
+    payload = request.payload
+    try:
+        amount = int(payload['amount'])
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        user_updated = User.objects.update({'balance': amount + user.balance}, f'id="{user.id}"')[0]
+        set_transaction_log(amount, transaction_log_type, user.username)
+        request.session.user = user_updated
+        return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
+                'status_code': 200}
+
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
+
+    except Exception as e:
+        return {'msg': 'Server Error', 'status_code': 500}
+
+
+@login_required
+def wallet_withdraw(request):
+    payload = request.payload
+    try:
+        amount = payload['amount']
+        transaction_log_type = payload['transaction_log_type']
+        user = request.session.user
+        discount = 0
+        if payload.get('operation', None) == 'ticket':
+            user_birthday_month = user.birthday.month
+            user_birthday_day = user.birthday.day
+            discount = 0.5 if datetime.today().month == user_birthday_month and datetime.today().day == user_birthday_day else 0
+        actual_amount = amount - (amount * discount)
+
+        if user.balance >= actual_amount:
+            user_updated = User.objects.update({'balance': user.balance - actual_amount}, f'id="{user.id}"')[0]
+            set_transaction_log(-amount, transaction_log_type, user.username)
+            request.session.user = user_updated
+            return {
+                'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
+                'status_code': 200}
+        else:
+            return {'msg': 'Your Balance Not enough', 'status_code': 400}
+
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -336,9 +385,13 @@ def delete_comment(request):
 def update_comment(request):
     payload = request.payload
     try:
-        Comment.objects.update({'description': payload['new_description']},
-                               f"user_id={request.session.user.id} AND id={payload['comment_id']}")
-        return {'status_code': 200}
+
+        comments = Comment.objects.update({'description': payload['new_description']},
+                                          f"user_id={request.session.user.id} AND id={payload['comment_id']}")
+        if comments:
+            return {'status_code': 200}
+        else:
+            return {'msg': 'Wrong Comment Id', 'status_code': 400}
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
     except Exception as e:
@@ -356,37 +409,6 @@ def add_comment_reply(request):
                 'status_code': 200}
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
-    except Exception as e:
-        return {'msg': 'Server Error', 'status_code': 500}
-
-
-@login_required
-def wallet_payment(request):
-    payload = request.payload
-    try:
-        user = User.objects.read(f"user_id={request.session.user}")
-        if user:
-            user = user[0]
-            if payload['wallet_payment_type'] == 'deposit':
-                user_updated = User.objects.update(
-                    {'balance': payload['amount'] + user.balance, 'user_id': request.session.user.id})
-                return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
-                        'status_code': 200}
-            elif payload['wallet_payment_type'] == 'withdraw':
-                if user.balance >= payload['amount']:
-                    user_updated = User.objects.update(
-                        {'balance': user.balance - payload['amount'], 'user_id': request.session.user.id})
-                    return {
-                        'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
-                        'status_code': 200}
-                else:
-                    return {'msg': 'Your Balance Not enough', 'status_code': 400}
-
-        else:
-            return {'msg': 'User Not Found', 'status_code': 400}
-    except DBError:
-        return {'msg': 'Error in Database', 'status_code': 400}
-
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -428,6 +450,9 @@ def get_user_rates(request):
         return {'rates': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
                            vars(rate).items()} for rate in rates],
                 'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -464,6 +489,9 @@ def get_movie_rates(request):
         return {'rates': [{k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
                            vars(rate).items()} for rate in rates],
                 'status_code': 200}
+    except DBError:
+        return {'msg': 'Error in Database', 'status_code': 400}
+
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -502,9 +530,37 @@ def update_cards(request):
 def add_amount_to_wallet(request):
     payload = request.payload
     try:
-        new_balance = request.session.user.balance + int(payload['amount'])
-        user = User.objects.update({"balance": new_balance}, f"id={request.session.user.id}")[0]
-        request.session.user = user
+        film = Film.objects.create(**{'title': payload['title'], 'min_age': payload['min_age']})
+        return {'film': {k: v if type(v) not in [date, datetime, timedelta] else v.strftime('%Y-%m-%d')
+                         for (k, v) in vars(film).items()}, 'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def delete_movie(request):
+    payload = request.payload
+    try:
+        Film.objects.delete(f"id={payload['movie_id']}")
         return {'status_code': 200}
-    except Exception as e:
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def update_movie(request):
+    payload = request.payload
+    try:
+        Film.objects.update(payload['fields'], f"id={payload['movie_id']}")
+        return {'status_code': 200}
+    except DBError:
+        return {'msg': 'server Error', 'status_code': 500}
+
+
+def get_movie_sans(request):
+    payload = request.payload
+    try:
+        sansses = CinemaSans.objects.read(f"film_id={payload['movie_id']}")
+        return {
+            'sansses': [{k: v if type(v) not in [datetime, date, timedelta] else v.strftime('%Y-%m-%d') for (k, v) in
+                         vars(sans).items()} for sans in sansses], 'status_code': 200}
+    except DBError:
         return {'msg': 'server Error', 'status_code': 500}

@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import json
 import os
 
 from dotenv import load_dotenv
@@ -24,3 +25,17 @@ def input_client(msg):
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def get_user_info(client):
+    request_data = json.dumps({
+        'payload': {},
+        'url': 'show_profile'
+    })
+    client.send(request_data.encode('utf-8'))
+    response = client.recv(5 * 1024).decode('utf-8')
+    response = json.loads(response)
+
+    if response['status_code'] == 200:
+        return response['user']
+    return None

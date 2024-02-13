@@ -1,5 +1,4 @@
 import json
-import signal
 from secrets import compare_digest
 
 from src.utils.custom_exceptions import UsernameValidationError, EmailValidationError, PhoneNumberValidationError, \

@@ -62,3 +62,33 @@ ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given
 ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:29
 ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:38
 ERROR:root: Exception in len_validator : The Input Length Must Be Equal To Given Length! | DateTime : 2024-02-10 19:31:39
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 00:02:18
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 01:41:43
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 01:45:29
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 01:53:24
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 01:59:07
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 02:29:11
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 02:44:51
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 02:44:51
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 02:46:50
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 02:46:50
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:01:41
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:04:14
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:05:45
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:05:45
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:07:00
+ERROR:root: Exception in set_transaction_log : set_transaction_log() missing 1 required positional argument: 'card_number' | DateTime : 2024-02-12 03:07:00
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:27:34
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:28:08
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:30:09
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:30:43
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:30:47
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:31:49
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:32:06
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: deposit_wallet | DateTime : 2024-02-12 03:32:06
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: cancel_ticket | DateTime : 2024-02-12 03:32:47
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: cancel_ticket | DateTime : 2024-02-12 03:34:14
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: cancel_ticket | DateTime : 2024-02-12 03:35:42
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:36:13
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: deposit_wallet | DateTime : 2024-02-12 03:36:13
+ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:36:30

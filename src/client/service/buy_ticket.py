@@ -4,7 +4,11 @@ from datetime import datetime
 from prettytable import PrettyTable
 from prettytable import ORGMODE
 
+
 from src.utils import custom_exceptions
+
+from src.utils.transaction import TransactionType
+
 from src.utils.utils import clear_terminal
 
 import src.utils.custom_validators as Validators
@@ -24,6 +28,54 @@ def cancel_ticket(client):
             if len(ticket_list) == 0:
                 print('You have no tickets!\n')
                 break
+        # Check if the selected ticket is found
+        if selected_ticket:
+            # Find the time difference for the selected ticket
+            ticket_time = datetime.strptime(selected_ticket['premiere_date'], '%Y-%m-%d')
+            system_time = datetime.now()
+            time_diff_hours = (ticket_time - system_time).total_seconds() / 3600
+            refund_amount = 0
+
+            # Calculate refund amount based on time difference
+            if time_diff_hours > 1:
+                refund_amount = selected_ticket['price']
+                print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
+                print(f'{refund_amount} can pass to wallet_management.py')
+                # 0 <= time_diff_hours <= 1 , no need for and XD
+            elif 0 <= time_diff_hours <= 1:
+                refund_amount = int(selected_ticket['price'] * 0.82)
+                print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
+                print(f'{refund_amount} can pass to wallet_management.py')
+            else:
+                refund_amount = 0
+                print("Sorry, ticket has been expired")
+
+            request_data = json.dumps({
+                'payload': {'ticket_id': selected_ticket['id']},
+                'url': 'cancel_ticket'
+            })
+            client.send(request_data.encode('utf-8'))
+            response = client.recv(5 * 1024).decode('utf-8')
+            response = json.loads(response)
+            if response['status_code'] == 200:
+                clear_terminal()
+                # add_to_wallet(refund_amount)
+                wallet_deposit_payload = json.dumps({
+                    'payload': {
+                        'amount': refund_amount,
+                        'transaction_log_type': TransactionType.CANCEL_TICKET.value
+                    },
+                    'url': 'wallet_deposit'
+                })
+                client.send(wallet_deposit_payload.encode('utf-8'))
+                response = client.recv(5 * 1024).decode('utf-8')
+                response = json.loads(response)
+                print(response['msg'])
+
+                break
+            else:
+                clear_terminal()
+                print(response['msg'])
         else:
             print(response['msg'])
             return False
@@ -298,11 +350,45 @@ def main(client):
 
                                 request_data = json.dumps({
                                     'payload': {},
-                                    'url': 'check_subscription'
+                                    'url': 'check_subscription'})
+                                cash_back_amount = 0
+                                package = response['package']
+                                if package['title'] == 'Gold':
+                                    cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
+                                    print(f'Cash Back Amount: {cash_back_amount}')
+                                    print('You Have A Free Cocktail!')
+                                elif package['title'] == 'Silver':
+                                    request_data = json.dumps({
+                                        'payload': {},
+                                        'url': 'check_tickets'
+                                    })
+                                    client.send(request_data.encode('utf-8'))
+                                    response = client.recv(5 * 1024).decode('utf-8')
+                                    response = json.loads(response)
+                                    if response['status_code'] == 200:
+                                        ticket_list = response['payload']
+                                        if len(ticket_list) < 3:
+                                            cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
+                                        else:
+                                            cash_back_amount = 0
+                                    else:
+                                        print(response['msg'])
+                                        continue
+
+                                else:
+                                    pass
+
+                                wallet_deposit_payload = json.dumps({
+                                    'payload': {
+                                        'amount': cash_back_amount,
+                                        'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                                    },
+                                    'url': 'wallet_deposit'
                                 })
-                                client.send(request_data.encode('utf-8'))
+                                client.send(wallet_deposit_payload.encode('utf-8'))
                                 response = client.recv(5 * 1024).decode('utf-8')
                                 response = json.loads(response)
+
                                 if response['status_code'] == 200:
                                     package = response['package']
                                     if package['title'] == 'Gold':
@@ -339,6 +425,29 @@ def main(client):
                         else:
                             print("Invalid input. Please enter a valid choice.")
                             continue
+                                    print(f'Cash Back Amount: {cash_back_amount}')
+                                    print(response['msg'])
+
+                                else:
+                                    print(response['msg'])
+                                    continue
+
+                                return 'Payed'
+
+                            else:
+                                print(response['msg'])
+                                continue
+                    else:
+                        clear_terminal()
+                        print(response['msg'])
+                        continue
+
+                elif payment_choice == '2':
+                    break
+
+                else:
+                    print("Invalid input. Please enter a valid choice.")
+                    continue
 
 
 if __name__ == '__main__':

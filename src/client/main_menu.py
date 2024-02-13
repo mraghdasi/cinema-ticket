@@ -1,3 +1,4 @@
+import json
 import sys
 
 import service.banking as banking
@@ -5,6 +6,7 @@ import service.buy_subscription as buy_subscription
 import service.buy_ticket as buy_ticket
 import service.film_management as film_management
 import service.user_modification as user_modification
+from src.client.service import movie_management, sans_management
 from src.utils.utils import clear_terminal
 from prettytable import PrettyTable
 
@@ -37,6 +39,18 @@ def main(client):
         elif user_input == '5' or user_input == 'modify account':
             clear_terminal()
             user_modification.main(client)
+        else:
+            if user["role"] == 0:
+                if user_input == '7' or user_input == 'movies':
+                    clear_terminal()
+                    movie_management.main(client)
+                elif user_input == '8' or user_input == 'sans':
+                    clear_terminal()
+                    sans_management.main(client)
+                else:
+                    continue
+            else:
+                continue
 
 
 if __name__ == "__main__":

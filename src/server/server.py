@@ -70,7 +70,8 @@ urls = {
     'delete_comment': delete_comment,
     'update_comment': update_comment,
     'add_comment_reply': add_comment_reply,
-    'wallet_payment': wallet_payment,
+    'wallet_deposit': wallet_deposit,
+    'wallet_withdraw': wallet_withdraw,
     'user_modification': user_modification,
     'add_rate': add_rate,
     'get_user_rates': get_user_rates,
@@ -80,7 +81,9 @@ urls = {
     'get_packages': get_packages,
     'show_profile': show_profile,
     'update_cards': update_cards,
-    'add_amount_to_wallet': add_amount_to_wallet,
+    'add_movie': add_movie,
+    'delete_movie': delete_movie,
+    'update_movie': update_movie,
 }
 
 HOST = '127.0.0.1'
@@ -114,6 +117,8 @@ def handle_client(client_socket):
         print('[!] Connection reset by client.')
     finally:
         print('[!] Connection Closed.')
+        if session.user:
+            User.objects.update({'is_logged_in': 0}, f"id={session.user.id}")
         client_socket.close()
 
 
