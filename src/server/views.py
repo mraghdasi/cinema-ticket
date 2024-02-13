@@ -136,22 +136,22 @@ def check_seats(request):
 def check_tickets(request):
     try:
         tickets_of_user = Ticket.objects.query(f"""SELECT ticket.id as id,
-       cinema_sans_id,
-       user_id,
-       sit_number,
-       premiere_date,
-       start_time,
-       end_time,
-       film_id,
-       hall_id,
-       price,
-       title,
-       min_age
-        FROM ticket
-                 JOIN cinema_sans cs on ticket.cinema_sans_id = cs.id
-                 JOIN film f on cs.film_id = f.id
-        WHERE user_id = {request.session.user.id}
-        """, fetch=True)
+           cinema_sans_id,
+           user_id,
+           sit_number,
+           premiere_date,
+           start_time,
+           end_time,
+           film_id,
+           hall_id,
+           price,
+           title,
+           min_age
+            FROM ticket
+                     JOIN cinema_sans cs on ticket.cinema_sans_id = cs.id
+                     JOIN film f on cs.film_id = f.id
+            WHERE user_id = {request.session.user.id}
+            """, fetch=True)
         tickets_of_user = [
             {k: v if type(v) not in [datetime, date, timedelta] else _convert_not_serializable2(v) for (k, v) in
              vars(ticket).items()} for ticket in tickets_of_user]
@@ -347,7 +347,6 @@ def wallet_deposit(request):
         request.session.user = user_updated
         return {'msg': f'Your Wallet is successfully updated. Current Balance : {user_updated.balance}',
                 'status_code': 200}
-
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}
 

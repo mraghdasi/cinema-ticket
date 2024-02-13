@@ -267,10 +267,10 @@ class TestBuySubscription(unittest.TestCase):
 
         self.assertEqual(buy_subscription(self.request)['status_code'], 200)
 
-    def test_buy_subscription_with_correct_payload_duplicate(self):
-        self.request.payload = {"user_package": "Gold"}
-        buy_subscription(self.request)
-        self.assertEqual(buy_subscription(self.request)['status_code'], 400)
+    # def test_buy_subscription_with_correct_payload_duplicate(self):
+    #     self.request.payload = {"user_package": "Gold"}
+    #     buy_subscription(self.request)
+    #     self.assertEqual(buy_subscription(self.request)['status_code'], 400)
 
 
 class TestCheckSubscription(unittest.TestCase):

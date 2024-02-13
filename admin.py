@@ -1,6 +1,6 @@
 import json
 
-from src.client import register
+from src.client.auth import register
 from src.server.models.user import User
 
 request_data = json.loads(register.main())

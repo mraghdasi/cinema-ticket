@@ -159,7 +159,7 @@ def op_manager(client, op, selected_card, card_creds):
                         print(
                             f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
                     your current balance: {card_creds[selected_card]['amount']}""")
-                        break
+                        return False
 
         except custom_exceptions.CardOpAmountValueError:
             clear_terminal()

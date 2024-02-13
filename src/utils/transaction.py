@@ -32,7 +32,7 @@ def set_transaction_log(amount: int, transaction_type: str, username: str, origi
     if int(amount) == 0:
         return
 
-    logging.basicConfig(filename='../logs/transaction-logs.txt', level=logging.INFO)
+    logging.basicConfig(filename='./src/logs/transaction-logs.txt', level=logging.INFO)
     logging.info(
         f' Username : {username} {f"| Origin Card Number : {origin_card_number}" if origin_card_number else ""} '
         f'{f"| Destination Card Number : {destination_card_number}" if destination_card_number else ""}  '

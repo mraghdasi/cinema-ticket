@@ -62,7 +62,7 @@ def main(client):
                 new_password = getpass.getpass("Enter New Password: ")
                 confirm_new_password = getpass.getpass("Confirm New Password: ")
                 if (compare_digest(new_password, confirm_new_password)) and (
-                compare_digest(hash_string(password), user['password'])):
+                        compare_digest(hash_string(password), user['password'])):
                     Validator.password_validator(new_password)
                     payload['password'] = hash_string(new_password)
                 else:

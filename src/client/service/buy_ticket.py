@@ -25,22 +25,49 @@ def cancel_ticket(client):
         if response['status_code'] == 200:
             ticket_list = response['payload']
             if len(ticket_list) == 0:
+                clear_terminal()
                 print('You have no tickets!\n')
                 break
-        # Check if the selected ticket is found
+        else:
+            clear_terminal()
+            print(response['msg'])
+            break
+
+        ticket_list = sorted(ticket_list, key=lambda x: x['id'], reverse=True)
+
+        table = PrettyTable(['Id', 'Seat', 'Ticket Data', 'Movie', 'Price'])
+
+        for ticket in ticket_list:
+            table.add_row(
+                [ticket['id'], ticket['sit_number'], f"{ticket['start_time']} {ticket['end_time']}", ticket['title'],
+                 ticket['price']])
+
+        clear_terminal()
+        while True:
+            print(table)
+            ticket_id = input("Enter the ID of the ticket you want to cancel: ").strip().lower()
+
+            if ticket_id == 'quit':
+                clear_terminal()
+                return True
+            elif ticket_id not in map(str, [ticket['id'] for ticket in ticket_list]):
+                clear_terminal()
+                print('Invalid Ticket ID')
+                continue
+            else:
+                selected_ticket = [ticket for ticket in ticket_list if str(ticket['id']) == ticket_id][0]
+                break
+
         if selected_ticket:
-            # Find the time difference for the selected ticket
             ticket_time = datetime.strptime(selected_ticket['premiere_date'], '%Y-%m-%d')
             system_time = datetime.now()
             time_diff_hours = (ticket_time - system_time).total_seconds() / 3600
             refund_amount = 0
 
-            # Calculate refund amount based on time difference
             if time_diff_hours > 1:
                 refund_amount = selected_ticket['price']
                 print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
                 print(f'{refund_amount} can pass to wallet_management.py')
-                # 0 <= time_diff_hours <= 1 , no need for and XD
             elif 0 <= time_diff_hours <= 1:
                 refund_amount = int(selected_ticket['price'] * 0.82)
                 print(f"Cancelled successfully. The refund amount is {refund_amount} Toman.")
@@ -58,7 +85,6 @@ def cancel_ticket(client):
             response = json.loads(response)
             if response['status_code'] == 200:
                 clear_terminal()
-                # add_to_wallet(refund_amount)
                 wallet_deposit_payload = json.dumps({
                     'payload': {
                         'amount': refund_amount,
@@ -106,6 +132,7 @@ def cancel_ticket(client):
                 ticket_time = datetime.strptime(selected_ticket['premiere_date'], '%Y-%m-%d')
                 system_time = datetime.now()
                 time_diff_hours = (ticket_time - system_time).total_seconds() / 3600
+                refund_amount = 0
 
                 if time_diff_hours > 1:
                     refund_amount = selected_ticket['price']
@@ -119,9 +146,6 @@ def cancel_ticket(client):
                     refund_amount = 0
                     print("Sorry, ticket has been expired")
 
-                # $$$$$$$ Foroutan $$$$$$$
-                # Payment Method
-
                 request_data = json.dumps({
                     'payload': {'ticket_id': selected_ticket['id']},
                     'url': 'cancel_ticket'
@@ -131,7 +155,17 @@ def cancel_ticket(client):
                 response = json.loads(response)
                 if response['status_code'] == 200:
                     clear_terminal()
-                    # add_to_wallet(refund_amount)
+                    wallet_deposit_payload = json.dumps({
+                        'payload': {
+                            'amount': refund_amount,
+                            'transaction_log_type': TransactionType.CANCEL_TICKET.value
+                        },
+                        'url': 'wallet_deposit'
+                    })
+                    client.send(wallet_deposit_payload.encode('utf-8'))
+                    response = client.recv(5 * 1024).decode('utf-8')
+                    response = json.loads(response)
+                    print(response['msg'])
                     break
                 else:
                     clear_terminal()
@@ -149,7 +183,7 @@ def main(client):
         table.add_row(['3', 'Quit'])
         print(table)
 
-        action_choice = input("\n:").strip().lower()
+        action_choice = input("Please Choose Your Option:").strip().lower()
         if action_choice == '3' or action_choice == 'quit':
             clear_terminal()
             break
@@ -301,7 +335,6 @@ def main(client):
                     for seat in seats:
                         table.add_row([seat], divider=True)
                     table.set_style(ORGMODE)
-                    clear_terminal()
                     print(table)
 
                     seat_to_reserve_input = input(
@@ -356,7 +389,7 @@ def main(client):
                                     if package['title'] == 'Gold':
                                         cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
                                         print(f'Cash Back Amount: {cash_back_amount}')
-                                        print('You Have A Free Cocktail!')
+                                        print('You Have A Free Cocktail!\n')
                                     elif package['title'] == 'Silver':
                                         request_data = json.dumps({
                                             'payload': {},
@@ -370,7 +403,7 @@ def main(client):
                                             if len(ticket_list) <= 3:
                                                 cash_back_amount = selected_sans['price'] * (
                                                         int(package['cash_back']) / 100)
-                                                print(f'Cash Back Amount: {cash_back_amount}')
+                                                print(f'Cash Back Amount: {cash_back_amount}\n')
                                         else:
                                             print(response['msg'])
                                             continue
@@ -400,7 +433,6 @@ def main(client):
                                     response = json.loads(response)
                                     ticket = response['payload']
                                     if response['status_code'] == 200:
-                                        clear_terminal()
                                         print(
                                             f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']}"
                                             f" {selected_sans['start_time']} to {selected_sans['end_time']}\n "

@@ -4,6 +4,7 @@ import threading
 
 from dotenv import load_dotenv
 
+from src.db.db_main import db_manager
 from src.server.views import *
 
 load_dotenv()
@@ -129,7 +130,7 @@ def handle_client(client_socket):
             User.objects.update({'is_logged_in': 0}, f"id={session.user.id}")
         client_socket.close()
 
-
+db_manager.initialize_database()
 # Add New Thread Per User
 while True:
     client_socket, addr = server.accept()

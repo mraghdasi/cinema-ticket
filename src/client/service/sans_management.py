@@ -96,16 +96,16 @@ def main(client):
                         print("Wrong Hall Id")
                         continue
 
-                    premier_date = input("Enter Premier Date: ")
+                    premiere_date = input("Enter Premiere Date: ")
                     try:
-                        datetime.strptime(premier_date, "%Y-%m-%d")
+                        datetime.strptime(premiere_date, "%Y-%m-%d")
                     except:
                         clear_terminal()
-                        print("Invalid Premier Date")
+                        print("Invalid Premiere Date")
                         continue
 
                     def check_time(string):
-                        return re.search(r'[0-9]{2}:[0-9]{2}:[0-9]{2}', string)
+                        return re.search(r'^[0-9]{2}:[0-9]{2}:[0-9]{2}$', string)
 
                     start_time = input("Enter Start Time: ")
                     if not check_time(start_time):
@@ -126,7 +126,7 @@ def main(client):
                         'payload': {
                             'film_id': selected_movie,
                             'hall_id': selected_hall,
-                            'premiere_date': premier_date,
+                            'premiere_date': premiere_date,
                             'start_time': start_time,
                             'end_time': end_time,
                             'price': price,
@@ -249,16 +249,16 @@ def main(client):
                         print("Wrong Hall Id")
                         continue
 
-                    premier_date = input("Enter Premier Date: ")
+                    premiere_date = input("Enter Premiere Date: ")
                     try:
-                        datetime.strptime(premier_date, "%Y-%m-%d")
+                        datetime.strptime(premiere_date, "%Y-%m-%d")
                     except:
                         clear_terminal()
-                        print("Invalid Premier Date")
+                        print("Invalid Premiere Date")
                         continue
 
                     def check_time(string):
-                        return re.search(r'[0-9]{2}:[0-9]{2}:[0-9]{2}', string)
+                        return re.search(r'^[0-9]{2}:[0-9]{2}:[0-9]{2}$', string)
 
                     start_time = input("Enter Start Time: ")
                     if not check_time(start_time):
@@ -279,7 +279,7 @@ def main(client):
                         'payload': {'data': {
                             'film_id': selected_movie,
                             'hall_id': selected_hall,
-                            'premiere_date': premier_date,
+                            'premiere_date': premiere_date,
                             'start_time': start_time,
                             'end_time': end_time,
                             'price': price,
