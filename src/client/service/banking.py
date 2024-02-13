@@ -1,6 +1,6 @@
 import os
 
-from client import card_operations, card_management, card_registeration, wallet_management
+from src.client import card_operations, card_management, card_registeration, wallet_management
 from src.utils.utils import clear_terminal
 from prettytable import PrettyTable
 

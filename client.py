@@ -4,7 +4,7 @@ import socket
 import sys
 
 import main_menu
-from auth import login, register
+from src.client.auth import login, register
 from src.utils.utils import clear_terminal
 from prettytable import PrettyTable
 
