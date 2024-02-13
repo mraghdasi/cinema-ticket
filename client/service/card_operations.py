@@ -1,3 +1,4 @@
+import getpass
 import json
 import sys
 
@@ -86,7 +87,7 @@ def op_manager(client, op, selected_card, card_creds):
                                 sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
                             password_tries += 1
 
-                            password = hash_string(input('\nPlease enter your card\'s password:'))
+                            password = hash_string(getpass.getpass('\nPlease enter your card\'s password:'))
 
                             if password != card_creds[selected_card]['password']:
                                 clear_terminal()

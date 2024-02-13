@@ -1,3 +1,4 @@
+import getpass
 import json
 from datetime import date
 import sys
@@ -42,7 +43,7 @@ def validate_card_number(card_number):
 def validate_password(password):
     try:
         if password.isdigit() and Validator.len_bound_validator(password, 4, 10):
-            confirm_password = input("Enter your password again: ")
+            confirm_password = getpass.getpass("Enter your password again: ").strip()
             if password == confirm_password:
                 return True
             clear_terminal()

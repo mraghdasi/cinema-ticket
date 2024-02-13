@@ -8,7 +8,7 @@ import service.buy_subscription as buy_subscription
 import service.buy_ticket as buy_ticket
 import service.film_management as film_management
 import service.user_modification as user_modification
-from src.client.service import movie_management, sans_management, hall_management
+from client import movie_management, sans_management, hall_management
 from src.utils.utils import clear_terminal
 
 

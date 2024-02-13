@@ -1,6 +1,6 @@
 import json
 
-from src.client.service import commenting, rating
+from client import commenting, rating
 from src.utils.utils import clear_terminal
 from prettytable import PrettyTable
 

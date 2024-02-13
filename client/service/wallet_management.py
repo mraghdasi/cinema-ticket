@@ -3,7 +3,7 @@ import os
 
 from prettytable import PrettyTable
 
-from src.client.service import card_operations
+from client import card_operations
 from src.utils.transaction import TransactionType
 from src.utils.utils import clear_terminal
 
