@@ -69,7 +69,8 @@ class Validator:
         lowercase_check = re.search(r"(.*[a-z].*){2,}", password_str)
         digit_check = re.search(r"(.*\d.*){2,}", password_str)
 
-        if all([length_check, special_char_check, uppercase_check, lowercase_check, digit_check]):
+        if all([length_check, special_char_check, uppercase_check, lowercase_check,
+                digit_check]) and " " not in password_str:
             return True
         else:
             raise custom_exceptions.PasswordValidationError()
@@ -91,7 +92,15 @@ class Validator:
             raise custom_exceptions.DateValidationError()
 
     @staticmethod
-    def min_age_validator(min_age):
+    def min_date_validator(birthday_str, min_date):
+
+        if datetime.date.fromisoformat(birthday_str) < datetime.date.fromisoformat(min_date):
+            return True
+
+        raise custom_exceptions.MinDateValidationError()
+
+    @staticmethod
+    def min_age_validator(min_age,user_age):
         """
         A function to validate min age bigger than 0
 
@@ -99,11 +108,14 @@ class Validator:
         :return:
             True Or Message of MinAgeNotPositive Exception
         """
+        current_year = datetime.date.today().year
+        year,month,day = user_age.split('-')
+        user_age = int(current_year) - int(year)
 
-        if min_age >= 0:
+        if user_age >= min_age:
             return True
         else:
-            raise custom_exceptions.MinAgeNotPositive()
+            raise custom_exceptions.MinAgeValidationError()
 
     @staticmethod
     def rate_validator(rate):

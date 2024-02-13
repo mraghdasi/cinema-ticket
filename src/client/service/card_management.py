@@ -70,7 +70,6 @@ def main(client):
         response = client.recv(5 * 1024).decode('utf-8')
         response = json.loads(response)
         if response['status_code'] == 200:
-            available_cards = list(response['cards'])
             card_creds = response['cards']
         elif response['status_code'] == 400:
             clear_terminal()
@@ -80,14 +79,18 @@ def main(client):
             print(response['msg'])
 
         i = 1
-        print('Your Cards:')
-        table = PrettyTable(['#', 'Card Number'])
-        for card in available_cards:
-            table.add_row([i, card])
+        table = PrettyTable(['Number', 'Title', 'Card Number'])
+        for card in card_creds:
+            table.add_row([i, card, card_creds[card]['card_number']])
             i += 1
+        table.add_row(['', '', ''], divider=True)
+        table.add_row(['Other Options', 'Functionality', ''], divider=True)
+        table.add_row([str(i), 'Quit', ''])
+        print(table)
 
-        print(table, f'\n{i}.Quit')
-        user_input = input("\nPlease Select Your Card:").replace(" ", "").lower()
+        available_cards = [card for card in card_creds]
+
+        user_input = input("\nPlease Select Your Card:").strip()
         if user_input == str(i) or user_input == 'quit':
             clear_terminal()
             break
@@ -96,9 +99,12 @@ def main(client):
                 clear_terminal()
                 selected_card = available_cards[int(user_input) - 1]
             else:
-                if user_input in available_cards:
+                if user_input in [card for card in card_creds]:
                     clear_terminal()
-                    selected_card = available_cards[available_cards.index(user_input)]
+                    selected_card = user_input
+                elif user_input in [card_creds[card]['card_number'] for card in card_creds]:
+                    clear_terminal()
+                    selected_card = [card for card in card_creds if card_creds[card]['card_number'] == user_input][0]
                 else:
                     clear_terminal()
                     print(f'\n{user_input} is not one of the available cards.\n')
@@ -112,8 +118,19 @@ def main(client):
         print("Selected card: ", selected_card)
 
         while True:
-            user_input = input(
-                "You can choose one of the following options:\n1. Edit card number\n2. Change CVV2\n3. Change expiration date\n4. Change password\n5. Quit\n6. Confirm Changes\n\n:").strip().lower()
+
+            table = PrettyTable(["Numbers", "Your Credentials", "Current Value Of Your Credential"])
+            table.add_rows([['1', 'Card number', f'{card_creds[selected_card]["card_number"]}'],
+                            ['2', 'CVV2', f'{card_creds[selected_card]["cvv2"]}'],
+                            ['3', 'Expiration Date', f'{card_creds[selected_card]["expire_date"]}'],
+                            ['4', 'Password', 'Can\'t show password due to privacy reasons']])
+            table.add_row(['', '', ''], divider=True)
+            table.add_row(['Other Options', 'Functionality', ''], divider=True)
+            table.add_row(['5', 'Quit', ''])
+            table.add_row(['6', 'Confirm Changes', ''])
+            print(table)
+
+            user_input = input("PLease Choose One Of The Options:").strip().lower()
 
             if user_input == '5' or user_input == 'quit':
                 clear_terminal()
@@ -136,7 +153,7 @@ def main(client):
                     print(response['msg'])
                     continue
             elif user_input == '1' or user_input == 'edit card number':
-                new_card = input("Enter new card number: ")
+                new_card = input("Enter new card number (length must be 16): ")
                 if new_card == card_creds[selected_card]['card_number']:
                     clear_terminal()
                     print(f"You can't change you card number to the same one")
@@ -146,7 +163,7 @@ def main(client):
                     clear_terminal()
                     continue
             elif user_input == '2' or user_input == 'change cvv2':
-                new_cvv2 = input("Enter new CVV2: ")
+                new_cvv2 = input("Enter new CVV2 (length must be 3 or 4): ")
                 if new_cvv2 == card_creds[selected_card]['cvv2']:
                     clear_terminal()
                     print("You can't change your CVV2 to the same number")
@@ -170,7 +187,7 @@ def main(client):
                 if validate_password(current_password):
                     current_password = hash_string(current_password)
                     if compare_digest(current_password, card_creds[selected_card]['password']):
-                        new_password = input("Please enter your new password: ")
+                        new_password = input("Please enter your new password (length must be 4 to 10): ")
                         if compare_digest(hash_string(new_password), card_creds[selected_card]['password']):
                             clear_terminal()
                             print("You Can't change your password to the same one")

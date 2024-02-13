@@ -8,23 +8,7 @@ from src.utils.utils import clear_terminal
 
 
 def main(client):
-    # package = bronze , silver , gold
-
-    # if package == one of the packages
-
-    # payment stuff and changes in db (should use other modules and db)
-
-    # returns user_info
-
-    # ===========================Please Check my Code==========================
-
-    # check buy_ticket.py and card_registration.py
-
     while True:
-        print('Please choose your package:\n')
-
-        # Get Packages From Server
-
         request_data = json.dumps({
             'payload': {},
             'url': 'get_packages'
@@ -40,16 +24,19 @@ def main(client):
             continue
 
         table = PrettyTable(['Id', 'Package Title'])
-
         for package in packages:
-            table.add_row([package['id'], package['title']])
+            table.add_row([package['id'], package['title'].capitalize()])
+        table.add_row(['', ''], divider=True)
+        table.add_row(['Other Options', 'Functionality'], divider=True)
+        table.add_row(['4', 'Quit'])
         print(table)
 
-        selected_package = input('Enter Id of Package: ').strip().lower()
-        if selected_package in map(str, [package['id'] for package in packages]):
-            selected_package = [package for package in packages if str(package['id']) == selected_package][0]
-        elif selected_package == 'quit':
+        selected_package = input('Enter the package you want: ').strip().lower()
+        if selected_package == 'quit' or selected_package == '4':
+            clear_terminal()
             break
+        elif selected_package in list(map(str, [package['id'] for package in packages])):
+            selected_package = [package for package in packages if str(package['id']) == selected_package][0]
         else:
             clear_terminal()
             print('Invalid Package ID')

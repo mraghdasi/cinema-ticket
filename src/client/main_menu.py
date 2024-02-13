@@ -6,16 +6,18 @@ import service.buy_ticket as buy_ticket
 import service.film_management as film_management
 import service.user_modification as user_modification
 from src.utils.utils import clear_terminal
+from prettytable import PrettyTable
 
-
-# outgoing : just the url for the next file
 
 def main(client):
     while True:
-        print("What do you want to do today ?\n")
+        table = PrettyTable(["What do you want to do today ?"])
+        table.align["What do you want to do today ?"] = "l"
+        table.add_rows([['1.Buy tickets'], ['2.Buy A Subscription'], ['3.Check Available Movies'],
+                        ['4.Banking'], ['5.Modify Account'], ['6.Quit']])
 
-        user_input = input(
-            '1.Buy tickets\n2.Buy A Subscription\n3.Check Available Movies\n4.Banking\n5.Modify Account\n6.Quit\n\n:').lower().strip()
+        print(table)
+        user_input = input('Choose One Option:').lower().strip()
 
         if user_input == '6' or user_input == 'quit':
             clear_terminal()

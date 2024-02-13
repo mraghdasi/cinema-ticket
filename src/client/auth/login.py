@@ -23,18 +23,14 @@ from src.utils.utils import clear_terminal, hash_string
 def main():
     while True:
         try:
-            print(
-                '\n Welcome! please enter your username and password (press ctrl+c to exit this menu)\n')
-            username = input(
-                'Username :').strip()
-            password = input(
-                'Password :').strip()
+            print('Welcome! please enter your username and password (press ctrl+c to exit this menu)\n')
+            username = input('Username :').strip()
+            password = hash_string(input('Password :').strip())
 
         except KeyboardInterrupt:
             clear_terminal()
             break
 
-        password = hash_string(password)
         data = {
             'payload': {'username': username, 'password': password},
             'url': 'login'

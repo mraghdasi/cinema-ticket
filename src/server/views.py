@@ -496,7 +496,8 @@ def update_cards(request):
         return {'status_code': 200}
     except DBError:
         return {'status_code': 400}
-    
+
+
 @login_required
 def add_amount_to_wallet(request):
     payload = request.payload
