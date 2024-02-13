@@ -96,7 +96,7 @@ class RateNotBetweenZeroAndFive(Exception):
 class CardOpAmountValueError(Exception):
 
     def __init__(self):
-        super().__init__('Please Enter Numeric Value Without Any Decimal Portions!')
+        super().__init__('Please Enter Numeric Value Without Any Decimal Portions (Min 2000)!')
 
 
 class LenBoundValidationError(Exception):

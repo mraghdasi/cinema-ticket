@@ -1,7 +1,5 @@
 import json
 
-# incoming : package and subscription details
-# outgoing : banking process and updating user
 from prettytable import PrettyTable
 
 from src.utils.transaction import TransactionType
@@ -47,9 +45,34 @@ def main(client):
 
         clear_terminal()
         print(f"You selected {user_package.capitalize()} package.")
-        # print("At this step the user should be taken to the payment stuff and changes in the database.")
+        request_data = json.dumps({
+            'payload': {},
+            'url': 'check_subscription'
+        })
+        client.send(request_data.encode('utf-8'))
+        response = client.recv(5 * 1024).decode('utf-8')
+        response = json.loads(response)
+        if response['status_code'] == 200:
+            subscription = response['package']
+            if subscription['title'] == user_package:
+                clear_terminal()
+                print('You Already Have This Subscription')
+                continue
+            elif subscription['title'] == 'Bronze':
+                pass
+            elif subscription['title'] == 'Silver' and user_package == 'Bronze':
+                clear_terminal()
+                print('You Have A Silver Subscription Can\'t Downgrade To Bronze')
+                continue
+            elif subscription['title'] == 'Gold':
+                clear_terminal()
+                print('You Already Have The Best Subscription Available, Can\'t Downgrade To Other Ones')
+                continue
+        else:
+            clear_terminal()
+            print(response['msg'])
+            continue
 
-        # Payment Method
         wallet_withdraw_payload = json.dumps({
             'payload': {
                 'amount': selected_package['price'],
@@ -76,6 +99,7 @@ def main(client):
                     f"Subscription Id: {payload['id']}\nPackage Title: {response['package']['title']}\nExpires At: {payload['expire_at']}")
                 break
             else:
+                clear_terminal()
                 print(response['msg'])
                 continue
         else:
