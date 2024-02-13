@@ -162,4 +162,5 @@ cython_debug/
 
 .vscode/
 
+./test_file_temp.py
 test_file_temp.py

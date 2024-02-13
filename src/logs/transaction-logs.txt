@@ -75,3 +75,4 @@ INFO:root: Username : aA1    | Amount : 7500 | Transaction Type : deposit_wallet
 INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 20:19:45.943502
 INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 20:23:28.705695
 INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 20:23:37.770137
+INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 20:34:03.844398
