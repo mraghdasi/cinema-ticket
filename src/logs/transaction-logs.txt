@@ -39,3 +39,5 @@ INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Am
 INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -6000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:00:12.775855
 INFO:root: Username : Mraghdasi33 | Origin Card Number : 4321432143214321   | Amount : -2000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:01:49.642948
 INFO:root: Username : Mraghdasi33    | Amount : 2000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 03:01:49.644653
+INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 17:50:48.907992
+INFO:root: Username : soroush223132    | Amount : 1000 | Transaction Type : deposit | DateTime : 2024-02-13 17:52:19.328387

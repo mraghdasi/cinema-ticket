@@ -215,7 +215,7 @@ def get_cards(request):
                                      'minimum_amount': card.minimum_amount}
         if len(card_dict) != 0:
             return {'cards': card_dict, 'status_code': 200}
-        return {'msg': 'You Have No Cards In Our DataBase', 'status_code': 400}
+        return {'msg': 'You Have No Cards In Our DataBase', 'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -524,6 +524,8 @@ def update_cards(request):
         return {'status_code': 200}
     except DBError:
         return {'status_code': 400}
+    except Exception as e:
+        return {'status_code': 500}
 
 
 def add_movie(request):
@@ -595,6 +597,8 @@ def add_sans(request):
     try:
         CinemaSans.objects.create(**payload)
         return {'status_code': 200}
+    except DBError:
+        return {'msg': 'Invalid Payload', 'status_code': 400}
     except Exception as e:
         return {'msg': 'server Error', 'status_code': 500}
 

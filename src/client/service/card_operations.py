@@ -184,9 +184,6 @@ def main(client, op):
         response = json.loads(response)
         if response['status_code'] == 200:
             card_creds = response['cards']
-        elif response['status_code'] == 400:
-            print(response['msg'])
-            break
         else:
             print(response['msg'])
             break
