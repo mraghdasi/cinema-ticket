@@ -149,7 +149,9 @@ def op_manager(client, op, selected_card, card_creds):
                 user = get_user_info(client)
                 print(user)
                 if op != 'transfer':
-                    set_transaction_log(-int(op_amount) if op == 'withdraw' else int(op_amount), TransactionType.WITHDRAW_CARD.value if op == 'withdraw' else TransactionType.DEPOSIT_CARD.value, user["username"],
+                    set_transaction_log(-int(op_amount) if op == 'withdraw' else int(op_amount),
+                                        TransactionType.WITHDRAW_CARD.value if op == 'withdraw' else TransactionType.DEPOSIT_CARD.value,
+                                        user["username"],
                                         card_creds[selected_card]['card_number'])
 
                     print(
@@ -157,7 +159,8 @@ def op_manager(client, op, selected_card, card_creds):
             your current balance: {card_creds[selected_card]['amount']}""")
                     return op_amount
                 else:
-                    set_transaction_log(int(op_amount), TransactionType.TRANSFER.value, user["username"], card_creds[selected_card]['card_number'], destination_card['card_number'])
+                    set_transaction_log(int(op_amount), TransactionType.TRANSFER.value, user["username"],
+                                        card_creds[selected_card]['card_number'], destination_card['card_number'])
                     print(
                         f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
             your current balance: {card_creds[selected_card]['amount']}""")

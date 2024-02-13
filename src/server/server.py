@@ -80,6 +80,7 @@ urls = {
     'get_movie_rates': get_movie_rates,
     'get_packages': get_packages,
     'show_profile': show_profile,
+    'add_amount_to_wallet': add_amount_to_wallet,
     'update_cards': update_cards,
     'add_movie': add_movie,
     'delete_movie': delete_movie,
