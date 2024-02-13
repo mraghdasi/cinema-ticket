@@ -179,12 +179,17 @@ def buy_subscription(request):
             package = Package.objects.read(f"title=\"{payload['user_package']}\"")[0]
             subscription = Subscription.objects.create(request.session.user.id, package.id,
                                                        (datetime.now() + timedelta(days=31)).strftime('%Y-%m-%d'))
-            return {'subscription': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
-                                     vars(subscription).items()},
-                    'package': vars(package),
-                    'status_code': 200}
         else:
-            return {'msg': 'You already have a subscription', 'status_code': 400}
+            package = Package.objects.read(f"title=\"{payload['user_package']}\"")[0]
+            subscription = Subscription.objects.update({"package_id": package.id,
+                                                        "expire_at": (datetime.now() + timedelta(days=31)).strftime(
+                                                            '%Y-%m-%d')},
+                                                       f'user_id={request.session.user.id}')
+
+        return {'subscription': {k: v if type(v) not in [datetime, date] else v.strftime('%Y-%m-%d') for k, v in
+                                 vars(subscription).items()},
+                'package': vars(package),
+                'status_code': 200}
     except Exception as e:
         return {'msg': 'Server Error', 'status_code': 500}
 
@@ -372,7 +377,7 @@ def wallet_withdraw(request):
                 'msg': f'Your Wallet is  successfully updated. Current Balance. Current Balance : {user_updated.balance}',
                 'status_code': 200}
         else:
-            return {'msg': 'Your Balance Not enough', 'status_code': 400}
+            return {'msg': 'Your Balance Is Not Enough Please Charge Your Wallet', 'status_code': 400}
 
     except DBError:
         return {'msg': 'Error in Database', 'status_code': 400}

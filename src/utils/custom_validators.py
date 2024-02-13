@@ -100,7 +100,7 @@ class Validator:
         raise custom_exceptions.MinDateValidationError()
 
     @staticmethod
-    def min_age_validator(min_age,user_age):
+    def min_age_validator(min_age, user_age):
         """
         A function to validate min age bigger than 0
 
@@ -109,7 +109,7 @@ class Validator:
             True Or Message of MinAgeNotPositive Exception
         """
         current_year = datetime.date.today().year
-        year,month,day = user_age.split('-')
+        year, month, day = user_age.split('-')
         user_age = int(current_year) - int(year)
 
         if user_age >= min_age:
@@ -171,12 +171,12 @@ class Validator:
 
     @staticmethod
     def card_op_amount_validator(deposit_amount: str):
+
         try:
-            int(deposit_amount)
+            if int(deposit_amount) >= 2000:
+                return True
         except ValueError:
             raise custom_exceptions.CardOpAmountValueError()
-
-        return True
 
     @staticmethod
     def len_bound_validator(str_input: str, start: int, end: int):

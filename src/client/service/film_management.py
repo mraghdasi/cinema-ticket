@@ -29,7 +29,7 @@ def main(client):
             if name not in movies_dict:
                 movies_dict[name] = {'Sat': [], 'Sun': [], 'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': []}
             for san in sans:
-                day = san['premiere_date'][:3]
+                day = san['premiere_date']
                 movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
         print("List of available movies:")

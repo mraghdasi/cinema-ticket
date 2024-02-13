@@ -39,3 +39,13 @@ INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Am
 INFO:root: Username : Mraghdasi33 | Origin Card Number : 1234123412341234   | Amount : -6000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:00:12.775855
 INFO:root: Username : Mraghdasi33 | Origin Card Number : 4321432143214321   | Amount : -2000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 03:01:49.642948
 INFO:root: Username : Mraghdasi33    | Amount : 2000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 03:01:49.644653
+INFO:root: Username : Behdad13 | Origin Card Number : 6104337387924085   | Amount : 100000 | Transaction Type : deposit_card | DateTime : 2024-02-13 12:58:58.903250
+INFO:root: Username : Behdad13 | Origin Card Number : 6104337387924085   | Amount : -100000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 13:00:19.541284
+INFO:root: Username : Behdad13    | Amount : 100000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 13:00:19.544928
+INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:00:37.966752
+INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:02:25.400719
+INFO:root: Username : Behdad13 | Origin Card Number : 6104337387924085   | Amount : 100000 | Transaction Type : deposit_card | DateTime : 2024-02-13 13:04:09.090840
+INFO:root: Username : Behdad13 | Origin Card Number : 6104337387924085   | Amount : -100000 | Transaction Type : withdraw_card | DateTime : 2024-02-13 13:04:54.150457
+INFO:root: Username : Behdad13    | Amount : 100000 | Transaction Type : deposit_wallet | DateTime : 2024-02-13 13:04:54.153477
+INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:05:33.281817
+INFO:root: Username : Behdad13    | Amount : -50000 | Transaction Type : buy_package | DateTime : 2024-02-13 13:05:54.845865

@@ -153,7 +153,7 @@ def main(client):
         if action_choice == '3' or action_choice == 'quit':
             clear_terminal()
             break
-        elif action_choice == '1' and action_choice == 'buy ticket':
+        elif action_choice == '1' or action_choice == 'buy ticket':
             clear_terminal()
             pass
         elif action_choice == '2' or action_choice == 'cancel ticket':
@@ -163,6 +163,10 @@ def main(client):
                 break
             else:
                 continue
+        else:
+            clear_terminal()
+            print('Invalid input.')
+            continue
 
         request_data = json.dumps({
             'payload': {},
@@ -200,7 +204,7 @@ def main(client):
             if name not in movies_dict:
                 movies_dict[name] = {'Sat': [], 'Sun': [], 'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': []}
             for san in sans:
-                day = san['premiere_date'][:3]
+                day = san['premiere_date']
                 movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
         movies_title_list = [title['title'] for title in movies]
@@ -261,7 +265,7 @@ def main(client):
 
                 selected_time = input("Enter id number: ").strip().lower()
 
-                if selected_time == 'quit':
+                if selected_time == str(i) or selected_time == 'quit':
                     clear_terminal()
                     break
                 try:
@@ -287,7 +291,7 @@ def main(client):
                     print(response['msg'])
                     continue
                 while True:
-                    table = PrettyTable([f'Seats for {payload["hall"]["title"]}'])
+                    table = PrettyTable([f'Seats for {payload["hall"]["title"].capitalize()}'])
                     seats = [[str((d * 10) + (y + 1)).zfill(2) for y in range(10)] for d in
                              range(payload['hall']['capacity'] // 10)]
                     reserved_tickets_seats = [ticket['sit_number'] for ticket in payload['sans_tickets']]
@@ -328,74 +332,87 @@ def main(client):
                             clear_terminal()
                             break
                         elif payment_choice == '1' or payment_choice == 'confirm payment':
-                            clear_terminal()
-                            print("Payment successful. Thank you for your purchase!")
-                            request_data = json.dumps({
-                                'payload': {},
-                                'url': 'check_subscription'})
-                            client.send(request_data.encode('utf-8'))
-                            response = client.recv(5 * 1024).decode('utf-8')
-                            response = json.loads(response)
-                            if response['status_code'] == 200:
-                                cash_back_amount = 0
-                                package = response['package']
-                                if package['title'] == 'Gold':
-                                    cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
-                                    print(f'Cash Back Amount: {cash_back_amount}')
-                                    print('You Have A Free Cocktail!')
-                                elif package['title'] == 'Silver':
-                                    request_data = json.dumps({
-                                        'payload': {},
-                                        'url': 'check_tickets'
-                                    })
-                                    client.send(request_data.encode('utf-8'))
-                                    response = client.recv(5 * 1024).decode('utf-8')
-                                    response = json.loads(response)
-                                    if response['status_code'] == 200:
-                                        ticket_list = response['payload']
-                                        if len(ticket_list) < 3:
-                                            cash_back_amount = selected_sans['price'] * (
-                                                    int(package['cash_back']) / 100)
-                                        else:
-                                            cash_back_amount = 0
-                                    else:
-                                        print(response['msg'])
-                                        continue
-                            else:
-                                print(response['msg'])
-                                continue
-                            wallet_deposit_payload = json.dumps({
+                            wallet_withdraw_payload = json.dumps({
                                 'payload': {
-                                    'amount': cash_back_amount,
-                                    'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                                    'amount': selected_sans['price'],
+                                    'transaction_log_type': TransactionType.BUY_PACKAGE.value
                                 },
-                                'url': 'wallet_deposit'
+                                'url': 'wallet_withdraw'
                             })
-                            client.send(wallet_deposit_payload.encode('utf-8'))
+                            client.send(wallet_withdraw_payload.encode('utf-8'))
                             response = client.recv(5 * 1024).decode('utf-8')
                             response = json.loads(response)
                             if response['status_code'] == 200:
                                 request_data = json.dumps({
-                                    'payload': {
-                                        'sans_id': selected_sans['id'],
-                                        'sit': seat_to_reserve_input
-                                    },
-                                    'url': 'add_ticket'
-                                })
+                                    'payload': {},
+                                    'url': 'check_subscription'})
                                 client.send(request_data.encode('utf-8'))
                                 response = client.recv(5 * 1024).decode('utf-8')
                                 response = json.loads(response)
-                                ticket = response['payload']
                                 if response['status_code'] == 200:
                                     clear_terminal()
-                                    print(
-                                        f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']}"
-                                        f" {selected_sans['start_time']} to {selected_sans['end_time']}\n "
-                                        f"Seat Number: {ticket['sit_number']}")
-                                    return 'Payed'
+                                    cash_back_amount = 0
+                                    package = response['package']
+                                    if package['title'] == 'Gold':
+                                        cash_back_amount = selected_sans['price'] * (int(package['cash_back']) / 100)
+                                        print(f'Cash Back Amount: {cash_back_amount}')
+                                        print('You Have A Free Cocktail!')
+                                    elif package['title'] == 'Silver':
+                                        request_data = json.dumps({
+                                            'payload': {},
+                                            'url': 'check_tickets'
+                                        })
+                                        client.send(request_data.encode('utf-8'))
+                                        response = client.recv(5 * 1024).decode('utf-8')
+                                        response = json.loads(response)
+                                        if response['status_code'] == 200:
+                                            ticket_list = response['payload']
+                                            if len(ticket_list) <= 3:
+                                                cash_back_amount = selected_sans['price'] * (
+                                                        int(package['cash_back']) / 100)
+                                                print(f'Cash Back Amount: {cash_back_amount}')
+                                        else:
+                                            print(response['msg'])
+                                            continue
+                                else:
+                                    print(response['msg'])
+                                    continue
+                                wallet_deposit_payload = json.dumps({
+                                    'payload': {
+                                        'amount': cash_back_amount,
+                                        'transaction_log_type': TransactionType.DEPOSIT_WALLET.value
+                                    },
+                                    'url': 'wallet_deposit'
+                                })
+                                client.send(wallet_deposit_payload.encode('utf-8'))
+                                response = client.recv(5 * 1024).decode('utf-8')
+                                response = json.loads(response)
+                                if response['status_code'] == 200:
+                                    request_data = json.dumps({
+                                        'payload': {
+                                            'sans_id': selected_sans['id'],
+                                            'sit': seat_to_reserve_input
+                                        },
+                                        'url': 'add_ticket'
+                                    })
+                                    client.send(request_data.encode('utf-8'))
+                                    response = client.recv(5 * 1024).decode('utf-8')
+                                    response = json.loads(response)
+                                    ticket = response['payload']
+                                    if response['status_code'] == 200:
+                                        clear_terminal()
+                                        print(
+                                            f"Ticket Id: {ticket['id']} For {selected_sans['premiere_date']}"
+                                            f" {selected_sans['start_time']} to {selected_sans['end_time']}\n "
+                                            f"Seat Number: {ticket['sit_number']}")
+                                        return 'Payed'
+                                    else:
+                                        clear_terminal()
+                                        print(response['msg'])
                                 else:
                                     clear_terminal()
                                     print(response['msg'])
+                                    continue
                             else:
                                 clear_terminal()
                                 print(response['msg'])

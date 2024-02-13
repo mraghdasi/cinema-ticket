@@ -1,6 +1,8 @@
 import json
 import os
 
+from prettytable import PrettyTable
+
 from src.client.service import card_operations
 from src.utils.transaction import TransactionType
 from src.utils.utils import clear_terminal
@@ -8,17 +10,18 @@ from src.utils.utils import clear_terminal
 
 def main(client):
     while True:
-        print('Please choose your wallet management operation:')
-        print('1. Charge wallet\n2. Check balance\n3. Quit')
 
-        choice = input('Enter your choice (1, 2, or 3):').strip().lower()
-        if choice == '3' or choice.lower() == 'quit':  # quit
+        table = PrettyTable(["Your Wallet Operations:"])
+        table.align["Your Wallet Operations:"] = "l"
+        table.add_rows([["1.Charge wallet"], ["2.Check balance"], ["3.Quit"]])
+        print(table)
+
+        choice = input('Please Choose One Option:').strip().lower()
+
+        if choice == '3' or choice.lower() == 'quit':
             clear_terminal()
-            print('Goodbye!')
             break
-
-        elif choice == '1' or choice == 'charge wallet':  # charge wallet
-
+        elif choice == '1' or choice == 'charge wallet':
             amount = card_operations.main(client, "withdraw")
             if not amount:
                 clear_terminal()
@@ -36,12 +39,13 @@ def main(client):
             response = json.loads(response)
 
             if response['status_code'] == 200:
+                clear_terminal()
                 print('Wallet charged successfully.')
             else:
                 print(response['msg'])
                 continue
 
-        elif choice == '2':  # check balance
+        elif choice == '2':
             request_data = json.dumps({
                 'payload': {},
                 'url': 'show_profile'
@@ -49,7 +53,7 @@ def main(client):
             client.send(request_data.encode('utf-8'))
             response = client.recv(5 * 1024).decode('utf-8')
             response = json.loads(response)
-
+            clear_terminal()
             if response['status_code'] == 200:
                 user = response['user']
             else:
@@ -57,7 +61,7 @@ def main(client):
                 continue
             print(f"Balance: {user['balance']} Toman")
 
-        else:  # invalid choice
+        else:
             print('Invalid choice. Please try again.')
 
 
