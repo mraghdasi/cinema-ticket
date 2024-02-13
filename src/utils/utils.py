@@ -5,6 +5,8 @@ import os
 
 from dotenv import load_dotenv
 
+from src.utils.custom_exceptions import exception_log
+
 load_dotenv()
 
 
@@ -39,3 +41,10 @@ def get_user_info(client):
     if response['status_code'] == 200:
         return response['user']
     return None
+
+
+@exception_log()
+def error_response(payload):
+    payload = json.loads(payload)
+    if int(payload['status_code']) >= 400:
+        raise Exception(payload['msg'])

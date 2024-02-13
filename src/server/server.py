@@ -5,6 +5,7 @@ import threading
 from dotenv import load_dotenv
 
 from src.server.views import *
+from src.utils.utils import error_response
 
 load_dotenv()
 
@@ -103,6 +104,10 @@ def handle_client(client_socket):
 
                 # Send Request To View Function
                 response = Response(urls[request.url](request))
+
+                # Log Client Error Response
+                error_response(response.payload.decode('utf-8'))
+
                 # Send Response To Client Connection
                 session.connection.send(response.payload)
             else:

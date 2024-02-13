@@ -92,3 +92,4 @@ ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: cancel_
 ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:36:13
 ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: deposit_wallet | DateTime : 2024-02-12 03:36:13
 ERROR:root: Exception in set_transaction_log : Invalid Transaction Type: buy_ticket | DateTime : 2024-02-12 03:36:30
+ERROR:root: Exception in error_response : User Not Found | DateTime : 2024-02-13 04:03:15
