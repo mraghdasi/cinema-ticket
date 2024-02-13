@@ -1,6 +1,7 @@
 import json
 
 from src.utils.utils import clear_terminal, hash_string
+import getpass
 
 
 # outgoing data : username and password to the User Table in DB
@@ -25,7 +26,7 @@ def main():
         try:
             print('Welcome! please enter your username and password (press ctrl+c to exit this menu)\n')
             username = input('Username :').strip()
-            password = hash_string(input('Password :').strip())
+            password = hash_string(getpass.getpass('Password :').strip())
 
         except KeyboardInterrupt:
             clear_terminal()

@@ -11,7 +11,7 @@ def main(client):
         table = PrettyTable(["Welcome to the Banking Service! What Can We Do For You?"])
         table.align["Welcome to the Banking Service! What Can We Do For You?"] = "l"
         table.add_rows([["1.Card Management"], ["2.Card Registration"],
-                        ["3.Card Operations"], ["4.Wallet Management"],["5.Quit"]])
+                        ["3.Card Operations"], ["4.Wallet Management"], ["5.Quit"]])
 
         print(table)
         user_input = input("Please choose your action:").strip().lower()
@@ -31,7 +31,7 @@ def main(client):
             while True:
                 table = PrettyTable(["Offered Operations:"])
                 table.align["Offered Operations:"] = "l"
-                table.add_rows([["1.Deposit"], ["2.Withdraw"], ["3.Transfer"],["4.Quit"]])
+                table.add_rows([["1.Deposit"], ["2.Withdraw"], ["3.Transfer"], ["4.Quit"]])
 
                 print(table)
                 op = input("Please Choose your operation:").strip().lower()
@@ -52,6 +52,7 @@ def main(client):
 
                 clear_terminal()
                 card_operations.main(client, operation)
+                break
         elif user_input == '4' or user_input == 'wallet management':
             clear_terminal()
             wallet_management.main(client)

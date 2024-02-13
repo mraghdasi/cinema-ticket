@@ -29,7 +29,7 @@ def main(client):
             if name not in movies_dict:
                 movies_dict[name] = {'Sat': [], 'Sun': [], 'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': []}
             for san in sans:
-                day = san['premiere_date'][:3]
+                day = san['premiere_date']
                 movies_dict[name][day] = movies_dict[name].get(day, []) + [san]
 
         print("List of available movies:")
@@ -109,7 +109,7 @@ def main(client):
 
         table = PrettyTable([movie['title'].capitalize()])
         table.add_rows([[f"Minimum Age: {movie['min_age']}"], [f"Rating: {film_rating:.1f}/10"],
-                       [f"Number of rates: {len(film_rates)}"], [f"Number of comments: {len(film_comments)}"]])
+                        [f"Number of rates: {len(film_rates)}"], [f"Number of comments: {len(film_comments)}"]])
         print(table, '\n', sep=None)
 
         table = PrettyTable(["Please select one of the options below:"])
@@ -137,7 +137,4 @@ def main(client):
 
 
 if __name__ == "__main__":
-    main('client')
-
-# input(buy ticket (runs buy_ticket.py staring in line 12 showing sans instead of making user choose a movie ,
-# comment (runs commenting.py)))
+    main()

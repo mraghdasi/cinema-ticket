@@ -5,7 +5,7 @@ import src.utils.custom_exceptions as CustomException
 import src.utils.custom_validators as Validators
 from src.utils.utils import clear_terminal, hash_string
 from src.utils.utils import input_client
-
+import getpass
 
 # outgoing data : validated user registration info :
 # username email phone number password birthday
@@ -63,8 +63,8 @@ def main():
                 print(f'Phone Number : {creds["phone_number"]}')
 
             if creds['password'] == '':
-                password = input(
-                    'Password*(at least 2 uppercase letters, numbers and special characters):').strip()
+                password = getpass.getpass(prompt=
+                                           'Password*(at least 2 uppercase letters, numbers and special characters):').strip()
 
                 if Validators.Validator.password_validator(password):
 
@@ -73,7 +73,7 @@ def main():
                     while not compare_digest(password, password_confirm):
                         if password_confirm != '':
                             print('\nPasswords Do Not Match!\n')
-                        password_confirm = input('Confirm Password*:').strip()
+                        password_confirm = getpass.getpass('Confirm Password*:').strip()
 
                     creds['password'] = hash_string(password)
 

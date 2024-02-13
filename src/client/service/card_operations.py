@@ -1,3 +1,4 @@
+import getpass
 import json
 import sys
 
@@ -13,162 +14,156 @@ def op_manager(client, op, selected_card, card_creds):
     while True:
         op_amount = input(f'\nHow much money you want to {op}? ')
 
-        if op_amount <= str(2000):
-            clear_terminal()
-            print(f'Operation Amount must be at least 2000.')
-            continue
+        card_creds_input = {'expire_date': '', 'cvv2': '', 'password': ''}
 
-    card_creds_input = {'expire_date': '', 'cvv2': '', 'password': ''}
+        try:
+            if Validators.Validator.card_op_amount_validator(op_amount):
+                while True:
+                    try:
+                        if op == 'transfer':
+                            destination_card = input('\nPlease enter the destination card:')
+                            if destination_card == selected_card:
+                                clear_terminal()
+                                print('\nYou can\'t transfer money to the origin card')
+                                break
 
-    try:
-        if Validators.Validator.card_op_amount_validator(op_amount):
-            while True:
-                try:
-                    if op == 'transfer':
-                        destination_card = input('\nPlease enter the destination card:')
-                        if destination_card == selected_card:
+                            request_data = json.dumps({
+                                'payload': {'destination_card': destination_card},
+                                'url': 'check_db_for_transfer'
+                            })
+                            client.send(request_data.encode('utf-8'))
+                            response = client.recv(5 * 1024).decode('utf-8')
+                            response = json.loads(response)
+                            if response['status_code'] == 200:
+                                destination_card = response['destination_card_obj']
+                                confirm = input(
+                                    f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
+                                if confirm == 'n':
+                                    return False
+                            else:
+                                print(response['msg'])
+                                continue
+
+                        expire_date = ''
+                        expire_date_tries = 0
+
+                        while expire_date != card_creds[selected_card]['expire_date']:
+                            if expire_date_tries == 3:
+                                clear_terminal()
+                                sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
+                            expire_date_tries += 1
+
+                            expire_date = input('\nPlease enter your card\'s expire date YYYY-MM-DD:')
+
+                            if expire_date != card_creds[selected_card]['expire_date']:
+                                clear_terminal()
+                                print(f'\nExpiration date: {expire_date} for card: {selected_card} is not correct')
+
+                            card_creds_input['expire_date'] = expire_date
+
+                        cvv2 = ''
+                        cvv2_tries = 0
+
+                        while cvv2 != card_creds[selected_card]['cvv2']:
+                            if cvv2_tries == 3:
+                                clear_terminal()
+                                sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
+                            cvv2_tries += 1
+
+                            cvv2 = input('\nPlease enter your card\'s Cvv2:')
+
+                            if cvv2 != card_creds[selected_card]['cvv2']:
+                                clear_terminal()
+                                print(f'\nExpiration date: {cvv2} for card: {selected_card} is not correct')
+
+                            card_creds_input['cvv2'] = cvv2
+
+                        password = ''
+                        password_tries = 0
+
+                        while password != card_creds[selected_card]['password']:
+                            if password_tries == 3:
+                                clear_terminal()
+                                sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
+                            password_tries += 1
+
+                            password = hash_string(getpass.getpass('\nPlease enter your card\'s password:'))
+
+                            if password != card_creds[selected_card]['password']:
+                                clear_terminal()
+                                print(f'\nExpiration date: {password} for card: {selected_card} is not correct')
+
+                            card_creds_input['password'] = password
+
+                    except KeyboardInterrupt:
+                        clear_terminal()
+                        break
+
+                    min_check = (card_creds[selected_card]['amount'] - int(op_amount)) < card_creds[selected_card][
+                        'minimum_amount']
+
+                    if op == 'deposit':
+                        card_creds[selected_card]['amount'] += int(op_amount)
+                    elif op == 'withdraw':
+
+                        if min_check:
                             clear_terminal()
-                            print('\nYou can\'t transfer money to the origin card')
+                            print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
                             break
 
-                        request_data = json.dumps({
-                            'payload': {'destination_card': destination_card},
-                            'url': 'check_db_for_transfer'
-                        })
-                        client.send(request_data.encode('utf-8'))
-                        response = client.recv(5 * 1024).decode('utf-8')
-                        response = json.loads(response)
-                        if response['status_code'] == 200:
-                            destination_card = response['destination_card_obj']
-                            confirm = input(
-                                f'\nAre You Sure You Want to transfer {op_amount} from {selected_card} to {destination_card["title"]} ? (Y/N)').strip().lower()
-                            if confirm == 'n':
-                                return False
-                        else:
-                            print(response['msg'])
-                            continue
-
-                    expire_date = ''
-                    expire_date_tries = 0
-
-                    while expire_date != card_creds[selected_card]['expire_date']:
-                        if expire_date_tries == 3:
+                        card_creds[selected_card]['amount'] -= int(op_amount)
+                    elif op == 'transfer':
+                        if min_check:
                             clear_terminal()
-                            sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
-                        expire_date_tries += 1
+                            print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
+                            break
+                        card_creds[selected_card]['amount'] -= int(op_amount)
+                        destination_card['amount'] += int(op_amount)
 
-                        expire_date = input('\nPlease enter your card\'s expire date YYYY-MM-DD:')
-
-                        if expire_date != card_creds[selected_card]['expire_date']:
-                            clear_terminal()
-                            print(f'\nExpiration date: {expire_date} for card: {selected_card} is not correct')
-
-                        card_creds_input['expire_date'] = expire_date
-
-                    cvv2 = ''
-                    cvv2_tries = 0
-
-                    while cvv2 != card_creds[selected_card]['cvv2']:
-                        if cvv2_tries == 3:
-                            clear_terminal()
-                            sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
-                        cvv2_tries += 1
-
-                        cvv2 = input('\nPlease enter your card\'s Cvv2:')
-
-                        if cvv2 != card_creds[selected_card]['cvv2']:
-                            clear_terminal()
-                            print(f'\nExpiration date: {cvv2} for card: {selected_card} is not correct')
-
-                        card_creds_input['cvv2'] = cvv2
-
-                    password = ''
-                    password_tries = 0
-
-                    while password != card_creds[selected_card]['password']:
-                        if password_tries == 3:
-                            clear_terminal()
-                            sys.exit('\nYou have failed to enter correct input 3 times terminating operation...')
-                        password_tries += 1
-
-                        password = hash_string(input('\nPlease enter your card\'s password:'))
-
-                        if password != card_creds[selected_card]['password']:
-                            clear_terminal()
-                            print(f'\nExpiration date: {password} for card: {selected_card} is not correct')
-
-                        card_creds_input['password'] = password
-
-                except KeyboardInterrupt:
                     clear_terminal()
-                    break
 
-                min_check = (card_creds[selected_card]['amount'] - int(op_amount)) < card_creds[selected_card][
-                    'minimum_amount']
-
-                if op == 'deposit':
-                    card_creds[selected_card]['amount'] += int(op_amount)
-                elif op == 'withdraw':
-
-                    if min_check:
-                        clear_terminal()
-                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
+                    if op == 'transfer':
+                        request_data = json.dumps({
+                            'payload': {'selected_card': card_creds[selected_card],
+                                        'destination_card': destination_card},
+                            'url': 'do_transfer'
+                        })
+                    else:
+                        request_data = json.dumps({
+                            'payload': {'selected_card': card_creds[selected_card]},
+                            'url': 'do_card_op'
+                        })
+                    client.send(request_data.encode('utf-8'))
+                    response = client.recv(5 * 1024).decode('utf-8')
+                    response = json.loads(response)
+                    if response['status_code'] == 200:
+                        pass
+                    else:
+                        print(response['msg'])
                         break
 
-                    card_creds[selected_card]['amount'] -= int(op_amount)
-                elif op == 'transfer':
-                    if min_check:
-                        clear_terminal()
-                        print(f'\nNot enough money, your balance : {card_creds[selected_card]["amount"]}')
-                        break
-                    card_creds[selected_card]['amount'] -= int(op_amount)
-                    destination_card['amount'] += int(op_amount)
+                    user = get_user_info(client)
+                    if op != 'transfer':
+                        set_transaction_log(-int(op_amount) if op == 'withdraw' else int(op_amount),
+                                            TransactionType.WITHDRAW_CARD.value if op == 'withdraw' else TransactionType.DEPOSIT_CARD.value,
+                                            user["username"],
+                                            card_creds[selected_card]['card_number'])
 
-                clear_terminal()
+                        print(
+                            f"""\n{op_amount} is {op}ed to {selected_card}\n
+                    your current balance: {card_creds[selected_card]['amount']}""")
+                        return op_amount
+                    else:
+                        set_transaction_log(int(op_amount), TransactionType.TRANSFER.value, user["username"],
+                                            card_creds[selected_card]['card_number'], destination_card['card_number'])
+                        print(
+                            f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
+                    your current balance: {card_creds[selected_card]['amount']}""")
+                        return False
 
-                if op == 'transfer':
-                    request_data = json.dumps({
-                        'payload': {'selected_card': card_creds[selected_card],
-                                    'destination_card': destination_card},
-                        'url': 'do_transfer'
-                    })
-                else:
-                    request_data = json.dumps({
-                        'payload': {'selected_card': card_creds[selected_card]},
-                        'url': 'do_card_op'
-                    })
-                client.send(request_data.encode('utf-8'))
-                response = client.recv(5 * 1024).decode('utf-8')
-                response = json.loads(response)
-                if response['status_code'] == 200:
-                    pass
-                else:
-                    print(response['msg'])
-                    break
-
-                user = get_user_info(client)
-                print(user)
-                if op != 'transfer':
-                    set_transaction_log(-int(op_amount) if op == 'withdraw' else int(op_amount),
-                                        TransactionType.WITHDRAW_CARD.value if op == 'withdraw' else TransactionType.DEPOSIT_CARD.value,
-                                        user["username"],
-                                        card_creds[selected_card]['card_number'])
-
-                    print(
-                        f"""\n{op_amount} is {op}ed to {selected_card}\n
-            your current balance: {card_creds[selected_card]['amount']}""")
-                    return op_amount
-                else:
-                    set_transaction_log(int(op_amount), TransactionType.TRANSFER.value, user["username"],
-                                        card_creds[selected_card]['card_number'], destination_card['card_number'])
-                    print(
-                        f"""\n{op_amount} is {op}ed to {destination_card['card_number']}\n
-            your current balance: {card_creds[selected_card]['amount']}""")
-                    break
-
-    except custom_exceptions.CardOpAmountValueError:
-        clear_terminal()
-        print(str(custom_exceptions.CardOpAmountValueError()))
+        except custom_exceptions.CardOpAmountValueError:
+            clear_terminal()
+            print(str(custom_exceptions.CardOpAmountValueError()))
 
 
 def main(client, op):
@@ -184,9 +179,6 @@ def main(client, op):
         response = json.loads(response)
         if response['status_code'] == 200:
             card_creds = response['cards']
-        elif response['status_code'] == 400:
-            print(response['msg'])
-            break
         else:
             print(response['msg'])
             break

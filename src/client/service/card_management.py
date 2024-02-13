@@ -8,7 +8,7 @@ from prettytable import PrettyTable
 from src.utils import custom_exceptions
 from src.utils.custom_validators import Validator
 from src.utils.utils import clear_terminal, hash_string
-
+import getpass
 
 def edit_card_number(card_list, new_card):
     try:
@@ -71,12 +71,10 @@ def main(client):
         response = json.loads(response)
         if response['status_code'] == 200:
             card_creds = response['cards']
-        elif response['status_code'] == 400:
-            clear_terminal()
-            sys.exit(response['msg'])
         else:
             clear_terminal()
             print(response['msg'])
+            break
 
         i = 1
         table = PrettyTable(['Number', 'Title', 'Card Number'])
@@ -183,17 +181,17 @@ def main(client):
                     clear_terminal()
                     continue
             elif user_input == '4' or user_input == 'change password':
-                current_password = input("Please enter your current password: ")
+                current_password = getpass.getpass("Please enter your current password: ")
                 if validate_password(current_password):
                     current_password = hash_string(current_password)
                     if compare_digest(current_password, card_creds[selected_card]['password']):
-                        new_password = input("Please enter your new password (length must be 4 to 10): ")
+                        new_password = getpass.getpass("Please enter your new password (length must be 4 to 10): ")
                         if compare_digest(hash_string(new_password), card_creds[selected_card]['password']):
                             clear_terminal()
                             print("You Can't change your password to the same one")
                             continue
                         if validate_password(new_password):
-                            confirm_new_password = input("Please confirm your new password: ")
+                            confirm_new_password = getpass.getpass("Please confirm your new password: ")
                             if compare_digest(new_password, confirm_new_password):
                                 card_creds[selected_card]['password'] = hash_string(new_password)
                                 clear_terminal()

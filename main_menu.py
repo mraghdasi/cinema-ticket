@@ -1,22 +1,37 @@
 import json
 import sys
 
-import service.banking as banking
-import service.buy_subscription as buy_subscription
-import service.buy_ticket as buy_ticket
-import service.film_management as film_management
-import service.user_modification as user_modification
-from src.client.service import movie_management, sans_management
-from src.utils.utils import clear_terminal
 from prettytable import PrettyTable
+
+from src.client.service import movie_management, sans_management, hall_management, buy_ticket, buy_subscription, \
+    film_management, banking, user_modification
+
+from src.utils.utils import clear_terminal
 
 
 def main(client):
     while True:
+        while True:
+            request_data = json.dumps({
+                'payload': {},
+                'url': 'show_profile'
+            })
+            client.send(request_data.encode('utf-8'))
+            response = client.recv(5 * 1024).decode('utf-8')
+            response = json.loads(response)
+
+            if response['status_code'] == 200:
+                user = response['user']
+                break
+            else:
+                print(response['msg'])
+                continue
         table = PrettyTable(["What do you want to do today ?"])
         table.align["What do you want to do today ?"] = "l"
         table.add_rows([['1.Buy tickets'], ['2.Buy A Subscription'], ['3.Check Available Movies'],
                         ['4.Banking'], ['5.Modify Account'], ['6.Quit']])
+        if user['role'] == 0:
+            table.add_rows([['7. Movies'], ['8. Sans'], ['9. Halls']])
 
         print(table)
         user_input = input('Choose One Option:').lower().strip()
@@ -47,6 +62,9 @@ def main(client):
                 elif user_input == '8' or user_input == 'sans':
                     clear_terminal()
                     sans_management.main(client)
+                elif user_input == '9' or user_input == 'halls':
+                    clear_terminal()
+                    hall_management.main(client)
                 else:
                     continue
             else:

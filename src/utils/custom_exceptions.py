@@ -96,7 +96,7 @@ class RateNotBetweenZeroAndFive(Exception):
 class CardOpAmountValueError(Exception):
 
     def __init__(self):
-        super().__init__('Please Enter Numeric Value Without Any Decimal Portions!')
+        super().__init__('Please Enter Numeric Value Without Any Decimal Portions (Min 2000)!')
 
 
 class LenBoundValidationError(Exception):
@@ -137,7 +137,7 @@ def exception_log():
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                logging.basicConfig(filename='../logs/error-logs.txt', level=logging.ERROR)
+                logging.basicConfig(filename='./src/logs/error-logs.txt', level=logging.ERROR)
                 logging.error(
                     f" Exception in {func.__name__} : {str(e)} | DateTime : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 

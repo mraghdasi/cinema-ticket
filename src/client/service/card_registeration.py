@@ -1,3 +1,4 @@
+import getpass
 import json
 from datetime import date
 import sys
@@ -9,9 +10,12 @@ import sys
 from src.utils.utils import clear_terminal, hash_string
 
 
-def get_input(prompt, validation_func):
+def get_input(prompt, validation_func, is_password=False):
     while True:
-        user_input = input(prompt)
+        if is_password:
+            user_input = getpass.getpass(prompt)
+        else:
+            user_input = input(prompt)
         if validation_func(user_input):
             clear_terminal()
             return user_input
@@ -42,7 +46,7 @@ def validate_card_number(card_number):
 def validate_password(password):
     try:
         if password.isdigit() and Validator.len_bound_validator(password, 4, 10):
-            confirm_password = input("Enter your password again: ")
+            confirm_password = getpass.getpass("Enter your password again: ").strip()
             if password == confirm_password:
                 return True
             clear_terminal()
@@ -83,7 +87,6 @@ def validate_expire_date(expire_date):
 
 
 def main(client):
-
     card_creds_input = {'user_id': '', 'title': '', 'card_number': '', 'password': '', 'cvv2': '', 'expire_date': ''}
     while True:
         try:
@@ -101,7 +104,7 @@ def main(client):
 
             if card_creds_input['password'] == '':
                 card_creds_input['password'] = hash_string(
-                    get_input("Enter password (4 to 10 digits): ", validate_password))
+                    get_input("Enter password (4 to 10 digits): ", validate_password, True))
             else:
                 print('Password Has Already Been Set')
 

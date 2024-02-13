@@ -4,6 +4,7 @@ import threading
 
 from dotenv import load_dotenv
 
+from src.db.db_main import db_manager
 from src.server.views import *
 from src.utils.utils import error_response
 
@@ -81,11 +82,18 @@ urls = {
     'get_movie_rates': get_movie_rates,
     'get_packages': get_packages,
     'show_profile': show_profile,
-    'add_amount_to_wallet': add_amount_to_wallet,
     'update_cards': update_cards,
     'add_movie': add_movie,
     'delete_movie': delete_movie,
     'update_movie': update_movie,
+    'get_movie_sans': get_movie_sans,
+    'get_halls': get_halls,
+    'add_sans': add_sans,
+    'delete_sans': delete_sans,
+    'update_sans': update_sans,
+    'add_hall': add_hall,
+    'delete_hall': delete_hall,
+    'update_hall': update_hall,
 }
 
 HOST = '127.0.0.1'
@@ -127,7 +135,7 @@ def handle_client(client_socket):
             User.objects.update({'is_logged_in': 0}, f"id={session.user.id}")
         client_socket.close()
 
-
+db_manager.initialize_database()
 # Add New Thread Per User
 while True:
     client_socket, addr = server.accept()
